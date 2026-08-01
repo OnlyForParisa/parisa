@@ -2,133 +2,346 @@
 <html lang="fa" dir="rtl">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوپرایزها 🎁</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
 
-<title>سوپرایزها 🎁</title>
+        /* ==========================================
+                   تنظیمات پایه
+                   ========================================== */
+        * {
+            box-sizing: border-box;
+            font-family: Vazirmatn, sans-serif;
+        }
 
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffd6e7, #fff7fb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-<style>
+        /* ==========================================
+                   قلب‌های متحرک پس‌زمینه (مثل صفحه اصلی)
+                   ========================================== */
+        .heart {
+            position: absolute;
+            opacity: .3;
+            font-size: 22px;
+            animation: floatHeart 12s linear infinite;
+        }
 
-body{
+        .heart:nth-child(1) {
+            left: 5%;
+            animation-delay: 0s;
+        }
+        .heart:nth-child(2) {
+            left: 25%;
+            animation-delay: 3s;
+        }
+        .heart:nth-child(3) {
+            left: 75%;
+            animation-delay: 6s;
+        }
+        .heart:nth-child(4) {
+            right: 5%;
+            animation-delay: 2s;
+        }
+        .heart:nth-child(5) {
+            left: 50%;
+            animation-delay: 4s;
+        }
 
-margin:0;
-min-height:100vh;
+        @keyframes floatHeart {
+            from {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(-20vh) rotate(360deg);
+            }
+        }
 
-background:linear-gradient(135deg,#ffd6e7,#fff7fb);
+        /* ==========================================
+                   کانتینر اصلی
+                   ========================================== */
+        .container {
+            width: 92%;
+            max-width: 520px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
 
-font-family:Tahoma;
+        /* ==========================================
+                   عنوان اصلی
+                   ========================================== */
+        h1 {
+            color: #b03060;
+            font-size: 32px;
+            animation: fadeDown 1s;
+            margin-bottom: 30px;
+        }
 
-display:flex;
-justify-content:center;
-align-items:center;
+        h1 .emoji {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
 
-}
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
 
+        /* ==========================================
+                   کارت‌ها
+                   ========================================== */
+        .card {
+            background: rgba(255, 255, 255, .7);
+            backdrop-filter: blur(12px);
+            padding: 30px 20px;
+            margin: 18px 0;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(176, 48, 96, .12);
+            transition: .4s;
+            border: 1px solid rgba(255, 255, 255, .5);
+            animation: fadeUp .8s ease forwards;
+            opacity: 0;
+        }
 
-.container{
+        .card:nth-child(1) {
+            animation-delay: .2s;
+        }
+        .card:nth-child(2) {
+            animation-delay: .5s;
+        }
 
-width:90%;
-max-width:500px;
-text-align:center;
+        .card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 15px 40px rgba(176, 48, 96, .2);
+        }
 
-}
+        /* کارت ویژه (اولی) */
+        .card-special {
+            background: linear-gradient(135deg, #ffd6e7, #ffe0eb);
+            border: 2px solid #b03060;
+        }
 
+        .card-special .lock-icon {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
 
-h1{
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
 
-color:#b03060;
+        .card p {
+            color: #555;
+            line-height: 2;
+            font-size: 16px;
+        }
 
-}
+        .card .hint {
+            color: #888;
+            font-size: 14px;
+            font-style: italic;
+        }
 
+        /* ==========================================
+                   دکمه باز کردن سوپرایز
+                   ========================================== */
+        .btn-surprise {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 35px;
+            background: #b03060;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: .3s;
+            border: none;
+            cursor: pointer;
+        }
 
-.card{
+        .btn-surprise:hover {
+            transform: scale(1.07);
+            box-shadow: 0 8px 25px rgba(176, 48, 96, .4);
+        }
 
-background:white;
+        /* ==========================================
+                   کارت "به زودی"
+                   ========================================== */
+        .card-coming {
+            background: rgba(255, 255, 255, .4);
+            backdrop-filter: blur(8px);
+            border: 1px dashed #ccc;
+        }
 
-padding:25px;
+        .card-coming .coming-soon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 5px;
+        }
 
-margin:20px 0;
+        /* ==========================================
+                   دکمه برگشت
+                   ========================================== */
+        .back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            color: #b03060;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 30px;
+            transition: .3s;
+            background: rgba(255, 255, 255, .5);
+            backdrop-filter: blur(6px);
+        }
 
-border-radius:25px;
+        .back:hover {
+            background: #b03060;
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(176, 48, 96, .3);
+        }
 
-box-shadow:0 10px 25px rgba(0,0,0,.1);
+        /* ==========================================
+                   انیمیشن‌ها
+                   ========================================== */
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-}
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-
-a{
-
-text-decoration:none;
-
-color:#b03060;
-
-font-size:20px;
-
-}
-
-
-.back{
-
-display:block;
-
-margin-top:30px;
-
-}
-
-
-</style>
-
-
+        /* ==========================================
+                   ریسپانسیو
+                   ========================================== */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            .card {
+                padding: 20px 15px;
+            }
+            .btn-surprise {
+                font-size: 16px;
+                padding: 10px 25px;
+            }
+        }
+    </style>
 </head>
-
-
 
 <body>
 
+    <!-- ==========================================
+    قلب‌های متحرک پس‌زمینه
+    ========================================== -->
+    <div class="heart">🤍</div>
+    <div class="heart">♡</div>
+    <div class="heart">🤍</div>
+    <div class="heart">♡</div>
+    <div class="heart">💖</div>
 
-<div class="container">
+    <!-- ==========================================
+    محتوای اصلی
+    ========================================== -->
+    <div class="container">
 
+        <h1>
+            <span class="emoji">🎁</span>
+            سوپرایزهای پریسا
+        </h1>
 
-<h1>
-🎁 سوپرایزهای پریسا
-</h1>
+        <!-- ===== کارت اول: سوپرایز ویژه ===== -->
+        <div class="card card-special">
 
+            <span class="lock-icon">💀</span>
 
-<div class="card">
+            <p>
+                <strong>🔐 ورود ممنوع!</strong>
+                <br>
+                <span style="color:#888; font-size:14px;">(به جز پریسا عزیزم 🤍)</span>
+            </p>
 
-💀 ورود ممنوع (به جز پریسا) 
+            <p class="hint">
+                ✨ یه چیزی مخصوص خودته...
+                <br>
+                فقط با یه کلیک !
+            </p>
 
-<br><br>
+            <a href="surprises1.html" class="btn-surprise">
+                باز کردن سوپرایز 🎁
+            </a>
 
-<a href="surprises1.html">
-باز کردن 🤍
-</a>
+        </div>
 
-</div>
+        <!-- ===== کارت دوم: سوپرایز بعدی ===== -->
+        <div class="card card-coming">
 
+            <span class="coming-soon">🌙</span>
 
+            <p style="color:#555; font-size:18px;">
+                <strong>سوپرایز بعدی</strong>
+            </p>
 
-<div class="card">
+            <p style="color:#aaa; font-size:14px;">
+                ⏳ در حال آماده‌سازی...
+                <br>
+                <span style="font-size:12px;">چیزی که منتظرش بودی!</span>
+            </p>
 
-🌙 سوپرایز بعدی
+            <span style="display:inline-block; background:#eee; padding:5px 20px; border-radius:20px; color:#999; font-size:13px;">
+                به زودی 🌟
+            </span>
 
-<br><br>
+        </div>
 
-به زودی...
+        <!-- ===== دکمه برگشت به خانه ===== -->
+        <a href="index.html" class="back">
+            ⬅ برگشت به خانه
+        </a>
 
-</div>
-
-
-
-<a class="back" href="index.html">
-⬅ برگشت به خانه
-</a>
-
-
-</div>
-
+    </div>
 
 </body>
 
