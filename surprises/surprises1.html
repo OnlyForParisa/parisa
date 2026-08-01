@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>🔐 طبقه‌بندی شده - فقط برای پریسا</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: #0a0a12;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Vazir', Tahoma, sans-serif;
+            padding: 20px;
+            direction: rtl;
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(232,74,111,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(111,207,151,0.08) 0%, transparent 60%);
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,100,0.01) 2px, rgba(0,255,100,0.01) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .card {
+            background: rgba(16, 16, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 56px;
+            padding: 44px 32px;
+            max-width: 620px;
+            width: 100%;
+            min-height: 520px;
+            box-shadow: 
+                0 40px 80px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(255,255,255,0.03),
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 0 60px rgba(232,74,111,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(232,74,111,0.05), transparent, rgba(111,207,151,0.05), transparent);
+            animation: rotateGlow 25s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+        .emoji-big {
+            font-size: 4.2rem;
+            display: block;
+            margin: 4px 0 8px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f0edf8, #c4b8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 6px 0;
+        }
+        h2 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #e8e4f8;
+            margin: 6px 0;
+        }
+        .sub {
+            font-size: 1.05rem;
+            opacity: 0.75;
+            line-height: 1.8;
+            margin: 12px 0;
+            color: #b8b0d0;
+        }
+        .sub strong {
+            color: #f0edf8;
+            opacity: 1;
+        }
+        .btn {
+            background: linear-gradient(135deg, #e84a6f, #c73a5e);
+            border: none;
+            border-radius: 60px;
+            padding: 16px 38px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #0a0a12;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 0 #7a2a42, 0 8px 24px rgba(232,74,111,0.2);
+            display: inline-block;
+            min-width: 150px;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn:hover::after {
+            opacity: 1;
+        }
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #7a2a42;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e84a6f;
+            color: #e84a6f;
+            box-shadow: none;
+        }
+        .btn-outline:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+        .btn-green {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            box-shadow: 0 8px 0 #008844, 0 8px 24px rgba(0,255,136,0.2);
+            color: #0a0a12;
+        }
+        .btn-green:active {
+            box-shadow: 0 2px 0 #008844;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            box-shadow: 0 8px 0 #b87a00, 0 8px 24px rgba(255,215,0,0.2);
+            color: #0a0a12;
+        }
+        .btn-gold:active {
+            box-shadow: 0 2px 0 #b87a00;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            box-shadow: 0 8px 0 #880000, 0 8px 24px rgba(255,68,68,0.2);
+            color: #f0edf8;
+        }
+        .btn-danger:active {
+            box-shadow: 0 2px 0 #880000;
+        }
+        .btn-purple {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            box-shadow: 0 8px 0 #6c3483, 0 8px 24px rgba(155,89,182,0.2);
+            color: #f0edf8;
+        }
+        .btn-purple:active {
+            box-shadow: 0 2px 0 #6c3483;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0%, 90%, 100% { opacity: 1; }
+            92% { opacity: 0.2; transform: translateX(-3px); }
+            94% { opacity: 0.8; transform: translateX(3px); }
+            96% { opacity: 0.2; transform: translateX(-2px); }
+        }
+
+        .prize-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .prize-box {
+            width: 140px;
+            height: 160px;
+            background: linear-gradient(145deg, rgba(255,215,0,0.05), rgba(255,215,0,0.01));
+            border: 2px solid rgba(255,215,0,0.15);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255,215,0,0.02);
+        }
+        .prize-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255,215,0,0.03), transparent, rgba(255,215,0,0.03), transparent);
+            animation: rotateGlow 8s linear infinite;
+            pointer-events: none;
+        }
+        .prize-box:hover:not(.opened):not(.disabled) {
+            transform: translateY(-8px) scale(1.03);
+            border-color: rgba(255,215,0,0.4);
+            box-shadow: 0 0 60px rgba(255,215,0,0.08);
+        }
+        .prize-box .prize-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.4s;
+        }
+        .prize-box:hover:not(.opened):not(.disabled) .prize-emoji {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .prize-box .prize-label {
+            font-size: 0.85rem;
+            color: #b8b0d0;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 8px;
+        }
+        .prize-box .prize-number {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: rgba(255,215,0,0.2);
+            font-weight: 700;
+        }
+        .prize-box .shine {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.6s;
+            pointer-events: none;
+        }
+        .prize-box:hover:not(.opened):not(.disabled) .shine {
+            opacity: 1;
+            animation: shineMove 2s infinite;
+        }
+        @keyframes shineMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30%, 30%); }
+        }
+        .prize-box.opened {
+            border-color: rgba(111,207,151,0.3);
+            background: rgba(111,207,151,0.05);
+            cursor: default;
+        }
+        .prize-box.opened .prize-emoji {
+            animation: prizeReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes prizeReveal {
+            0% { transform: scale(0) rotate(-180deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .prize-box.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+            transform: scale(0.95);
+        }
+        .prize-box .prize-result {
+            font-size: 0.75rem;
+            color: #6fcf97;
+            margin-top: 4px;
+            opacity: 0;
+            transition: opacity 0.4s;
+            position: relative;
+            z-index: 1;
+        }
+        .prize-box.opened .prize-result {
+            opacity: 1;
+        }
+        .prize-box .lock-icon {
+            position: absolute;
+            bottom: 8px;
+            font-size: 0.8rem;
+            opacity: 0.2;
+        }
+        .prize-box .glow-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            border: 2px solid transparent;
+            transition: all 0.4s;
+        }
+        .prize-box.opened .glow-ring {
+            border-color: rgba(111,207,151,0.2);
+            box-shadow: 0 0 40px rgba(111,207,151,0.05);
+        }
+
+        .scan-container {
+            text-align: right;
+            padding: 8px 4px;
+            margin: 10px 0;
+            min-height: 180px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(0,255,100,0.1);
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            max-height: 280px;
+            overflow-y: auto;
+            position: relative;
+        }
+        .scan-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scan-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        .scan-container::-webkit-scrollbar-thumb {
+            background: rgba(0,255,100,0.3);
+            border-radius: 10px;
+        }
+        .scan-line {
+            font-size: 0.85rem;
+            opacity: 0;
+            transform: translateX(-8px);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            padding: 4px 0;
+            color: #4a9e6a;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        .scan-line.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .scan-line .tick {
+            color: #6fcf97;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .scan-line.done .tick {
+            opacity: 1;
+        }
+        .scan-line .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0,255,100,0.15);
+            border-top: 2px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .scan-line.done .spinner {
+            display: none;
+        }
+        .hack-code {
+            color: #2a8a5a;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            padding-right: 12px;
+            border-right: 1px solid rgba(0,255,100,0.08);
+            margin: 2px 0;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            transition: all 0.4s ease;
+        }
+        .hack-code .highlight { color: #00ff88; opacity: 1; }
+        .hack-code .string { color: #ff6b6b; }
+        .hack-code .comment { color: #4a6a5a; font-style: italic; }
+        .hack-code .variable { color: #ffd93d; }
+        .hack-code .error { color: #ff4444; }
+        .hack-code .location { color: #ffd700; }
+        .scan-progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(0,255,100,0.05);
+            border-radius: 10px;
+            margin: 10px 0 6px;
+            overflow: hidden;
+            direction: ltr;
+        }
+        .scan-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ff88, #00cc66, #00ff88);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+            background-size: 200% 100%;
+            animation: progressShine 2s linear infinite;
+        }
+        @keyframes progressShine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .verify-badge {
+            display: inline-block;
+            background: rgba(111,207,151,0.12);
+            border: 1px solid rgba(111,207,151,0.3);
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: #6fcf97;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 8px;
+            backdrop-filter: blur(8px);
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(111,207,151,0.05); }
+            50% { box-shadow: 0 0 40px rgba(111,207,151,0.2); }
+        }
+
+        .ip-tracker {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #4a9e6a;
+            margin: 8px 0;
+            border: 1px solid rgba(0,255,100,0.05);
+            direction: ltr;
+            text-align: left;
+        }
+        .ip-tracker .label { color: #6a8a7a; }
+        .ip-tracker .value { color: #00ff88; }
+        .ip-tracker .location-highlight { color: #ffd700; }
+        .ip-tracker .blink-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: dotBlink 1s infinite;
+            margin-left: 8px;
+        }
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .option-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin: 18px 0;
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 40px;
+            padding: 14px 30px;
+            color: #d0c8e8;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            min-width: 130px;
+            position: relative;
+        }
+        .option-btn:hover {
+            border-color: #e84a6f;
+            background: rgba(232,74,111,0.06);
+            transform: scale(1.02);
+        }
+        .option-btn.correct {
+            border-color: #6fcf97;
+            background: rgba(111,207,151,0.1);
+            color: #6fcf97;
+            box-shadow: 0 0 30px rgba(111,207,151,0.05);
+        }
+        .option-btn.wrong {
+            border-color: #eb5757;
+            background: rgba(235,87,87,0.1);
+            color: #eb5757;
+        }
+        .feedback-msg {
+            font-size: 1.15rem;
+            min-height: 3rem;
+            margin: 8px 0;
+            padding: 8px;
+            color: #e8e4f8;
+        }
+
+        .flee-container {
+            position: relative;
+            min-height: 100px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 16px 0;
+            padding: 20px 10px;
+            border: 1px dashed rgba(255,255,255,0.05);
+            border-radius: 20px;
+        }
+        .btn-flee {
+            position: relative;
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            z-index: 10;
+        }
+        .btn-flee.fleeing {
+            position: absolute !important;
+        }
+
+        .final-box {
+            background: rgba(255,215,0,0.03);
+            border-radius: 32px;
+            padding: 24px 20px;
+            border-right: 4px solid #f2c94a;
+            margin: 12px 0;
+            line-height: 2.2;
+        }
+        .final-box p {
+            font-size: 1.15rem;
+            color: #e8e4f8;
+        }
+        .secret-code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            opacity: 0.15;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+        .pulse-border {
+            animation: pulseBorder 2s ease-in-out infinite;
+        }
+        @keyframes pulseBorder {
+            0%, 100% { border-color: rgba(232,74,111,0.1); }
+            50% { border-color: rgba(232,74,111,0.3); }
+        }
+
+        .easter-egg {
+            font-size: 0.6rem;
+            opacity: 0.05;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+        .easter-egg:hover {
+            opacity: 0.3;
+        }
+
+        .duel-box {
+            background: rgba(255,215,0,0.05);
+            border: 1px solid rgba(255,215,0,0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+        }
+        .duel-box .duel-title {
+            color: #ffd700;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .duel-box .duel-text {
+            color: #b8b0d0;
+            font-size: 0.95rem;
+            line-height: 2;
+        }
+        .duel-box .duel-text strong {
+            color: #ffd700;
+        }
+
+        .cheat-alert {
+            background: rgba(255,0,0,0.05);
+            border: 1px solid rgba(255,0,0,0.15);
+            border-radius: 12px;
+            padding: 12px;
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            text-align: center;
+            margin: 8px 0;
+            animation: fadeIn 0.5s;
+        }
+
+        .challenge-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .ch-option {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 14px 20px;
+            color: #d0c8e8;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .ch-option:hover:not(.disabled) {
+            border-color: #9b59b6;
+            background: rgba(155,89,182,0.06);
+            transform: scale(1.01);
+        }
+        .ch-option.wrong-answer {
+            border-color: #eb5757;
+            background: rgba(235,87,87,0.1);
+            color: #eb5757;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .ch-option.disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .exit-box {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,0,0,0.03);
+            border-radius: 20px;
+            border: 1px dashed rgba(255,0,0,0.15);
+            margin: 12px 0;
+        }
+        .exit-box .exit-title {
+            color: #ff6b6b;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .exit-box .exit-sub {
+            color: #b8b0d0;
+            font-size: 0.95rem;
+            margin: 8px 0;
+        }
+
+        .trick-box {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,215,0,0.04);
+            border-radius: 20px;
+            border: 1px solid rgba(255,215,0,0.1);
+            margin: 12px 0;
+        }
+        .trick-box .trick-title {
+            color: #ffd93d;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .trick-box .trick-sub {
+            color: #b8b0d0;
+            font-size: 1rem;
+            margin: 8px 0;
+        }
+
+        .agree-box {
+            background: rgba(0,255,136,0.03);
+            border: 1px solid rgba(0,255,136,0.08);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .agree-box label {
+            color: #b8b0d0;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .agree-box input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #9b59b6;
+            cursor: pointer;
+        }
+        .agree-box .agree-text strong {
+            color: #ffd700;
+        }
+
+        .code-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 20px 16px;
+            margin: 12px 0;
+            border: 1px solid rgba(255,215,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .code-box .code-bg-icon {
+            position: absolute;
+            top: -20px;
+            right: -10px;
+            font-size: 4rem;
+            opacity: 0.03;
+        }
+        .code-box .code-label {
+            color: #b8b0d0;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .code-box .code-label strong {
+            color: #ffd700;
+        }
+        .code-box .code-display {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255,215,0,0.2);
+            padding: 12px;
+            background: rgba(255,215,0,0.04);
+            border-radius: 16px;
+            border: 1px dashed rgba(255,215,0,0.15);
+        }
+        .code-box .code-display .locked {
+            color: #6a8a7a;
+            letter-spacing: 8px;
+        }
+        .code-box .code-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .code-box .code-actions .btn {
+            padding: 10px 28px;
+            font-size: 0.9rem;
+            min-width: auto;
+        }
+        .code-box .code-note {
+            color: #6a8a7a;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 10px;
+            line-height: 1.8;
+        }
+        .code-box .code-note strong {
+            color: #ffd700;
+        }
+
+        .surprise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,10,18,0.92);
+            backdrop-filter: blur(20px);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+            padding: 40px;
+        }
+        .surprise-overlay .surprise-emoji {
+            font-size: 4rem;
+            animation: float 2s ease-in-out infinite;
+        }
+        .surprise-overlay .surprise-title {
+            color: #ffd700;
+            font-size: 2rem;
+            margin: 16px 0;
+            text-align: center;
+        }
+        .surprise-overlay .surprise-text {
+            color: #e8e4f8;
+            font-size: 1.2rem;
+            text-align: center;
+            line-height: 2.2;
+            max-width: 500px;
+        }
+        .surprise-overlay .surprise-text strong {
+            color: #ffd700;
+        }
+        .surprise-overlay .surprise-hearts {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .surprise-overlay .surprise-hearts span {
+            font-size: 2.5rem;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+                border-radius: 32px;
+            }
+            h1 { font-size: 1.7rem; }
+            h2 { font-size: 1.4rem; }
+            .btn {
+                padding: 14px 24px;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+            .option-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                min-width: 100px;
+            }
+            .flee-container {
+                min-height: 80px;
+                padding: 15px 5px;
+            }
+            .scan-container {
+                font-size: 0.75rem;
+                padding: 10px;
+                max-height: 200px;
+            }
+            .hack-code {
+                font-size: 0.65rem;
+            }
+            .prize-box {
+                width: 100px;
+                height: 120px;
+            }
+            .prize-box .prize-emoji {
+                font-size: 2.5rem;
+            }
+            .prize-container {
+                gap: 12px;
+            }
+            .code-box .code-display {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+            .surprise-overlay .surprise-title {
+                font-size: 1.5rem;
+            }
+            .surprise-overlay .surprise-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card pulse-border" id="app">
+
+    <!-- ===== صفحه ۱ ===== -->
+    <div id="step1" class="fade-in">
+        <span class="emoji-big">⚠️</span>
+        <h1>دسترسی ممنوع</h1>
+        <p class="sub">
+            این صفحه برای <strong>یک نفر خاص</strong> رمزنگاری شده...<br />
+            اگر نام شما <strong>پریسا</strong> نیست،<br />
+            لطفاً بلافاصله صفحه را ببندید. 🔒
+        </p>
+        <button class="btn" onclick="goTo(2)">من پریسام 😌</button>
+        <div class="secret-code">◆ ENCRYPTED ◆</div>
+        <div class="easter-egg" onclick="showEaster()">[ACCESS LOG: 0x7F3A]</div>
+    </div>
+
+    <!-- ===== صفحه ۲: اسکن ===== -->
+    <div id="step2" class="hidden">
+        <span class="emoji-big">🕵️</span>
+        <h2 style="font-size:1.2rem;">نفوذ به سیستم...</h2>
+        <p style="font-size:0.8rem; opacity:0.4; margin-bottom:8px;">⚠️ دسترسی غیرمجاز تشخیص داده شد</p>
+        
+        <div class="ip-tracker" id="ipTracker">
+            <span class="blink-dot"></span>
+            <span class="label">[TRACKING]</span> IP: <span class="value" id="ipDisplay">192.168.1.100</span> | 
+            <span class="label">LOC:</span> <span class="location-highlight" id="locDisplay">Isfahan, IR</span>
+        </div>
+        
+        <div class="scan-container" id="scanContainer">
+            <div class="scan-line" id="scan1">
+                <span class="spinner"></span> Scanning biometric data...
+                <span class="tick">✅</span>
+            </div>
+            <div class="scan-line" id="scan2">
+                <span class="spinner"></span> Bypassing firewall...
+                <span class="tick">✅</span>
+            </div>
+            <div class="scan-line" id="scan3">
+                <span class="spinner"></span> Injecting payload...
+                <span class="tick">✅</span>
+            </div>
+            <div class="scan-line" id="scan4">
+                <span class="spinner"></span> Decrypting user profile...
+                <span class="tick">✅</span>
+            </div>
+            <div class="scan-line" id="scan5">
+                <span class="spinner"></span> Access granted...
+                <span class="tick">✅</span>
+            </div>
+            <div id="hackCodes"></div>
+            <div class="scan-progress">
+                <div class="scan-progress-bar" id="scanProgress"></div>
+            </div>
+            <div style="font-size:0.7rem; opacity:0.2; text-align:left; direction:ltr;" id="progressText">0%</div>
+        </div>
+
+        <div id="verifyResult" class="hidden">
+            <div class="verify-badge">✅ SYSTEM BREACHED — ACCESS GRANTED</div>
+        </div>
+        <button id="btnStep2Next" class="btn hidden" onclick="goTo(3)" style="margin-top:12px;">🔓 رمزگشایی نهایی</button>
+    </div>
+
+    <!-- ===== صفحه ۳ ===== -->
+    <div id="step3" class="hidden">
+        <span class="emoji-big">🎉</span>
+        <h2>دسترسی مجاز</h2>
+        <p class="sub">
+            شما وارد <strong>بخش فوق محرمانه</strong> اینترنت شدید.<br />
+            این صفحه فقط برای <strong>پریسا</strong> ساخته شده.<br />
+            و اون... <strong>خودتی</strong>. 😌🤍
+        </p>
+        <button class="btn" onclick="goTo(4)">بریم ببینیم این دیوونه چی ساخته 😂</button>
+    </div>
+
+    <!-- ===== صفحه ۴ ===== -->
+    <div id="step4" class="hidden">
+        <span class="emoji-big">🤔</span>
+        <h2>سؤال امنیتی</h2>
+        <p class="sub">آیا سازنده این سایت زیادی بیکار بوده؟ 🤔</p>
+        <div class="option-grid">
+            <button class="option-btn" onclick="answerBikar('بله')">😂 بله</button>
+            <button class="option-btn" onclick="answerBikar('خیر')">😌 خیر</button>
+        </div>
+        <div id="bikarFeedback" class="feedback-msg"></div>
+        <button id="btnStep4Next" class="btn hidden" onclick="goTo(5)">ادامه ➡️</button>
+    </div>
+
+    <!-- ===== صفحه ۵ ===== -->
+    <div id="step5" class="hidden">
+        <span class="emoji-big">😈</span>
+        <h2 style="font-size:1.3rem;">انتخاب گزینه‌ی صحیح</h2>
+        <p class="sub">سیستم نیاز به تأیید نهایی دارد.</p>
+        <div class="option-grid">
+            <button class="option-btn" id="aliCool" onclick="selectAli('cool')">🔥 علی خیلی باحاله</button>
+            <button class="option-btn" id="aliNormal" onclick="selectAli('normal')">😐 علی معمولیه</button>
+        </div>
+        <div id="aliFeedback" class="feedback-msg"></div>
+        <button id="btnStep5Next" class="btn hidden" onclick="goTo(6)">ادامه ➡️</button>
+    </div>
+
+    <!-- ===== صفحه ۶: چالش ===== -->
+    <div id="step6" class="hidden">
+        <span class="emoji-big">⚡</span>
+        <h2 style="font-size:1.3rem;">چالش نهایی</h2>
+        <p class="sub" style="font-size:0.85rem; opacity:0.4; text-align:center;">
+            ⚠️ این مرحله برای افراد ضعیف‌النفس مناسب نیست
+        </p>
+
+        <div style="margin:12px 0;">
+            <p style="color:#e8e4f8; font-size:1.05rem; text-align:center; line-height:2;">
+                بخاطر کدوم خصوصات <strong style="color:#ffd700;">علی</strong> رو جذب کردی؟ 🤔
+            </p>
+        </div>
+
+        <div class="challenge-options" id="challengeOptions">
+            <div class="ch-option" data-value="1" onclick="answerChallenge('1')">
+                💝 مهربونیت
+            </div>
+            <div class="ch-option" data-value="2" onclick="answerChallenge('2')">
+                🌟 اخلاقت
+            </div>
+            <div class="ch-option" data-value="3" onclick="answerChallenge('3')">
+                🤍 صداقتت
+            </div>
+        </div>
+
+        <div id="challengeFeedback" class="feedback-msg" style="text-align:center; min-height:1.5rem;"></div>
+    </div>
+
+    <!-- ===== صفحه ۷: خطا و خروج ===== -->
+    <div id="step7" class="hidden">
+        <span class="emoji-big">🚫</span>
+        <h2 style="color:#ff6b6b;">خطای سیستمی</h2>
+        <div class="exit-box">
+            <div class="exit-title">⛔ ادامه مسیر برای شما مقدرور نیست</div>
+            <div class="exit-sub">سیستم تشخیص داده که شما صلاحیت ادامه ندارید.</div>
+            <button class="btn btn-danger" onclick="goTo(8)" style="min-width:100px; margin-top:8px;">
+                🚪 خروج
+            </button>
+        </div>
+        <p style="font-size:0.7rem; opacity:0.15; text-align:center; margin-top:8px;">
+            [ERROR CODE: 0xDEADBEEF]
+        </p>
+    </div>
+
+    <!-- ===== صفحه ۸: شوخی ===== -->
+    <div id="step8" class="hidden">
+        <span class="emoji-big">😂</span>
+        <div class="trick-box">
+            <div class="trick-title">گول خوردی!</div>
+            <div class="trick-sub">
+                شوخی کردم عزیزم 😘<br>
+                البته که می‌تونی ادامه بدی...
+            </div>
+            <button class="btn btn-purple" onclick="goTo(9)" style="min-width:100px; margin-top:10px;">
+                🚀 ادامه مسیر
+            </button>
+        </div>
+        <p style="font-size:0.7rem; opacity:0.1; text-align:center;">[SYSTEM REBOOTING...]</p>
+    </div>
+
+    <!-- ===== صفحه ۹: توافق ===== -->
+    <div id="step9" class="hidden">
+        <span class="emoji-big">📜</span>
+        <h2 style="font-size:1.3rem;">شرایط ادامه</h2>
+        <p style="color:#b8b0d0; text-align:center; font-size:1rem; margin:8px 0;">
+            برای ادامه مسیر <strong style="color:#ffd700;">۱ امتیاز</strong> از شما کسر می‌شود.
+        </p>
+        <p style="color:#6a8a7a; text-align:center; font-size:0.85rem; margin-bottom:12px;">
+            آیا با این سیاست موافقید؟
+        </p>
+
+        <div class="agree-box">
+            <label>
+                <input type="checkbox" id="agreeCheck" onchange="toggleAgree()" />
+                <span class="agree-text">✅ بله، با کسر <strong>۱ امتیاز</strong> موافقم</span>
+            </label>
+        </div>
+
+        <button id="btnAgreeNext" class="btn btn-gold hidden" onclick="goTo(10)" style="width:100%; margin-top:4px;">
+            🔓 ادامه مسیر
+        </button>
+        
+        <p style="font-size:0.65rem; opacity:0.1; text-align:center; margin-top:10px;">
+            [CONTRACT v2.3.1]
+        </p>
+    </div>
+
+    <!-- ===== صفحه ۱۰: سوال جدید (دکمه نه فراری) ===== -->
+    <div id="step10" class="hidden">
+        <span class="emoji-big">😈</span>
+        <h2>سؤال نهایی</h2>
+        <p class="sub">آیا من <strong>بچه‌ی بدی</strong> هستم؟ 😏</p>
+        <div class="flee-container" id="fleeContainer">
+            <button class="btn btn-gold" id="btnYes" onclick="goTo(11)">
+                آره 😈
+            </button>
+            <button class="btn btn-danger btn-flee" id="btnNo" 
+                onmouseover="fleeButton()" 
+                onclick="fleeButton()">
+                نه 😇
+            </button>
+        </div>
+        <div id="iceCreamMsg" class="feedback-msg" style="font-size:0.95rem; opacity:0.5; text-align:center;"></div>
+    </div>
+
+    <!-- ===== صفحه ۱۱: جایزه ===== -->
+    <div id="step11" class="hidden">
+        <span class="emoji-big">🎁</span>
+        <h2>جایزه‌ی شما!</h2>
+        <p class="sub" style="font-size:0.95rem;">
+            یکی از این جعبه‌ها رو انتخاب کن... <br>
+            <span style="opacity:0.4; font-size:0.8rem;">فقط یکبار می‌تونی انتخاب کنی!</span>
+        </p>
+
+        <div class="prize-container" id="prizeContainer">
+            <div class="prize-box" data-prize="1" onclick="openPrize(1)">
+                <span class="prize-number">#01</span>
+                <div class="shine"></div>
+                <span class="prize-emoji">🎁</span>
+                <span class="prize-label">جعبه‌ی طلایی</span>
+                <span class="prize-result" id="prizeResult1"></span>
+                <span class="lock-icon">🔒</span>
+                <div class="glow-ring"></div>
+            </div>
+            <div class="prize-box" data-prize="2" onclick="openPrize(2)">
+                <span class="prize-number">#02</span>
+                <div class="shine"></div>
+                <span class="prize-emoji">🎁</span>
+                <span class="prize-label">جعبه‌ی نقر‌های</span>
+                <span class="prize-result" id="prizeResult2"></span>
+                <span class="lock-icon">🔒</span>
+                <div class="glow-ring"></div>
+            </div>
+            <div class="prize-box" data-prize="3" onclick="openPrize(3)">
+                <span class="prize-number">#03</span>
+                <div class="shine"></div>
+                <span class="prize-emoji">🎁</span>
+                <span class="prize-label">جعبه‌ی برنزی</span>
+                <span class="prize-result" id="prizeResult3"></span>
+                <span class="lock-icon">🔒</span>
+                <div class="glow-ring"></div>
+            </div>
+        </div>
+
+        <div id="prizeMessage" class="hidden">
+            <div class="duel-box">
+                <div class="duel-title">⚔️ شما به دوئل دعوت شدید! ⚔️</div>
+                <div class="duel-text" id="duelText">
+                    با برنده شدن <strong>خواسته‌ی شما اجابت میشود</strong> 🏆<br>
+                    و در صورت بازنده بودن باید <strong>درخواست من رو قبول کنی</strong> 😏
+                </div>
+            </div>
+        </div>
+
+        <button id="btnStep7Next" class="btn btn-gold hidden" onclick="goTo(12)" style="margin-top:10px;">
+            🚀 قبول میکنم!
+        </button>
+    </div>
+
+    <!-- ===== صفحه ۱۲: پیام نهایی + روز دوست‌دختر + کد مخفی ===== -->
+    <div id="step12" class="hidden">
+        <span class="emoji-big">💝</span>
+        <h2 style="font-size:1.5rem; text-align:center; background: linear-gradient(135deg, #ff6b8a, #ff3366, #ff6b8a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            روز دوست‌دختر مبارک!
+        </h2>
+        
+        <div class="final-box" style="border-right-color: #ff6b8a; background: rgba(255,107,138,0.04);">
+            <p style="font-size:1.1rem; line-height:2.2; text-align:center;">
+                پریسای قشنگم... 💕<br><br>
+                امروز روز توئه، روزی که به من ثابت کردی<br>
+                <strong style="color:#ff6b8a;">دخترا می‌تونن دنیا رو تغییر بدن</strong> 😌<br><br>
+                مخصوصاً وقتی اون دختر <strong>تو</strong> باشی...<br><br>
+                🌸 <strong style="font-size:1.2rem; color:#ffd700;">روز دوست‌دختر مبارک، عزیزترین دختر زندگی من</strong> 🌸<br><br>
+                راستی... یه چیزی برات دارم 👇
+            </p>
+        </div>
+
+        <!-- بخش کد مخفی -->
+        <div class="code-box">
+            <div class="code-bg-icon">🔑</div>
+            <div class="code-label">
+                🎁 یه <strong>کد مخفی</strong> مخصوص خودت:
+            </div>
+            <div class="code-display" id="secretCodeDisplay">
+                <span id="codeReveal" class="locked">🔒 • • • • • •</span>
+            </div>
+            <div class="code-actions">
+                <button class="btn btn-gold" onclick="revealSecretCode()" style="padding:10px 28px; font-size:0.9rem; min-width:auto;">
+                    🔓 نمایش کد
+                </button>
+                <button class="btn btn-outline" onclick="copySecretCode()" style="padding:10px 28px; font-size:0.9rem; min-width:auto; border-color:#ffd700; color:#ffd700;">
+                    📋 کپی
+                </button>
+                <button class="btn btn-green" onclick="downloadCode()" style="padding:10px 28px; font-size:0.9rem; min-width:auto;">
+                    💾 ذخیره
+                </button>
+            </div>
+            <div class="code-note">
+                ⚠️ این کد رو <strong>نگه دار</strong>، چون بعداً<br>
+                توی یه <strong>سورپرایز دیگه</strong> به کارت میاد! 😉
+            </div>
+        </div>
+
+        <!-- دکمه سورپرایز -->
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:8px;">
+            <button class="btn btn-purple" onclick="showExtraSurprise()" style="min-width:120px;">
+                🎁 سورپرایز دیگه
+            </button>
+        </div>
+
+        <p style="font-size:0.7rem; opacity:0.1; text-align:center; margin-top:14px; letter-spacing:2px;">
+            ◆ CLASSIFIED — FOR PRISA ONLY ◆
+        </p>
+    </div>
+
+</div>
+
+<script>
+    // ============================================
+    // ===== سیستم ضدتقلب =====
+    // ============================================
+    const PRIZE_COOKIE_NAME = 'prize_selected_global';
+    const PRIZE_COOKIE_EXPIRY = 30;
+    const PRIZE_LOCAL_KEY = 'prize_selected_local';
+    const PRIZE_VALUE_KEY = 'prize_value';
+
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+    }
+
+    function getCookie(name) {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [key, value] = cookie.trim().split('=');
+            if (key === name) return value;
+        }
+        return null;
+    }
+
+    function isPrizeClaimed() {
+        const cookieClaimed = getCookie(PRIZE_COOKIE_NAME);
+        if (cookieClaimed === 'true') return true;
+        const localClaimed = localStorage.getItem(PRIZE_LOCAL_KEY);
+        if (localClaimed === 'true') {
+            setCookie(PRIZE_COOKIE_NAME, 'true', PRIZE_COOKIE_EXPIRY);
+            return true;
+        }
+        return false;
+    }
+
+    function claimPrize(prizeNum) {
+        setCookie(PRIZE_COOKIE_NAME, 'true', PRIZE_COOKIE_EXPIRY);
+        localStorage.setItem(PRIZE_LOCAL_KEY, 'true');
+        localStorage.setItem(PRIZE_VALUE_KEY, prizeNum);
+    }
+
+    function getPrizeValue() {
+        let val = localStorage.getItem(PRIZE_VALUE_KEY);
+        if (val) return val;
+        return null;
+    }
+
+    // ============================================
+    // ===== کنترل مراحل =====
+    // ============================================
+    function goTo(step) {
+        const steps = [1,2,3,4,5,6,7,8,9,10,11,12];
+        for (let s of steps) {
+            const el = document.getElementById('step' + s);
+            if (el) el.classList.add('hidden');
+        }
+        
+        const el = document.getElementById('step' + step);
+        if (el) {
+            el.classList.remove('hidden');
+            el.classList.add('fade-in');
+        }
+
+        if (step === 2) runHackScan();
+        if (step === 10) resetFlee();
+        if (step === 11) checkPrizeStatus();
+        if (step === 6) resetChallenge();
+        if (step === 9) resetAgreement();
+        if (step === 12) resetCodeReveal();
+    }
+
+    // ============================================
+    // ===== سیستم جایزه =====
+    // ============================================
+    function checkPrizeStatus() {
+        const claimed = isPrizeClaimed();
+        
+        if (claimed) {
+            const prizeNum = getPrizeValue() || '1';
+            
+            document.querySelectorAll('.prize-box').forEach(box => {
+                box.classList.add('disabled');
+                const num = box.dataset.prize;
+                if (num == prizeNum) {
+                    box.classList.add('opened');
+                    const resultEl = document.getElementById('prizeResult' + num);
+                    if (resultEl) {
+                        resultEl.textContent = '🎁 انتخاب شده';
+                        resultEl.style.color = '#ffd700';
+                    }
+                    box.querySelector('.lock-icon').textContent = '✅';
+                    box.querySelector('.prize-emoji').textContent = '🏆';
+                }
+            });
+            
+            document.getElementById('prizeMessage').classList.remove('hidden');
+            document.getElementById('btnStep7Next').classList.remove('hidden');
+            
+            const cheatDiv = document.createElement('div');
+            cheatDiv.className = 'cheat-alert';
+            cheatDiv.innerHTML = `
+                ⚠️ <strong>شما جایزه خود را انتخاب کردید و تقلب کار ساز نیست!</strong><br>
+                <span style="font-size:0.8rem; opacity:0.7;">
+                🔒 این انتخاب در تمام مرورگرها ثبت شده است.
+                </span>
+            `;
+            const container = document.getElementById('prizeContainer');
+            if (container) {
+                const oldAlerts = container.parentNode.querySelectorAll('.cheat-alert');
+                oldAlerts.forEach(el => el.remove());
+                container.after(cheatDiv);
+            }
+            
+            setTimeout(() => confettiEffect(), 300);
+        } else {
+            document.querySelectorAll('.cheat-alert').forEach(el => el.remove());
+        }
+    }
+
+    function openPrize(num) {
+        if (isPrizeClaimed()) {
+            showToast('⚠️ شما قبلاً جایزه‌تان را انتخاب کرده‌اید!', '#ff6b6b');
+            return;
+        }
+
+        const box = document.querySelector(`.prize-box[data-prize="${num}"]`);
+        if (!box) return;
+        if (box.classList.contains('opened') || box.classList.contains('disabled')) return;
+
+        box.classList.add('opened');
+        box.classList.add('disabled');
+        
+        const emoji = box.querySelector('.prize-emoji');
+        const resultEl = document.getElementById('prizeResult' + num);
+        const lockIcon = box.querySelector('.lock-icon');
+        
+        const prizes = {
+            1: { emoji: '🏆', text: '🏆 جایزه‌ی طلایی!', result: 'شما برنده شدید!' },
+            2: { emoji: '👑', text: '👑 جایزه‌ی نقر‌های!', result: 'شما نایب قهرمان شدید!' },
+            3: { emoji: '⭐', text: '⭐ جایزه‌ی برنزی!', result: 'شما شرکت کردید!' }
+        };
+        
+        const prize = prizes[num];
+        emoji.textContent = prize.emoji;
+        lockIcon.textContent = '✅';
+        if (resultEl) {
+            resultEl.textContent = prize.result;
+            resultEl.style.color = '#ffd700';
+        }
+
+        claimPrize(num);
+
+        document.querySelectorAll('.prize-box').forEach(b => {
+            if (b !== box) {
+                b.classList.add('disabled');
+                b.querySelector('.lock-icon').textContent = '🔒';
+            }
+        });
+
+        document.getElementById('prizeMessage').classList.remove('hidden');
+        document.getElementById('btnStep7Next').classList.remove('hidden');
+
+        confettiEffect();
+        showToast('🎉 جعبه‌ی ' + ['طلایی', 'نقره‌ای', 'برنزی'][num-1] + ' باز شد!', '#ffd700');
+        document.querySelectorAll('.cheat-alert').forEach(el => el.remove());
+    }
+
+    // ============================================
+    // ===== چالش =====
+    // ============================================
+    let challengeAnswered = false;
+
+    function resetChallenge() {
+        challengeAnswered = false;
+        document.querySelectorAll('.ch-option').forEach(el => {
+            el.classList.remove('wrong-answer', 'disabled');
+        });
+        document.getElementById('challengeFeedback').textContent = '';
+        document.getElementById('challengeFeedback').style.color = '#e8e4f8';
+    }
+
+    function answerChallenge(value) {
+        if (challengeAnswered) return;
+        
+        const options = document.querySelectorAll('.ch-option');
+        const feedback = document.getElementById('challengeFeedback');
+        
+        options.forEach(el => {
+            el.classList.add('disabled');
+            if (el.dataset.value === value) {
+                el.classList.add('wrong-answer');
+            }
+        });
+        
+        feedback.textContent = '❌ اشتباه! 🤣';
+        feedback.style.color = '#eb5757';
+        challengeAnswered = true;
+        
+        setTimeout(() => {
+            goTo(7);
+        }, 800);
+    }
+
+    // ============================================
+    // ===== توافق =====
+    // ============================================
+    function resetAgreement() {
+        document.getElementById('agreeCheck').checked = false;
+        document.getElementById('btnAgreeNext').classList.add('hidden');
+    }
+
+    function toggleAgree() {
+        const checked = document.getElementById('agreeCheck').checked;
+        const btn = document.getElementById('btnAgreeNext');
+        if (checked) {
+            btn.classList.remove('hidden');
+            btn.classList.add('fade-in');
+        } else {
+            btn.classList.add('hidden');
+        }
+    }
+
+    // ============================================
+    // ===== کد مخفی =====
+    // ============================================
+    let codeRevealed = false;
+    const SECRET_CODE = 'PSH24';
+
+    function resetCodeReveal() {
+        codeRevealed = false;
+        const display = document.getElementById('codeReveal');
+        if (display) {
+            display.textContent = '🔒 • • • • • •';
+            display.className = 'locked';
+        }
+    }
+
+    function revealSecretCode() {
+        if (codeRevealed) return;
+        const display = document.getElementById('codeReveal');
+        display.textContent = SECRET_CODE;
+        display.className = '';
+        display.style.animation = 'glitch 0.5s ease';
+        setTimeout(() => {
+            display.style.animation = '';
+        }, 600);
+        codeRevealed = true;
+        showToast('🔑 کد مخفی نمایش داده شد!', '#ffd700');
+        confettiEffect();
+    }
+
+    function copySecretCode() {
+        if (!codeRevealed) {
+            showToast('⚠️ اول دکمه‌ی "نمایش کد" رو بزن!', '#ff6b6b');
+            return;
+        }
+        navigator.clipboard.writeText(SECRET_CODE).then(() => {
+            showToast('✅ کد مخفی کپی شد!', '#6fcf97');
+        }).catch(() => {
+            const textArea = document.createElement('textarea');
+            textArea.value = SECRET_CODE;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            textArea.remove();
+            showToast('✅ کد مخفی کپی شد!', '#6fcf97');
+        });
+    }
+
+    function downloadCode() {
+        if (!codeRevealed) {
+            showToast('⚠️ اول دکمه‌ی "نمایش کد" رو بزن!', '#ff6b6b');
+            return;
+        }
+        const content = `
+┌─────────────────────────────────┐
+│     🔐 کد مخفی مخصوص پریسا       │
+├─────────────────────────────────┤
+│                                 │
+│           ${SECRET_CODE}         │
+│                                 │
+│   🌸 روز دوست‌دختر مبارک عزیزم 💕│
+│   این کد رو نگه دار!            │
+│   یه روز به کارت میاد 😉         │
+│                                 │
+└─────────────────────────────────┘
+        `;
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'secret_code_prisa.txt';
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast('💾 فایل کد ذخیره شد!', '#6fcf97');
+    }
+
+    function showExtraSurprise() {
+        if (!codeRevealed) {
+            showToast('⚠️ اول کد رو نمایش بده تا سورپرایز فعال بشه!', '#ff6b6b');
+            return;
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'surprise-overlay';
+        overlay.innerHTML = `
+            <div class="surprise-emoji">🎊</div>
+            <div class="surprise-title">🥳 سورپرایز!</div>
+            <div class="surprise-text">
+                این کد مخفی رو توی <strong>قدم بعدی</strong> استفاده کن... 😏<br><br>
+                <span style="opacity:0.4; font-size:0.9rem;">
+                    (به زودی یه جای دیگه ازش استفاده میکنی)
+                </span>
+            </div>
+            <div class="surprise-hearts">
+                <span>💖</span>
+                <span>✨</span>
+                <span>💝</span>
+                <span>🌟</span>
+                <span>💕</span>
+            </div>
+            <button onclick="this.closest('.surprise-overlay').remove()" class="btn" style="margin-top:20px; min-width:120px;">
+                ❤️ متوجه شدم
+            </button>
+        `;
+        document.body.appendChild(overlay);
+        confettiEffect();
+    }
+
+    // ============================================
+    // ===== اسکنر =====
+    // ============================================
+    let hackInterval = null;
+
+    function runHackScan() {
+        const lines = ['scan1','scan2','scan3','scan4','scan5'];
+        const hackCodesContainer = document.getElementById('hackCodes');
+        const progressBar = document.getElementById('scanProgress');
+        const progressText = document.getElementById('progressText');
+        
+        lines.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active', 'done');
+        });
+        document.getElementById('verifyResult').classList.add('hidden');
+        document.getElementById('btnStep2Next').classList.add('hidden');
+        if (hackCodesContainer) hackCodesContainer.innerHTML = '';
+        if (progressBar) progressBar.style.width = '0%';
+        if (progressText) progressText.textContent = '0%';
+
+        const locations = ['Isfahan, IR', 'Isfahan, IR', 'Isfahan, IR', 'Tehran, IR', 'Isfahan, IR'];
+        let locIndex = 0;
+        const ipInterval = setInterval(() => {
+            const locDisplay = document.getElementById('locDisplay');
+            if (locDisplay) {
+                locDisplay.textContent = locations[locIndex % locations.length];
+                locIndex++;
+            }
+        }, 2000);
+
+        const hackCodes = [
+            { code: '> sudo nmap -sV -p- --open 192.168.1.1', delay: 100 },
+            { code: '> Starting Nmap 7.80 at 2024-01-15 22:14 UTC', delay: 200 },
+            { code: '> Interesting ports on 192.168.1.1:', delay: 150 },
+            { code: '> 22/tcp open  ssh     OpenSSH 7.9', delay: 180 },
+            { code: '> 80/tcp open  http    nginx 1.18.0', delay: 160 },
+            { code: '> 443/tcp open  https   nginx 1.18.0', delay: 170 },
+            { code: '> 3306/tcp open  mysql   MySQL 8.0.23', delay: 190 },
+            { code: '> [+] Vulnerability detected: CVE-2021-44228', delay: 220 },
+            { code: '> [+] Exploiting Log4Shell...', delay: 250 },
+            { code: '> [+] Reverse shell established ✅', delay: 280 },
+            { code: '> [!] User "prisa" found in /etc/passwd', delay: 200 },
+            { code: '> [+] Decrypting user data...', delay: 230 },
+            { code: '> [+] Access granted to "prisa" profile ✅', delay: 260 },
+            { code: '> [WARNING] Firewall detected!', delay: 180, type: 'error' },
+            { code: '> [+] Bypassing with SSL injection...', delay: 220 },
+            { code: '> [+] Connection established securely ✅', delay: 200 },
+            { code: '> 📡 Downloading classified data...', delay: 240 },
+            { code: '> [+] Location detected: <span class="location">Isfahan, IR</span>', delay: 300 },
+            { code: '> ✅ Transfer complete — 100%', delay: 200 },
+        ];
+
+        let hackIndex = 0;
+        let progress = 0;
+        const totalSteps = hackCodes.length;
+
+        function showNextHackCode() {
+            if (hackIndex < hackCodes.length) {
+                const code = hackCodes[hackIndex];
+                const div = document.createElement('div');
+                div.className = 'hack-code';
+                
+                let text = code.code;
+                if (code.type === 'error') {
+                    text = text.replace(/\[WARNING\]/g, '<span class="error">[WARNING]</span>');
+                }
+                text = text.replace(/\b(nmap|sudo|Starting|Interesting|open|Vulnerability|Exploiting|Reverse|shell|established|Decrypting|Access|Bypassing|Connection|Downloading|Transfer|Location)\b/g, '<span class="highlight">$1</span>');
+                text = text.replace(/"([^"]*)"/g, '<span class="string">"$1"</span>');
+                text = text.replace(/CVE-\d+-\d+/g, '<span class="string">$&</span>');
+                text = text.replace(/#.*/g, '<span class="comment">$&</span>');
+                text = text.replace(/\b(prisa|192\.168\.1\.1|nginx|MySQL|OpenSSH)\b/g, '<span class="variable">$1</span>');
+                text = text.replace(/✅/g, '<span class="highlight">✅</span>');
+                text = text.replace(/Isfahan, IR/g, '<span class="location">Isfahan, IR</span>');
+                
+                div.innerHTML = text;
+                div.style.opacity = '0';
+                div.style.transform = 'translateX(-10px)';
+                hackCodesContainer.appendChild(div);
+                
+                setTimeout(() => {
+                    div.style.opacity = '1';
+                    div.style.transform = 'translateX(0)';
+                }, 50);
+
+                hackIndex++;
+                progress = Math.min(100, (hackIndex / totalSteps) * 100);
+                if (progressBar) progressBar.style.width = progress + '%';
+                if (progressText) progressText.textContent = Math.round(progress) + '%';
+
+                if (hackCodesContainer) {
+                    hackCodesContainer.scrollTop = hackCodesContainer.scrollHeight;
+                }
+
+                const nextDelay = code.delay + Math.random() * 200;
+                hackInterval = setTimeout(showNextHackCode, nextDelay);
+            } else {
+                if (progressBar) progressBar.style.width = '100%';
+                if (progressText) progressText.textContent = '100%';
+                clearInterval(ipInterval);
+                
+                setTimeout(() => {
+                    runScanLines(lines);
+                }, 500);
+            }
+        }
+
+        function runScanLines(lines) {
+            lines.forEach((id, idx) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('active');
+                    
+                    setTimeout(() => {
+                        if (el) el.classList.add('done');
+                        if (idx === lines.length-1) {
+                            setTimeout(() => {
+                                document.getElementById('verifyResult').classList.remove('hidden');
+                                document.getElementById('btnStep2Next').classList.remove('hidden');
+                            }, 500);
+                        }
+                    }, 700 + Math.random() * 300);
+                }, 300 + idx * 600);
+            });
+        }
+
+        setTimeout(showNextHackCode, 300);
+    }
+
+    // ============================================
+    // ===== بقیه توابع =====
+    // ============================================
+
+    function answerBikar(val) {
+        const fb = document.getElementById('bikarFeedback');
+        const btnNext = document.getElementById('btnStep4Next');
+        if (fb) {
+            fb.innerHTML = 'جواب ثبت شد...<br />ولی متأسفانه فقط یکی از جواب‌ها مورد قبول سیستم بود 😂';
+            fb.style.color = '#ffd93d';
+        }
+        if (btnNext) btnNext.classList.remove('hidden');
+    }
+
+    function selectAli(choice) {
+        const fb = document.getElementById('aliFeedback');
+        const btnCool = document.getElementById('aliCool');
+        const btnNormal = document.getElementById('aliNormal');
+        const btnNext = document.getElementById('btnStep5Next');
+
+        if (btnCool) btnCool.classList.remove('correct','wrong');
+        if (btnNormal) btnNormal.classList.remove('correct','wrong');
+
+        if (choice === 'cool') {
+            if (btnCool) btnCool.classList.add('correct');
+            if (fb) {
+                fb.innerHTML = '✅ هوووم... سیستم با نظر شما موافقه 😌';
+                fb.style.color = '#6fcf97';
+            }
+            if (btnNext) btnNext.classList.remove('hidden');
+        } else {
+            if (btnNormal) btnNormal.classList.add('wrong');
+            if (fb) {
+                fb.innerHTML = '❌ سیستم از انتخاب شما ناامید شد 😐';
+                fb.style.color = '#eb5757';
+            }
+            if (btnNext) btnNext.classList.add('hidden');
+        }
+    }
+
+    let fleeTimer = null;
+    let fleeAttempts = 0;
+
+    function fleeButton() {
+        const btn = document.getElementById('btnNo');
+        const container = document.getElementById('fleeContainer');
+        if (!btn || !container) return;
+        if (btn.classList.contains('hidden')) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const btnRect = btn.getBoundingClientRect();
+
+        const margin = 5;
+        const maxX = containerRect.width - btnRect.width - margin * 2;
+        const maxY = containerRect.height - btnRect.height - margin * 2;
+
+        if (maxX <= 0 || maxY <= 0) {
+            btn.style.transform = 'scale(0.85)';
+            setTimeout(() => { btn.style.transform = 'scale(1)'; }, 150);
+            return;
+        }
+
+        const x = Math.max(0, Math.min(maxX, Math.random() * maxX));
+        const y = Math.max(0, Math.min(maxY, Math.random() * maxY));
+
+        btn.style.position = 'absolute';
+        btn.style.left = x + 'px';
+        btn.style.top = y + 'px';
+        btn.style.transform = 'scale(0.85) rotate(' + (Math.random() * 10 - 5) + 'deg)';
+        btn.classList.add('fleeing');
+        
+        const msg = document.getElementById('iceCreamMsg');
+        if (msg) {
+            const msgs = [
+                '🙈 نه گفتن ممنوع!',
+                '😏 تو فکر کردی می‌تونی نه بگی؟',
+                '😂 دکمه نه فراریه!',
+                '😜 هر چی بدوی بازم می‌گیرمت!',
+                '🏃‍♂️ بسه دیگه، آره بگو!',
+                '🤭 این دکمه مال تو نیست!',
+                '😈 من از تو سریع‌ترم!',
+                '🎯 هدف قفل شد! آره بگو!'
+            ];
+            msg.innerHTML = msgs[fleeAttempts % msgs.length];
+            msg.style.color = '#ffd93d';
+            fleeAttempts++;
+        }
+
+        clearTimeout(fleeTimer);
+        fleeTimer = setTimeout(() => {
+            btn.style.transform = 'scale(1) rotate(0deg)';
+        }, 200);
+    }
+
+    function resetFlee() {
+        const btn = document.getElementById('btnNo');
+        if (btn) {
+            btn.style.position = 'relative';
+            btn.style.left = '0';
+            btn.style.top = '0';
+            btn.style.transform = 'scale(1) rotate(0deg)';
+            btn.classList.remove('fleeing');
+        }
+        const msg = document.getElementById('iceCreamMsg');
+        if (msg) {
+            msg.innerHTML = '';
+            msg.style.color = '#e8e4f8';
+        }
+        fleeAttempts = 0;
+    }
+
+    function showToast(text, color = '#6fcf97') {
+        const existing = document.querySelector('.toast-msg');
+        if (existing) existing.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(16,16,30,0.95);
+            color: ${color};
+            padding: 16px 28px;
+            border-radius: 40px;
+            border: 1px solid ${color}40;
+            font-size: 1rem;
+            z-index: 99999;
+            animation: fadeIn 0.4s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            max-width: 90%;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        `;
+        toast.textContent = text;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    function confettiEffect() {
+        const emojis = ['🎉', '✨', '⭐', '💖', '🌈', '🎊', '💝', '🌟', '🏆', '👑'];
+        for (let i = 0; i < 25; i++) {
+            setTimeout(() => {
+                const span = document.createElement('span');
+                span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                span.style.position = 'fixed';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.top = '-20px';
+                span.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                span.style.pointerEvents = 'none';
+                span.style.zIndex = '9999';
+                span.style.animation = `floatDown ${Math.random() * 2 + 2}s ease-in forwards`;
+                document.body.appendChild(span);
+                setTimeout(() => span.remove(), 4000);
+            }, i * 80);
+        }
+    }
+
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = `
+        @keyframes floatDown {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+    function showEaster() {
+        alert('🔍 شما یک راز پیدا کردید!\n\n' +
+              'این سایت با ❤️ برای پریسا ساخته شده.\n' +
+              'اگر این رو می‌خونی، یعنی کنجکاوی خوبی داری! 😉\n\n' +
+              '🍦 یادت نره که علی رو بستنی مهمون کنی!\n\n' +
+              '📍 موقعیت مکانی: اصفهان');
+    }
+
+    // ============================================
+    // ===== شروع =====
+    // ============================================
+    console.log('🚀 صفحه برای پریسای عزیز آماده شد!');
+    console.log('💡 سیستم ضدتقلب فعال است!');
+    console.log('🔒 جایزه فقط یکبار در تمام مرورگرها قابل انتخاب است.');
+    console.log('📍 موقعیت مکانی: اصفهان');
+</script>
+
+</body>
+</html>
