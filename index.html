@@ -286,13 +286,13 @@
 
         .period-card .period-stats .stat-item {
             text-align: center;
-            font-size: 11px;
+            font-size: 13px;
             color: #888;
         }
 
         .period-card .period-stats .stat-item .stat-number {
             display: block;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 700;
             color: #b03060;
             -webkit-text-fill-color: #b03060;
@@ -1099,16 +1099,12 @@
                 font-size: 34px;
             }
 
-            .period-card .period-stats {
-                gap: 12px;
-            }
-
             .period-card .period-stats .stat-item {
-                font-size: 10px;
+                font-size: 11px;
             }
 
             .period-card .period-stats .stat-item .stat-number {
-                font-size: 13px;
+                font-size: 17px;
             }
 
             .cards {
@@ -1268,14 +1264,9 @@
                         </div>
 
                         <div class="period-stats">
-                            <div class="stat-item">
-                                <span class="stat-number" id="daysSinceLastPeriod">--</span>
-                                روز گذشته
-                            </div>
-                            <div class="stat-divider"></div>
-                            <div class="stat-item">
-                                <span class="stat-number" id="cycleDay">--</span>
-                                روز سیکل
+                            <div class="stat-item" style="margin: 0 auto;">
+                                <span class="stat-number" id="moodStatus">🌸</span>
+                                <span id="moodText">معمولی</span>
                             </div>
                         </div>
 
@@ -1530,7 +1521,7 @@
         }
 
         // ==========================================
-        // روزشمار
+        // روزشمار - باگ برطرف شده
         // ==========================================
 
         const DEFAULT_CYCLE = 28;
@@ -1549,18 +1540,43 @@
         function getLastPeriodDate() {
             const history = getPeriodHistory();
             if (history.length === 0) return null;
-            return new Date(history[history.length - 1]);
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const sorted = [...history].sort((a, b) => new Date(a) - new Date(b));
+
+            for (let i = sorted.length - 1; i >= 0; i--) {
+                const date = new Date(sorted[i]);
+                date.setHours(0, 0, 0, 0);
+
+                if (date <= today) {
+                    return date;
+                }
+            }
+
+            return null;
         }
 
         function calculateAverageCycle() {
             const history = getPeriodHistory();
             if (history.length < 2) return null;
 
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const validHistory = history
+                .map(d => new Date(d))
+                .filter(d => d <= today)
+                .sort((a, b) => a - b);
+
+            if (validHistory.length < 2) return null;
+
             let totalDays = 0;
             let count = 0;
-            for (let i = 1; i < history.length; i++) {
-                const prev = new Date(history[i - 1]);
-                const curr = new Date(history[i]);
+            for (let i = 1; i < validHistory.length; i++) {
+                const prev = validHistory[i - 1];
+                const curr = validHistory[i];
                 const diff = Math.floor((curr - prev) / (1000 * 60 * 60 * 24));
                 if (diff > 20 && diff < 45) {
                     totalDays += diff;
@@ -1643,7 +1659,12 @@
             const avg = calculateAverageCycle();
             const display = document.getElementById('avgCycleDisplay');
             const history = getPeriodHistory();
-            if (history.length < 2) {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const validCount = history.filter(d => new Date(d) <= today).length;
+
+            if (validCount < 2) {
                 display.textContent = `${DEFAULT_CYCLE} روز (پیش‌فرض)`;
                 display.style.fontSize = '14px';
                 display.style.color = '#888';
@@ -1712,22 +1733,46 @@
         });
 
         // ==========================================
+        // وضعیت احساسی بر اساس روز سیکل
+        // ==========================================
+        function getMoodStatus(cycleDay, cycleLength) {
+            // روزهای پریود (۱ تا ۵)
+            if (cycleDay <= 5) {
+                return { emoji: '🌙', text: 'خسته و کم‌انرژی' };
+            }
+            // روزهای بعد از پریود (۶ تا ۱۰) - انرژی بالا
+            else if (cycleDay <= 10) {
+                return { emoji: '⚡', text: 'پرانرژی و شاداب' };
+            }
+            // روزهای نزدیک تخمک‌گزاری (۱۱ تا ۱۶) - هورنی
+            else if (cycleDay >= 11 && cycleDay <= 16) {
+                return { emoji: '🔥', text: 'هورنی و پراحساس' };
+            }
+            // روزهای بعد از تخمک‌گزاری (۱۷ تا ۲۲)
+            else if (cycleDay <= 22) {
+                return { emoji: '💕', text: 'معمولی و آروم' };
+            }
+            // روزهای PMS (۲۳ تا ۲۸)
+            else {
+                return { emoji: '🌊', text: 'احساساتی و حساس' };
+            }
+        }
+
+        // ==========================================
         // نمایش اصلی با جملات قشنگ
         // ==========================================
         function updatePeriodDisplay() {
             const savedDate = getLastPeriodDate();
             const daysElement = document.getElementById('daysUntilPeriod');
-            const daysSinceElement = document.getElementById('daysSinceLastPeriod');
-            const cycleDayElement = document.getElementById('cycleDay');
-            const motivationElement = document.getElementById('motivationText');
             const daysLabel = document.getElementById('daysLabel');
+            const motivationElement = document.getElementById('motivationText');
 
             const cycleLength = getCycleLength();
 
             if (!savedDate) {
                 daysElement.textContent = '✨';
-                daysSinceElement.textContent = '--';
-                cycleDayElement.textContent = '--';
+                document.getElementById('moodStatus').textContent = '🌸';
+                document.getElementById('moodText').textContent = 'معمولی';
                 motivationElement.innerHTML = `<span class="emoji">💕</span> تاریخ رو تنظیم کن تا ببینم`;
                 daysLabel.innerHTML = `تا <span class="highlight">فرارسیدن روزهای نرم</span>`;
                 return;
@@ -1769,8 +1814,10 @@
             daysElement.style.webkitTextFillColor = 'transparent';
             daysElement.style.backgroundClip = 'text';
 
-            daysSinceElement.textContent = daysSince;
-            cycleDayElement.textContent = cycleDay;
+            // وضعیت احساسی
+            const mood = getMoodStatus(cycleDay, cycleLength);
+            document.getElementById('moodStatus').textContent = mood.emoji;
+            document.getElementById('moodText').textContent = mood.text;
 
             // پیام‌های انگیزشی
             const msgs = [
