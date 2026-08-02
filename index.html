@@ -141,9 +141,6 @@
             margin-bottom: 20px;
         }
 
-        /* ============================================
-           چیدمان دو ستونه
-           ============================================ */
         .menu-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -163,9 +160,6 @@
             gap: 20px;
         }
 
-        /* ============================================
-           کارت روزشمار - تم اصلی صورتی
-           ============================================ */
         .period-card {
             background: linear-gradient(145deg, rgba(255, 245, 247, 0.9), rgba(255, 232, 238, 0.75));
             backdrop-filter: blur(15px);
@@ -348,9 +342,6 @@
             transform: scale(1.03);
         }
 
-        /* ============================================
-           کارت‌های منو - تم اصلی
-           ============================================ */
         .cards {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -410,9 +401,7 @@
             }
         }
 
-        /* ============================================
-           مودال تنظیمات تاریخ - تم اصلی
-           ============================================ */
+        /* مودال تنظیمات */
         .period-settings-overlay {
             display: none;
             position: fixed;
@@ -628,9 +617,6 @@
             margin-top: 2px;
         }
 
-        /* ============================================
-           مودال توضیحات بیشتر - تم اصلی
-           ============================================ */
         .period-info-overlay {
             display: none;
             position: fixed;
@@ -707,9 +693,7 @@
             transform: scale(1.03);
         }
 
-        /* ============================================
-           مودال رمز - تم اصلی
-           ============================================ */
+        /* مودال رمز */
         .password-overlay {
             display: none;
             position: fixed;
@@ -1044,9 +1028,6 @@
             font-size: 15px;
         }
 
-        /* ============================================
-           ریسپانسیو
-           ============================================ */
         @media (max-width: 768px) {
             .menu-grid {
                 grid-template-columns: 1fr;
@@ -1180,7 +1161,7 @@
                     <span>📋 تاریخ‌های ثبت‌شده</span>
                     <span class="count" id="historyCount">۰</span>
                 </div>
-                <div id="historyItems">هنوز تاریخی ثبت نشده</div>
+                <div id="historyItems">در حال بارگذاری...</div>
             </div>
 
             <div class="settings-buttons">
@@ -1314,15 +1295,79 @@
     </div>
 
     <script>
+        // =============================================
+        // تنظیمات Supabase
+        // =============================================
+        const SUPABASE_URL = 'https://qsqlljosmwayrasklthn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcWxsam9zbXdhcnlhc2tsdGhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NzI4MzUsImV4cCI6MjEwMTI0ODgzNX0.pM-ocTom8I8No8U9prLsfiRgCMgrLRcj9cKhHlRrRo8';
 
-        // ==========================================
+        const supabaseClient = {
+            url: SUPABASE_URL,
+            key: SUPABASE_KEY,
+
+            // ===== Periods =====
+            async savePeriod(date) {
+                try {
+                    const response = await fetch(`${this.url}/rest/v1/periods`, {
+                        method: 'POST',
+                        headers: {
+                            'apikey': this.key,
+                            'Authorization': `Bearer ${this.key}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=representation'
+                        },
+                        body: JSON.stringify({ period_date: date })
+                    });
+                    if (!response.ok) throw new Error(await response.text());
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error in savePeriod:', error);
+                    throw error;
+                }
+            },
+
+            async getPeriods() {
+                try {
+                    const response = await fetch(
+                        `${this.url}/rest/v1/periods?order=period_date.asc&select=*`,
+                        { headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` } }
+                    );
+                    if (!response.ok) throw new Error(await response.text());
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error in getPeriods:', error);
+                    throw error;
+                }
+            },
+
+            async deletePeriod(id) {
+                try {
+                    const response = await fetch(
+                        `${this.url}/rest/v1/periods?id=eq.${id}`,
+                        {
+                            method: 'DELETE',
+                            headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
+                        }
+                    );
+                    if (!response.ok) throw new Error(await response.text());
+                    return true;
+                } catch (error) {
+                    console.error('Error in deletePeriod:', error);
+                    throw error;
+                }
+            }
+        };
+
+        // =============================================
         // رمز عبور
-        // ==========================================
+        // =============================================
         const CORRECT_PASSWORD = "7880";
+        let attempts = 3;
+        let isLocked = false;
+        let lockTimer = null;
+        let lockEndTime = null;
+        let currentSentence = "";
 
-        // ==========================================
-        // جملات عاشقانه
-        // ==========================================
         const sentences = [
             "دوستت دارم بی‌نهایت، با تمام وجودم ❤️",
             "تو قشنگ‌ترین رویایی هستی که به واقعیت پیوست",
@@ -1346,19 +1391,12 @@
             "دوست داشتن تو بزرگترین نعمت زندگی منه"
         ];
 
-        let currentSentence = "";
-        let attempts = 3;
-        let isLocked = false;
-        let lockTimer = null;
-        let lockEndTime = null;
-
         function getRandomSentence() {
             return sentences[Math.floor(Math.random() * sentences.length)];
         }
 
         function openPasswordModal() {
             if (isLocked) { showLockMessage(); return; }
-
             currentSentence = getRandomSentence();
             document.getElementById('passwordOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1473,6 +1511,7 @@
                     closePasswordModal();
                     document.getElementById("welcome").style.display = "none";
                     document.getElementById("menu").style.display = "block";
+                    loadPeriods();
                 }, 1000);
             } else {
                 attempts--;
@@ -1501,9 +1540,9 @@
             if (e.target === this && !isLocked) closePasswordModal();
         });
 
-        // ==========================================
-        // تبدیل تاریخ
-        // ==========================================
+        // =============================================
+        // تبدیل تاریخ شمسی به میلادی
+        // =============================================
         function shamsiToGregorian(shamsiDate) {
             const parts = shamsiDate.split('-').map(Number);
             if (parts.length !== 3) return null;
@@ -1520,81 +1559,12 @@
             return `${year}/${month}/${day}`;
         }
 
-        // ==========================================
-        // روزشمار - باگ برطرف شده
-        // ==========================================
-
+        // =============================================
+        // تاریخ‌های پریود (با Supabase)
+        // =============================================
         const DEFAULT_CYCLE = 28;
 
-        function getPeriodHistory() {
-            try {
-                const data = localStorage.getItem('periodHistory');
-                return data ? JSON.parse(data) : [];
-            } catch { return []; }
-        }
-
-        function savePeriodHistory(history) {
-            localStorage.setItem('periodHistory', JSON.stringify(history));
-        }
-
-        function getLastPeriodDate() {
-            const history = getPeriodHistory();
-            if (history.length === 0) return null;
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const sorted = [...history].sort((a, b) => new Date(a) - new Date(b));
-
-            for (let i = sorted.length - 1; i >= 0; i--) {
-                const date = new Date(sorted[i]);
-                date.setHours(0, 0, 0, 0);
-
-                if (date <= today) {
-                    return date;
-                }
-            }
-
-            return null;
-        }
-
-        function calculateAverageCycle() {
-            const history = getPeriodHistory();
-            if (history.length < 2) return null;
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const validHistory = history
-                .map(d => new Date(d))
-                .filter(d => d <= today)
-                .sort((a, b) => a - b);
-
-            if (validHistory.length < 2) return null;
-
-            let totalDays = 0;
-            let count = 0;
-            for (let i = 1; i < validHistory.length; i++) {
-                const prev = validHistory[i - 1];
-                const curr = validHistory[i];
-                const diff = Math.floor((curr - prev) / (1000 * 60 * 60 * 24));
-                if (diff > 20 && diff < 45) {
-                    totalDays += diff;
-                    count++;
-                }
-            }
-            return count > 0 ? Math.round(totalDays / count) : null;
-        }
-
-        function getCycleLength() {
-            const avg = calculateAverageCycle();
-            return avg || DEFAULT_CYCLE;
-        }
-
-        // ==========================================
-        // ذخیره و حذف و ادیت
-        // ==========================================
-        function savePeriodDate() {
+        async function savePeriodDate() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             const shamsiDate = dateInput.value;
 
@@ -1603,173 +1573,108 @@
                 return;
             }
 
-            const history = getPeriodHistory();
             const gregorianDate = shamsiToGregorian(shamsiDate);
-            if (gregorianDate) {
-                const dateStr = gregorianDate.toISOString();
-                if (!history.includes(dateStr)) {
-                    history.push(dateStr);
-                    history.sort((a, b) => new Date(a) - new Date(b));
-                    savePeriodHistory(history);
-                } else {
-                    alert('این تاریخ قبلاً ثبت شده عزیزم 💕');
-                }
-                closePeriodSettings();
-                updatePeriodDisplay();
-                updateHistoryList();
-                updateCycleInfo();
-            } else {
+            if (!gregorianDate) {
                 alert('تاریخ رو درست وارد کن عزیزم 💕');
-            }
-        }
-
-        function deletePeriodDate(dateStr) {
-            if (confirm('آیا مطمئنی که میخوای این تاریخ رو حذف کنی؟ 💕')) {
-                let history = getPeriodHistory();
-                history = history.filter(d => d !== dateStr);
-                savePeriodHistory(history);
-                updatePeriodDisplay();
-                updateHistoryList();
-                updateCycleInfo();
-            }
-        }
-
-        function editPeriodDate(dateStr) {
-            const date = new Date(dateStr);
-            const persianYear = date.getFullYear() - 621;
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            document.getElementById('lastPeriodDateShamsi').value = `${persianYear}-${month}-${day}`;
-
-            let history = getPeriodHistory();
-            history = history.filter(d => d !== dateStr);
-            savePeriodHistory(history);
-
-            updateHistoryList();
-            updateCycleInfo();
-
-            document.getElementById('lastPeriodDateShamsi').focus();
-            document.getElementById('lastPeriodDateShamsi').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        // ==========================================
-        // به‌روزرسانی‌ها
-        // ==========================================
-        function updateCycleInfo() {
-            const avg = calculateAverageCycle();
-            const display = document.getElementById('avgCycleDisplay');
-            const history = getPeriodHistory();
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const validCount = history.filter(d => new Date(d) <= today).length;
-
-            if (validCount < 2) {
-                display.textContent = `${DEFAULT_CYCLE} روز (پیش‌فرض)`;
-                display.style.fontSize = '14px';
-                display.style.color = '#888';
-            } else {
-                display.textContent = `${avg} روز`;
-                display.style.fontSize = '18px';
-                display.style.color = '#b03060';
-            }
-        }
-
-        function updateHistoryList() {
-            const history = getPeriodHistory();
-            const container = document.getElementById('historyItems');
-            const count = document.getElementById('historyCount');
-
-            count.textContent = history.length;
-
-            if (history.length === 0) {
-                container.innerHTML = 'هنوز تاریخی ثبت نشده';
                 return;
             }
 
-            let html = '';
-            const sorted = [...history].reverse();
-            sorted.forEach((date) => {
-                const d = new Date(date);
-                const shamsi = gregorianToShamsi(d);
-                const isLast = date === history[history.length - 1];
-                const label = isLast ? ' ✨' : '';
+            const dateStr = gregorianDate.toISOString().split('T')[0];
 
-                html += `
-                            <div class="history-item">
-                                <span class="date" onclick="editPeriodDate('${date}')" title="برای ویرایش کلیک کن">
-                                    📅 ${shamsi}${label}
-                                </span>
-                                <span class="actions">
-                                    <button class="edit-btn" onclick="editPeriodDate('${date}')" title="ویرایش">✏️</button>
-                                    <button class="delete-btn" onclick="deletePeriodDate('${date}')" title="حذف">❌</button>
-                                </span>
-                            </div>
-                        `;
-            });
-            container.innerHTML = html;
-        }
-
-        function openPeriodSettings() {
-            document.getElementById('periodSettingsOverlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            updateHistoryList();
-            updateCycleInfo();
-
-            const now = new Date();
-            const persianYear = now.getFullYear() - 621;
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            document.getElementById('lastPeriodDateShamsi').value = `${persianYear}-${month}-${day}`;
-        }
-
-        function closePeriodSettings() {
-            document.getElementById('periodSettingsOverlay').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        document.getElementById('periodSettingsOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closePeriodSettings();
-        });
-
-        // ==========================================
-        // وضعیت احساسی بر اساس روز سیکل
-        // ==========================================
-        function getMoodStatus(cycleDay, cycleLength) {
-            // روزهای پریود (۱ تا ۵)
-            if (cycleDay <= 5) {
-                return { emoji: '🌙', text: 'خسته و کم‌انرژی' };
-            }
-            // روزهای بعد از پریود (۶ تا ۱۰) - انرژی بالا
-            else if (cycleDay <= 10) {
-                return { emoji: '⚡', text: 'پرانرژی و شاداب' };
-            }
-            // روزهای نزدیک تخمک‌گزاری (۱۱ تا ۱۶) - هورنی
-            else if (cycleDay >= 11 && cycleDay <= 16) {
-                return { emoji: '🔥', text: 'هورنی و پراحساس' };
-            }
-            // روزهای بعد از تخمک‌گزاری (۱۷ تا ۲۲)
-            else if (cycleDay <= 22) {
-                return { emoji: '💕', text: 'معمولی و آروم' };
-            }
-            // روزهای PMS (۲۳ تا ۲۸)
-            else {
-                return { emoji: '🌊', text: 'احساساتی و حساس' };
+            try {
+                await supabaseClient.savePeriod(dateStr);
+                closePeriodSettings();
+                await loadPeriods();
+                updateCycleInfo();
+            } catch (error) {
+                alert('❌ خطا در ذخیره تاریخ: ' + error.message);
             }
         }
 
-        // ==========================================
-        // نمایش اصلی با جملات قشنگ
-        // ==========================================
-        function updatePeriodDisplay() {
-            const savedDate = getLastPeriodDate();
+        async function deletePeriodDate(id) {
+            if (!confirm('آیا مطمئنی که میخوای این تاریخ رو حذف کنی؟ 💕')) return;
+
+            try {
+                await supabaseClient.deletePeriod(id);
+                await loadPeriods();
+                updateCycleInfo();
+            } catch (error) {
+                alert('❌ خطا در حذف: ' + error.message);
+            }
+        }
+
+        async function loadPeriods() {
+            try {
+                const data = await supabaseClient.getPeriods();
+                const history = data.map(item => item.period_date);
+
+                // به‌روزرسانی تاریخچه
+                const container = document.getElementById('historyItems');
+                const count = document.getElementById('historyCount');
+
+                count.textContent = history.length;
+
+                if (history.length === 0) {
+                    container.innerHTML = 'هنوز تاریخی ثبت نشده';
+                    updatePeriodDisplay(history);
+                    return;
+                }
+
+                let html = '';
+                const sorted = [...history].reverse();
+                sorted.forEach((date) => {
+                    const d = new Date(date + 'T00:00:00');
+                    const shamsi = gregorianToShamsi(d);
+                    const isLast = date === history[history.length - 1];
+                    const label = isLast ? ' ✨' : '';
+                    const item = data.find(p => p.period_date === date);
+
+                    html += `
+                                <div class="history-item">
+                                    <span class="date" onclick="editPeriodDate('${date}')" title="برای ویرایش کلیک کن">
+                                        📅 ${shamsi}${label}
+                                    </span>
+                                    <span class="actions">
+                                        <button class="edit-btn" onclick="editPeriodDate('${date}')" title="ویرایش">✏️</button>
+                                        <button class="delete-btn" onclick="deletePeriodDate('${item.id}')" title="حذف">❌</button>
+                                    </span>
+                                </div>
+                            `;
+                });
+                container.innerHTML = html;
+
+                updatePeriodDisplay(history);
+                updateCycleInfo();
+            } catch (error) {
+                console.error('Error loading periods:', error);
+                document.getElementById('historyItems').innerHTML =
+                `<div class="empty-msg">❌ خطا در دریافت تاریخ‌ها: ${error.message}</div>`;
+            }
+        }
+
+        function calculateAverageCycle(history) {
+            if (history.length < 2) return null;
+
+            const dates = history.map(d => new Date(d + 'T00:00:00')).sort((a, b) => a - b);
+
+            let totalDays = 0;
+            let count = 0;
+            for (let i = 1; i < dates.length; i++) {
+                const diff = Math.floor((dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24));
+                if (diff > 20 && diff < 45) {
+                    totalDays += diff;
+                    count++;
+                }
+            }
+            return count > 0 ? Math.round(totalDays / count) : null;
+        }
+
+        function updatePeriodDisplay(history) {
             const daysElement = document.getElementById('daysUntilPeriod');
             const daysLabel = document.getElementById('daysLabel');
             const motivationElement = document.getElementById('motivationText');
 
-            const cycleLength = getCycleLength();
-
-            if (!savedDate) {
+            if (!history || history.length === 0) {
                 daysElement.textContent = '✨';
                 document.getElementById('moodStatus').textContent = '🌸';
                 document.getElementById('moodText').textContent = 'معمولی';
@@ -1778,11 +1683,13 @@
                 return;
             }
 
+            const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
+            const cycleLength = calculateAverageCycle(history) || DEFAULT_CYCLE;
+
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const lastPeriod = new Date(savedDate.getFullYear(), savedDate.getMonth(), savedDate.getDate());
 
-            const diffTime = today - lastPeriod;
+            const diffTime = today - lastDate;
             const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
             let cycleDay = (daysSince % cycleLength) + 1;
@@ -1793,7 +1700,6 @@
 
             daysElement.textContent = daysUntil;
 
-            // رنگ‌بندی
             let gradient;
             if (daysUntil <= 3 && daysUntil > 0) {
                 gradient = 'linear-gradient(135deg, #e74c3c, #ff6b6b)';
@@ -1819,7 +1725,6 @@
             document.getElementById('moodStatus').textContent = mood.emoji;
             document.getElementById('moodText').textContent = mood.text;
 
-            // پیام‌های انگیزشی
             const msgs = [
                 { emoji: '💕', text: 'همیشه کنارتم، قوی باش' },
                 { emoji: '🌸', text: 'زیباترین دختر دنیا، به خودت افتخار کن' },
@@ -1836,66 +1741,149 @@
             motivationElement.innerHTML = `<span class="emoji">${msg.emoji}</span> ${msg.text}`;
         }
 
-        // ==========================================
-        // توضیحات بیشتر
-        // ==========================================
-        function openPeriodInfo() {
-            const savedDate = getLastPeriodDate();
-            const cycleLength = getCycleLength();
+        function getMoodStatus(cycleDay, cycleLength) {
+            if (cycleDay <= 5) return { emoji: '🌙', text: 'خسته و کم‌انرژی' };
+            else if (cycleDay <= 10) return { emoji: '⚡', text: 'پرانرژی و شاداب' };
+            else if (cycleDay >= 11 && cycleDay <= 16) return { emoji: '🔥', text: 'هورنی و پراحساس' };
+            else if (cycleDay <= 22) return { emoji: '💕', text: 'معمولی و آروم' };
+            else return { emoji: '🌊', text: 'احساساتی و حساس' };
+        }
 
-            if (!savedDate) {
-                alert('💕 اول تاریخ رو تنظیم کن تا بتونم بهت بگم');
-                return;
-            }
+        function updateCycleInfo() {
+            // اطلاعات سیکل در مودال تنظیمات
+            const display = document.getElementById('avgCycleDisplay');
+
+            // نیاز به بارگذاری مجدد تاریخ‌ها برای محاسبه دقیق
+            supabaseClient.getPeriods().then(data => {
+                const history = data.map(item => item.period_date);
+                const avg = calculateAverageCycle(history);
+
+                if (history.length < 2) {
+                    display.textContent = `${DEFAULT_CYCLE} روز (پیش‌فرض)`;
+                    display.style.fontSize = '14px';
+                    display.style.color = '#888';
+                } else {
+                    display.textContent = `${avg} روز`;
+                    display.style.fontSize = '18px';
+                    display.style.color = '#b03060';
+                }
+            }).catch(() => {
+                display.textContent = `${DEFAULT_CYCLE} روز (پیش‌فرض)`;
+                display.style.fontSize = '14px';
+                display.style.color = '#888';
+            });
+        }
+
+        function editPeriodDate(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            const persianYear = d.getFullYear() - 621;
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            document.getElementById('lastPeriodDateShamsi').value = `${persianYear}-${month}-${day}`;
+
+            // حذف تاریخ قبلی - باید با ID حذف کنیم
+            supabaseClient.getPeriods().then(data => {
+                const item = data.find(p => p.period_date === dateStr);
+                if (item) {
+                    supabaseClient.deletePeriod(item.id).then(() => {
+                        loadPeriods();
+                        updateCycleInfo();
+                    });
+                }
+            });
+
+            document.getElementById('lastPeriodDateShamsi').focus();
+            document.getElementById('lastPeriodDateShamsi').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function openPeriodSettings() {
+            document.getElementById('periodSettingsOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loadPeriods();
 
             const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const lastPeriod = new Date(savedDate.getFullYear(), savedDate.getMonth(), savedDate.getDate());
+            const persianYear = now.getFullYear() - 621;
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            document.getElementById('lastPeriodDateShamsi').value = `${persianYear}-${month}-${day}`;
+        }
 
-            const diffTime = today - lastPeriod;
-            const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            let cycleDay = (daysSince % cycleLength) + 1;
-            if (cycleDay > cycleLength) cycleDay = 1;
-            let daysUntil = cycleLength - cycleDay;
-            if (daysUntil < 0) daysUntil = 0;
+        function closePeriodSettings() {
+            document.getElementById('periodSettingsOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
 
-            let status = '';
-            let emoji = '';
-            if (cycleDay <= 5) {
-                status = 'روزهای پریود 🌸';
-                emoji = '🌙';
-            } else if (cycleDay <= 9) {
-                status = 'روزهای انرژی ✨';
-                emoji = '🌿';
-            } else if (cycleDay >= Math.floor(cycleLength / 2) - 2 && cycleDay <= Math.floor(cycleLength / 2) + 2) {
-                status = 'نزدیک تخمک‌گزاری 🌺';
-                emoji = '💖';
-            } else if (cycleDay >= cycleLength - 5) {
-                status = 'نزدیک پریود 🌙';
-                emoji = '🌊';
-            } else {
-                status = 'روزهای معمولی 🌸';
-                emoji = '💕';
+        document.getElementById('periodSettingsOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closePeriodSettings();
+        });
+
+        // =============================================
+        // توضیحات بیشتر
+        // =============================================
+        async function openPeriodInfo() {
+            try {
+                const data = await supabaseClient.getPeriods();
+                const history = data.map(item => item.period_date);
+
+                if (history.length === 0) {
+                    alert('💕 اول تاریخ رو تنظیم کن تا بتونم بهت بگم');
+                    return;
+                }
+
+                const cycleLength = calculateAverageCycle(history) || DEFAULT_CYCLE;
+
+                const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                const diffTime = today - lastDate;
+                const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                let cycleDay = (daysSince % cycleLength) + 1;
+                if (cycleDay > cycleLength) cycleDay = 1;
+                let daysUntil = cycleLength - cycleDay;
+                if (daysUntil < 0) daysUntil = 0;
+
+                let status = '';
+                let emoji = '';
+                if (cycleDay <= 5) {
+                    status = 'روزهای پریود 🌸';
+                    emoji = '🌙';
+                } else if (cycleDay <= 9) {
+                    status = 'روزهای انرژی ✨';
+                    emoji = '🌿';
+                } else if (cycleDay >= Math.floor(cycleLength / 2) - 2 && cycleDay <= Math.floor(cycleLength / 2) + 2) {
+                    status = 'نزدیک تخمک‌گزاری 🌺';
+                    emoji = '💖';
+                } else if (cycleDay >= cycleLength - 5) {
+                    status = 'نزدیک پریود 🌙';
+                    emoji = '🌊';
+                } else {
+                    status = 'روزهای معمولی 🌸';
+                    emoji = '💕';
+                }
+
+                const ovulationDay = Math.floor(cycleLength / 2);
+                const ovulationStart = ovulationDay - 2;
+                const ovulationEnd = ovulationDay + 2;
+                const pmsStart = cycleLength - 5;
+                const avgCycle = calculateAverageCycle(history);
+
+                document.getElementById('infoCycleDay').textContent = `${cycleDay} از ${cycleLength} روز`;
+                document.getElementById('infoStatus').innerHTML = `${emoji} ${status}`;
+                document.getElementById('infoDaysUntil').textContent = `${daysUntil} روز`;
+                document.getElementById('infoOvulation').textContent =
+                    `روز ${ovulationStart} تا ${ovulationEnd} سیکل (${cycleDay >= ovulationStart && cycleDay <= ovulationEnd ? '🌸 الان در این بازه هستی!' : '⚠️ هنوز نرسیده'})`;
+                document.getElementById('infoPMS').textContent =
+                    `از روز ${pmsStart} به بعد (${cycleDay >= pmsStart ? '🌙 الان در این بازه هستی!' : '⚠️ هنوز نرسیده'})`;
+                document.getElementById('infoAvgCycle').textContent =
+                    avgCycle ? `${avgCycle} روز (بر اساس ${history.length} تاریخ)` : 'هنوز داده کافی نیست';
+
+                document.getElementById('periodInfoOverlay').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } catch (error) {
+                alert('❌ خطا: ' + error.message);
             }
-
-            const ovulationDay = Math.floor(cycleLength / 2);
-            const ovulationStart = ovulationDay - 2;
-            const ovulationEnd = ovulationDay + 2;
-            const pmsStart = cycleLength - 5;
-            const avgCycle = calculateAverageCycle();
-
-            document.getElementById('infoCycleDay').textContent = `${cycleDay} از ${cycleLength} روز`;
-            document.getElementById('infoStatus').innerHTML = `${emoji} ${status}`;
-            document.getElementById('infoDaysUntil').textContent = `${daysUntil} روز`;
-            document.getElementById('infoOvulation').textContent =
-                `روز ${ovulationStart} تا ${ovulationEnd} سیکل (${cycleDay >= ovulationStart && cycleDay <= ovulationEnd ? '🌸 الان در این بازه هستی!' : '⚠️ هنوز نرسیده'})`;
-            document.getElementById('infoPMS').textContent =
-                `از روز ${pmsStart} به بعد (${cycleDay >= pmsStart ? '🌙 الان در این بازه هستی!' : '⚠️ هنوز نرسیده'})`;
-            document.getElementById('infoAvgCycle').textContent =
-                avgCycle ? `${avgCycle} روز (بر اساس ${getPeriodHistory().length} تاریخ)` : 'هنوز داده کافی نیست';
-
-            document.getElementById('periodInfoOverlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
         }
 
         function closePeriodInfo() {
@@ -1907,9 +1895,9 @@
             if (e.target === this) closePeriodInfo();
         });
 
-        // ==========================================
+        // =============================================
         // شمارشگر زمان
-        // ==========================================
+        // =============================================
         const start = new Date("2023-03-06T23:00:00");
 
         function updateCounter() {
@@ -1939,11 +1927,10 @@
         updateCounter();
         setInterval(updateCounter, 1000);
 
+        // =============================================
         // اجرای اولیه
-        updatePeriodDisplay();
-        updateHistoryList();
-        updateCycleInfo();
-
+        // =============================================
+        loadPeriods();
     </script>
 
 </body>
