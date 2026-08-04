@@ -8,6 +8,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <style>
+        /* ... تمام استایل‌های قبلی یکسان ... */
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
         * { box-sizing: border-box; font-family: Vazirmatn, sans-serif; margin: 0; padding: 0; }
         html, body { width: 100%; height: 100%; overflow: hidden; }
@@ -56,13 +57,12 @@
             border: none; border-radius: 50%; width: 55px; height: 55px;
             font-size: 28px; cursor: pointer;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            transition: all 0.4s ease; z-index: 9999;
+            transition: all 0.3s ease; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
             padding: 0; line-height: 1;
         }
         .theme-btn:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 8px 30px rgba(0,0,0,0.25); }
 
-        /* ===== تم شب - دست نخورده ===== */
         body.night-mode { background: linear-gradient(135deg, #1a1f35, #2a2f4a, #3a4060) !important; transition: all 3.5s ease-in-out !important; }
         body.night-mode .heart { opacity: 0 !important; transition: opacity 1.5s ease !important; }
         body.night-mode .glass, body.night-mode .card, body.night-mode .period-card,
@@ -116,7 +116,6 @@
         }
         body.night-mode .theme-btn:hover { box-shadow: 0 8px 30px rgba(255,215,0,0.2) !important; }
 
-        /* ===== اصلاح تاریخ و فوتر در تم شب ===== */
         body.night-mode #counter .date-text,
         body.night-mode #counter .footer-text {
             color: #d4e4ff !important;
@@ -159,7 +158,7 @@
 
         .container {
             width: 92%;
-            max-width: 520px;
+            max-width: 560px;
             text-align: center;
             position: relative;
             z-index: 1;
@@ -184,7 +183,6 @@
             width: 100%;
         }
 
-        /* ===== شمارشگر ===== */
         #counter {
             direction: rtl;
             font-family: Vazirmatn, sans-serif;
@@ -200,7 +198,6 @@
             color: #b03060 !important;
         }
 
-        /* ===== قلب بزرگ و شیک ===== */
         .heart-icon-wrapper {
             display: inline-flex;
             align-items: center;
@@ -223,7 +220,6 @@
             60% { transform: scale(1); }
         }
 
-        /* ===== نوار قلب جدید (ECG Monitor) ===== */
         .ecg-container {
             display: flex;
             align-items: center;
@@ -239,13 +235,14 @@
         .ecg-monitor {
             flex: 1;
             height: 50px;
-            background: rgba(10, 17, 32, 0.15);
+            background: rgba(10, 17, 32, 0.12);
             border-radius: 10px;
             position: relative;
             overflow: hidden;
             border: 1.5px solid rgba(176, 48, 96, 0.2);
             box-shadow: 0 0 20px rgba(176, 48, 96, 0.05);
             backdrop-filter: blur(4px);
+            will-change: transform;
         }
         
         body.night-mode .ecg-monitor {
@@ -282,6 +279,7 @@
             stroke-linejoin: round;
             filter: drop-shadow(0 0 6px rgba(176, 48, 96, 0.3)) drop-shadow(0 0 15px rgba(176, 48, 96, 0.1));
             animation: scrollECG 7s linear infinite;
+            will-change: transform;
         }
         
         body.night-mode .ecg-monitor svg {
@@ -307,7 +305,6 @@
             opacity: 0.9;
         }
         
-        /* ===== عدد روز با کلمه "روز" ===== */
         #counter .days-number-wrapper {
             display: flex;
             align-items: center;
@@ -402,8 +399,19 @@
         .menu h1 { color: #b03060 !important; font-size: 30px; margin-bottom: 15px; transition: all 3.5s ease-in-out; }
         .menu .sub-title { color: #888 !important; font-size: 15px; margin-bottom: 20px; transition: all 3.5s ease-in-out; }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: start; transition: all 3.5s ease-in-out; }
-        .menu-grid .left-col, .menu-grid .right-col { display: flex; flex-direction: column; gap: 20px; transition: all 3.5s ease-in-out; }
+        .menu-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1.2fr; 
+            gap: 20px; 
+            align-items: start; 
+            transition: all 3.5s ease-in-out;
+        }
+        .menu-grid .left-col, .menu-grid .right-col { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            transition: all 3.5s ease-in-out;
+        }
 
         .period-card {
             background: linear-gradient(145deg, rgba(255,245,247,0.9), rgba(255,232,238,0.75));
@@ -456,46 +464,101 @@
         }
         .period-card .more-info-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.03); }
 
-        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; transition: all 3.5s ease-in-out; }
-        .card {
-            text-decoration: none; color: #444 !important;
-            background: rgba(255,255,255,.55); padding: 20px 8px; border-radius: 22px;
-            font-size: 30px; backdrop-filter: blur(10px);
-            box-shadow: 0 8px 20px rgba(0,0,0,.06);
+        .cards { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
             transition: all 3.5s ease-in-out;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 80px; position: relative;
+        }
+        .card {
+            text-decoration: none; 
+            color: #444 !important;
+            background: rgba(255,255,255,.55); 
+            padding: 20px 8px; 
+            border-radius: 22px;
+            font-size: 30px; 
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,.06);
+            transition: all 0.3s ease-in-out;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            min-height: 80px; 
+            position: relative;
+            cursor: pointer;
+            will-change: transform;
         }
         .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
         .card span { display: block; margin-top: 5px; font-size: 12px; color: #888 !important; transition: all 3.5s ease-in-out; }
-        .card .badge { font-size: 10px; padding: 1px 7px; min-width: 16px; margin-right: 4px; }
+        .card .badge { 
+            font-size: 10px; 
+            padding: 1px 7px; 
+            min-width: 16px; 
+            margin-right: 4px;
+            transition: all 0.3s ease;
+        }
+        .card .badge.zero {
+            display: none !important;
+        }
 
         footer { margin-top: 30px; color: #888 !important; font-size: 14px; grid-column: 1 / -1; text-align: center; transition: all 3.5s ease-in-out; }
 
         @keyframes show { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         .password-overlay, .period-settings-overlay, .period-info-overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(6px);
-            z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(6px);
+            z-index: 2000; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px;
+            will-change: opacity;
         }
-        .password-overlay.active, .period-settings-overlay.active, .period-info-overlay.active { display: flex; }
+        .password-overlay.active, .period-settings-overlay.active, .period-info-overlay.active { 
+            display: flex; 
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
         .password-modal, .period-settings-modal, .period-info-modal {
-            background: white; padding: 30px 25px 28px; border-radius: 28px;
-            max-width: 420px; width: 100%; text-align: center;
+            background: white; 
+            padding: 30px 25px 28px; 
+            border-radius: 28px;
+            max-width: 420px; 
+            width: 100%; 
+            text-align: center;
             box-shadow: 0 30px 80px rgba(0,0,0,0.2);
-            animation: modalPop 0.4s ease; max-height: 90vh; overflow-y: auto;
+            max-height: 90vh; 
+            overflow-y: auto;
             transition: all 3.5s ease-in-out;
+            animation: modalPop 0.3s ease;
+            will-change: transform, opacity;
         }
+        
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
         .password-modal {
             background: linear-gradient(145deg, #fff5f7, #ffe8ee);
             box-shadow: 0 40px 100px rgba(176,48,96,0.35), 0 0 0 2px rgba(255,182,193,0.3);
-            position: relative; overflow: hidden;
+            position: relative; 
+            overflow: hidden;
         }
         .password-modal::before { content: '🌸'; position: absolute; top: -15px; right: -15px; font-size: 70px; opacity: 0.15; transform: rotate(25deg); }
         .password-modal::after { content: '🌸'; position: absolute; bottom: -15px; left: -15px; font-size: 70px; opacity: 0.15; transform: rotate(-25deg); }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.85) translateY(40px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
         .password-modal .modal-logo { font-size: 55px; display: block; margin-bottom: 6px; animation: heartBeat 1.8s infinite; }
         .password-modal h3 { color: #b03060 !important; font-size: 24px; margin-bottom: 4px; }
@@ -594,6 +657,47 @@
         .close-info-btn { margin-top: 15px; padding: 10px 30px; background: #b03060; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: Vazirmatn, sans-serif; transition: 0.3s; }
         .close-info-btn:hover { transform: scale(1.03); }
 
+        /* ===== اعلان ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(176, 48, 96, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(176, 48, 96, 0.4);
+            z-index: 99999;
+            font-family: Vazirmatn, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            text-align: center;
+            max-width: 90%;
+            direction: rtl;
+        }
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+        .notification.hide {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+        body.night-mode .notification {
+            background: rgba(30, 40, 80, 0.95);
+            box-shadow: 0 8px 30px rgba(0, 100, 255, 0.3);
+            color: #d4e4ff;
+        }
+        .notification .notif-icon {
+            margin-left: 8px;
+        }
+
         @media (max-width: 768px) {
             .menu-grid { grid-template-columns: 1fr; gap: 15px; }
             .period-card .days-number { font-size: 40px; }
@@ -654,6 +758,12 @@
     </div>
 
     <button id="themeToggle" class="theme-btn" onclick="toggleTheme()" title="تغییر تم">🌙</button>
+
+    <!-- ===== اعلان ===== -->
+    <div id="notification" class="notification hide">
+        <span class="notif-icon">🔔</span>
+        <span id="notifMessage">پیام جدید</span>
+    </div>
 
     <div class="password-overlay" id="passwordOverlay">
         <div class="password-modal">
@@ -721,7 +831,6 @@
                     <b>⏳ از شبی که سرنوشت اسم تو را وارد زندگی من کرد...</b>
                     <br>
                     
-                    <!-- ===== نوار قلب (بالای عدد روز) ===== -->
                     <div class="ecg-container">
                         <span class="ecg-heart-icon">💓</span>
                         <div class="ecg-monitor">
@@ -767,7 +876,6 @@
                         <span class="ecg-heart-icon">💓</span>
                     </div>
                     
-                    <!-- ===== عدد روز با کلمه "روز" ===== -->
                     <div class="days-number-wrapper">
                         <span class="heart-icon-wrapper"><span class="big-heart">❤️</span></span>
                         <span class="days-number" id="daysDisplay">۰</span>
@@ -812,12 +920,30 @@
                 </div>
                 <div class="right-col">
                     <div class="cards">
-                        <a class="card" href="#"><span>💌</span><span>نامه‌ها <span class="badge">0</span></span></a>
-                        <a class="card" href="surprises/surprises.html?v=1"><span>🎁</span><span>سوپرایزها <span class="badge">0</span></span></a>
-                        <a class="card" href="#"><span>📸</span><span>خاطرات <span class="badge">0</span></span></a>
-                        <a class="card" href="game and test/game and test.html?v=1"><span>🧠</span><span>بازی و تست‌ها <span class="badge">0</span></span></a>
-                        <a class="card" href="celebrations/celebrations.html?v=1"><span>🎉</span><span>تبریکات <span class="badge">0</span></span></a>
-                        <a class="card" href="secret/index.html?v=1"><span>🔒</span><span>اتاق مخفی <span class="badge">0</span></span></a>
+                        <a class="card" href="#" data-type="messages" onclick="handleCardClick(event, 'messages')">
+                            💌
+                            <span>نامه‌ها <span class="badge" id="badge-messages">0</span></span>
+                        </a>
+                        <a class="card" href="surprises/surprises.html?v=1" data-type="surprises" onclick="handleCardClick(event, 'surprises')">
+                            🎁
+                            <span>سوپرایزها <span class="badge" id="badge-surprises">0</span></span>
+                        </a>
+                        <a class="card" href="#" data-type="memories" onclick="handleCardClick(event, 'memories')">
+                            📸
+                            <span>خاطرات <span class="badge" id="badge-memories">0</span></span>
+                        </a>
+                        <a class="card" href="game and test/game and test.html?v=1" data-type="games" onclick="handleCardClick(event, 'games')">
+                            🧠
+                            <span>بازی و تست‌ها <span class="badge" id="badge-games">0</span></span>
+                        </a>
+                        <a class="card" href="celebrations/celebrations.html?v=1" data-type="celebrations" onclick="handleCardClick(event, 'celebrations')">
+                            🎉
+                            <span>تبریکات <span class="badge" id="badge-celebrations">0</span></span>
+                        </a>
+                        <a class="card" href="secret/index.html?v=1" data-type="secret" onclick="handleCardClick(event, 'secret')">
+                            🔒
+                            <span>اتاق مخفی <span class="badge" id="badge-secret">0</span></span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -852,6 +978,113 @@
                 return true;
             }
         };
+
+        // =============================================
+        // سیستم Badge با ذخیره محلی
+        // =============================================
+        const BADGE_STORAGE_KEY = 'parisa_badge_counts';
+        
+        function getBadgeCounts() {
+            try {
+                const data = localStorage.getItem(BADGE_STORAGE_KEY);
+                if (data) {
+                    return JSON.parse(data);
+                }
+            } catch (e) {}
+            return { messages: 0, surprises: 0, memories: 0, games: 0, celebrations: 0, secret: 0 };
+        }
+        
+        function saveBadgeCounts(counts) {
+            localStorage.setItem(BADGE_STORAGE_KEY, JSON.stringify(counts));
+        }
+        
+        function updateBadgeUI(type, count) {
+            const badge = document.getElementById(`badge-${type}`);
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.classList.remove('zero');
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.classList.add('zero');
+                    badge.style.display = 'none';
+                }
+            }
+        }
+        
+        function handleCardClick(event, type) {
+            const counts = getBadgeCounts();
+            const currentCount = counts[type] || 0;
+            
+            if (currentCount > 0) {
+                // صفر کردن Badge (بدون اعلان در صفحه دوم)
+                counts[type] = 0;
+                saveBadgeCounts(counts);
+                updateBadgeUI(type, 0);
+            }
+            
+            // اجازه ادامه لینک
+            return true;
+        }
+        
+        // =============================================
+        // سیستم اعلان (فقط برای صفحه اول)
+        // =============================================
+        let notificationTimeout = null;
+        
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            const msg = document.getElementById('notifMessage');
+            
+            msg.textContent = message;
+            notif.classList.remove('hide');
+            notif.classList.add('show');
+            
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
+            
+            notificationTimeout = setTimeout(() => {
+                notif.classList.remove('show');
+                notif.classList.add('hide');
+            }, 4000);
+        }
+        
+        // =============================================
+        // بارگذاری اولیه Badge و اعلان
+        // =============================================
+        function loadAllBadges() {
+            const counts = getBadgeCounts();
+            Object.keys(counts).forEach(type => {
+                updateBadgeUI(type, counts[type] || 0);
+            });
+            
+            // نمایش اعلان برای بخش‌های جدید (فقط در صفحه اول)
+            let hasNew = false;
+            let newMessages = [];
+            const nameMap = {
+                messages: 'نامه‌ها',
+                surprises: 'سوپرایزها',
+                memories: 'خاطرات',
+                games: 'بازی و تست‌ها',
+                celebrations: 'تبریکات',
+                secret: 'اتاق مخفی'
+            };
+            
+            Object.keys(counts).forEach(type => {
+                if (counts[type] > 0) {
+                    hasNew = true;
+                    newMessages.push(`${counts[type]} مورد جدید در ${nameMap[type]}`);
+                }
+            });
+            
+            // فقط اگر صفحه اول (welcome) نمایش داده میشه و مورد جدید هست
+            if (hasNew && document.getElementById('welcome').style.display !== 'none') {
+                setTimeout(() => {
+                    showNotification(`🔔 ${newMessages.join(' • ')}`);
+                }, 2000);
+            }
+        }
 
         const CORRECT_PASSWORD = "7880";
         let attempts = 3, isLocked = false, lockTimer = null, lockEndTime = null, currentSentence = "";
@@ -984,6 +1217,7 @@
                     document.getElementById("menu").style.display = "block";
                     loadPeriods();
                     loadBadgeCounts();
+                    loadAllBadges();
                 }, 1000);
             } else {
                 attempts--;
@@ -1043,6 +1277,7 @@
                 await loadPeriods();
                 updateCycleInfo();
                 loadBadgeCounts();
+                showNotification('🌸 تاریخ با موفقیت ذخیره شد!');
             } catch (error) { alert('❌ خطا در ذخیره تاریخ: ' + error.message); }
         }
 
@@ -1053,6 +1288,7 @@
                 await loadPeriods();
                 updateCycleInfo();
                 loadBadgeCounts();
+                showNotification('🗑️ تاریخ با موفقیت حذف شد');
             } catch (error) { alert('❌ خطا در حذف: ' + error.message); }
         }
 
@@ -1274,22 +1510,25 @@
                 const counts = {};
                 allData.forEach(row => { const type = row.type; if (type) { counts[type] = (counts[type] || 0) + 1; } });
 
-                function updateBadge(selector, count) {
-                    const element = document.querySelector(selector);
-                    if (element) {
-                        const badge = element.querySelector('.badge');
-                        if (badge) {
-                            badge.textContent = count || 0;
-                            badge.style.display = (count && count > 0) ? 'inline-block' : 'none';
-                        }
-                    }
-                }
-                updateBadge('a.card[href="#"]:nth-of-type(1)', counts['message']);
-                updateBadge('a.card[href="#"]:nth-of-type(3)', counts['memory']);
-                const secretCount = (counts['message'] || 0) + (counts['memory'] || 0) + (counts['secret'] || 0) + (counts[
-                    'crazy'] || 0);
-                updateBadge('a.card[href="secret/index.html?v=1"]', secretCount);
-            } catch (error) { console.error('خطا در دریافت تعداد:', error); }
+                const badgeCounts = getBadgeCounts();
+                badgeCounts.messages = counts['message'] || 0;
+                badgeCounts.surprises = counts['surprise'] || 0;
+                badgeCounts.memories = counts['memory'] || 0;
+                badgeCounts.games = counts['game'] || 0;
+                badgeCounts.celebrations = counts['celebration'] || 0;
+                const secretCount = (counts['message'] || 0) + (counts['memory'] || 0) + 
+                                    (counts['secret'] || 0) + (counts['crazy'] || 0);
+                badgeCounts.secret = secretCount;
+                
+                saveBadgeCounts(badgeCounts);
+                
+                Object.keys(badgeCounts).forEach(type => {
+                    updateBadgeUI(type, badgeCounts[type] || 0);
+                });
+
+            } catch (error) {
+                console.error('خطا در دریافت تعداد:', error);
+            }
         }
 
         function createSnowflakes() {
@@ -1361,9 +1600,12 @@
         updateCounter();
         setInterval(updateCounter, 1000);
 
-        document.addEventListener('DOMContentLoaded', function() { loadTheme();
+        document.addEventListener('DOMContentLoaded', function() { 
+            loadTheme();
             loadPeriods();
-            loadBadgeCounts(); });
+            loadBadgeCounts();
+            loadAllBadges();
+        });
     </script>
 </body>
 </html>
