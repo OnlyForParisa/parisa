@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>دنیای پریسا 🤍</title>
-
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
-
-        * {
-            box-sizing: border-box;
-            font-family: Vazirmatn, sans-serif;
-        }
-
+        * { box-sizing: border-box; font-family: Vazirmatn, sans-serif; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; overflow: hidden; }
+        
         body {
             margin: 0;
             min-height: 100vh;
@@ -21,71 +19,359 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: auto;
-            padding: 20px 0;
+            padding: 20px;
+            transition: all 3.5s ease-in-out;
         }
-
+        
         .heart {
             position: fixed;
             opacity: .35;
-            animation: floatHeart 10s linear infinite;
+            animation: floatHeart 12s linear infinite;
             pointer-events: none;
+            font-size: 24px;
         }
-
-        .heart:nth-child(1) {
-            left: 10%;
-        }
-        .heart:nth-child(2) {
-            left: 30%;
-            animation-delay: 2s;
-        }
-        .heart:nth-child(3) {
-            left: 70%;
-            animation-delay: 5s;
-        }
-        .heart:nth-child(4) {
-            left: 90%;
-            animation-delay: 1s;
-        }
-        .heart:nth-child(5) {
-            left: 50%;
-            animation-delay: 7s;
-            font-size: 20px;
-        }
-
         @keyframes floatHeart {
-            from {
-                transform: translateY(100vh);
-            }
-            to {
-                transform: translateY(-20vh);
-            }
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+            10% { opacity: .35; }
+            90% { opacity: .35; }
+            100% { transform: translateY(-10vh) scale(1.2) rotate(720deg); opacity: 0; }
         }
+        .heart:nth-child(1) { left: 5%; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 15%; animation-delay: 2s; font-size: 18px; }
+        .heart:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .heart:nth-child(4) { left: 45%; animation-delay: 1s; font-size: 20px; }
+        .heart:nth-child(5) { left: 60%; animation-delay: 3s; }
+        .heart:nth-child(6) { left: 75%; animation-delay: 5s; font-size: 16px; }
+        .heart:nth-child(7) { left: 88%; animation-delay: 0.5s; }
+        .heart:nth-child(8) { left: 95%; animation-delay: 3.5s; font-size: 22px; }
+
+        .snowflakes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0; transition: opacity 3s ease; }
+        body.night-mode .snowflakes { opacity: 1; }
+        .snowflake { position: absolute; color: #fff; font-size: 12px; opacity: 0.5; animation: fall linear infinite; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0.3; } 100% { transform: translateY(110vh) rotate(360deg) scale(1.3); opacity: 0.8; } }
+
+        .theme-btn {
+            position: fixed; bottom: 25px; right: 25px;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);
+            border: none; border-radius: 50%; width: 55px; height: 55px;
+            font-size: 28px; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.4s ease; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0; line-height: 1;
+        }
+        .theme-btn:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 8px 30px rgba(0,0,0,0.25); }
+
+        /* ===== تم شب - دست نخورده ===== */
+        body.night-mode { background: linear-gradient(135deg, #1a1f35, #2a2f4a, #3a4060) !important; transition: all 3.5s ease-in-out !important; }
+        body.night-mode .heart { opacity: 0 !important; transition: opacity 1.5s ease !important; }
+        body.night-mode .glass, body.night-mode .card, body.night-mode .period-card,
+        body.night-mode .period-settings-modal, body.night-mode .period-info-modal {
+            background: rgba(30,40,80,0.55) !important; backdrop-filter: blur(15px);
+            border-color: rgba(180,200,255,0.1) !important; color: #c8d8f0 !important;
+            transition: all 3.5s ease-in-out !important;
+        }
+        body.night-mode .card { background: rgba(30,40,80,0.45) !important; }
+        body.night-mode .welcome h2, body.night-mode .menu h1,
+        body.night-mode .period-card .card-header .title,
+        body.night-mode .period-card .days-label,
+        body.night-mode .period-card .days-label .highlight,
+        body.night-mode .period-card .motivation-text,
+        body.night-mode .period-card .period-stats .stat-item .stat-number,
+        body.night-mode .period-card .more-info-btn,
+        body.night-mode #counter {
+            color: #d4e4ff !important;
+            -webkit-text-fill-color: #d4e4ff !important;
+        }
+        
+        body.night-mode .welcome p {
+            color: #b0c4e8 !important;
+            opacity: 0.9 !important;
+        }
+        
+        body.night-mode .period-card .days-number {
+            background: linear-gradient(135deg, #ffd4b8, #ffb3c6, #d4a0ff) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        body.night-mode .period-card .motivation-text {
+            background: rgba(255,255,255,0.05) !important;
+            border-color: rgba(255,255,255,0.05) !important;
+        }
+        body.night-mode .card span { color: #a0b8d8 !important; }
+        body.night-mode .badge { background: #ff6b8a !important; box-shadow: 0 2px 12px rgba(255,107,138,0.3) !important; }
+        body.night-mode .settings-btn, body.night-mode .more-info-btn {
+            background: rgba(255,255,255,0.08) !important;
+            color: #c8d8f0 !important;
+            border-color: rgba(255,255,255,0.08) !important;
+        }
+        body.night-mode .settings-btn:hover, body.night-mode .more-info-btn:hover {
+            background: rgba(255,255,255,0.15) !important;
+        }
+        body.night-mode .theme-btn {
+            background: rgba(255,255,255,0.1) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+            color: #ffd700 !important;
+        }
+        body.night-mode .theme-btn:hover { box-shadow: 0 8px 30px rgba(255,215,0,0.2) !important; }
+
+        /* ===== اصلاح تاریخ و فوتر در تم شب ===== */
+        body.night-mode #counter .date-text,
+        body.night-mode #counter .footer-text {
+            color: #d4e4ff !important;
+        }
+
+        .moon-stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0; transition: opacity 3s ease; }
+        body.night-mode .moon-stars { opacity: 1; }
+        .moon {
+            position: absolute; bottom: -180px; right: 30px;
+            width: 90px; height: 90px;
+            background: radial-gradient(circle at 30% 30%, #fff9e6, #e8d5b0);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255,215,0,0.15), 0 0 80px rgba(255,215,0,0.05), inset -10px -10px 30px rgba(0,0,0,0.1);
+            opacity: 0; transform: translateY(80px) scale(0.2) rotate(-10deg);
+            transition: all 4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        body.night-mode .moon { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); bottom: auto; top: 40px; right: 40px; }
+        .star { position: absolute; color: #fff; font-size: 14px; opacity: 0; transition: opacity 2.5s ease; animation: twinkle 4s infinite alternate; }
+        body.night-mode .star { opacity: 0.7; }
+        .star:nth-child(1) { top: 10%; left: 15%; transition-delay: 3.8s; }
+        .star:nth-child(2) { top: 25%; left: 5%; transition-delay: 4.1s; }
+        .star:nth-child(3) { top: 45%; left: 25%; transition-delay: 4.4s; }
+        .star:nth-child(4) { top: 15%; left: 60%; transition-delay: 4.7s; }
+        .star:nth-child(5) { top: 55%; left: 10%; transition-delay: 5s; }
+        .star:nth-child(6) { top: 70%; left: 70%; transition-delay: 5.3s; }
+        .star:nth-child(7) { top: 35%; left: 85%; transition-delay: 5.6s; }
+        .star:nth-child(8) { top: 80%; left: 25%; transition-delay: 5.9s; }
+        .star:nth-child(9) { top: 60%; left: 50%; transition-delay: 6.2s; }
+        .star:nth-child(10) { top: 10%; left: 90%; transition-delay: 6.5s; }
+        @keyframes twinkle { 0% { opacity: 0.2; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1.4); } }
+
+        .badge {
+            background: #b03060; color: white; border-radius: 50%;
+            padding: 2px 8px; font-size: 11px; margin-right: 5px;
+            display: inline-block; min-width: 18px; text-align: center;
+            font-weight: 700; box-shadow: 0 2px 8px rgba(176,48,96,0.3);
+            transition: all 0.3s ease;
+        }
+        .badge.hidden { display: none; }
 
         .container {
-            width: 94%;
-            max-width: 900px;
+            width: 92%;
+            max-width: 520px;
             text-align: center;
+            position: relative;
+            z-index: 1;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .logo {
-            font-size: 72px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            50% {
-                transform: scale(1.15);
-            }
-        }
+        .logo { font-size: 72px; animation: pulse 2s infinite; }
+        @keyframes pulse { 50% { transform: scale(1.15); } }
 
         .glass {
-            background: rgba(255, 255, 255, .55);
+            background: rgba(255,255,255,.55);
             backdrop-filter: blur(12px);
             padding: 18px;
             border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+            box-shadow: 0 10px 25px rgba(0,0,0,.08);
             margin: 18px 0;
+            transition: all 3.5s ease-in-out;
+            width: 100%;
+        }
+
+        /* ===== شمارشگر ===== */
+        #counter {
+            direction: rtl;
+            font-family: Vazirmatn, sans-serif;
+            color: #b03060 !important;
+            line-height: 2.2;
+            padding: 6px 0;
+            font-size: 15px;
+            transition: all 3.5s ease-in-out;
+        }
+        #counter b {
+            font-size: 16px;
+            font-weight: 600;
+            color: #b03060 !important;
+        }
+
+        /* ===== قلب بزرگ و شیک ===== */
+        .heart-icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 6px 0 4px;
+        }
+        .heart-icon-wrapper .big-heart {
+            font-size: 40px;
+            display: inline-block;
+            animation: heartBeat 1.5s infinite;
+            color: #b03060;
+            filter: drop-shadow(0 0 10px rgba(176,48,96,0.3));
+        }
+        @keyframes heartBeat {
+            0%,100% { transform: scale(1); }
+            15% { transform: scale(1.25); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        /* ===== نوار قلب جدید (ECG Monitor) ===== */
+        .ecg-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 6px auto 8px;
+            padding: 0;
+            width: 100%;
+            direction: ltr;
+            max-width: 380px;
+        }
+        
+        .ecg-monitor {
+            flex: 1;
+            height: 50px;
+            background: rgba(10, 17, 32, 0.15);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 1.5px solid rgba(176, 48, 96, 0.2);
+            box-shadow: 0 0 20px rgba(176, 48, 96, 0.05);
+            backdrop-filter: blur(4px);
+        }
+        
+        body.night-mode .ecg-monitor {
+            background: rgba(10, 17, 32, 0.5);
+            border-color: rgba(0, 180, 255, 0.25);
+            box-shadow: 0 0 30px rgba(0, 100, 255, 0.08);
+        }
+        
+        .ecg-monitor .baseline {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(176, 48, 96, 0.15);
+            z-index: 1;
+        }
+        
+        body.night-mode .ecg-monitor .baseline {
+            background: rgba(0, 180, 255, 0.2);
+        }
+        
+        .ecg-monitor svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            z-index: 2;
+            fill: none;
+            stroke: #b03060;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 6px rgba(176, 48, 96, 0.3)) drop-shadow(0 0 15px rgba(176, 48, 96, 0.1));
+            animation: scrollECG 7s linear infinite;
+        }
+        
+        body.night-mode .ecg-monitor svg {
+            stroke: #33ccff;
+            filter: drop-shadow(0 0 8px rgba(0, 180, 255, 0.4)) drop-shadow(0 0 25px rgba(0, 100, 255, 0.15));
+        }
+        
+        @keyframes scrollECG {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .ecg-heart-icon {
+            font-size: 20px;
+            animation: heartBeat 1.5s infinite;
+            flex-shrink: 0;
+            color: #b03060;
+            opacity: 0.8;
+        }
+        
+        body.night-mode .ecg-heart-icon {
+            color: #33ccff;
+            opacity: 0.9;
+        }
+        
+        /* ===== عدد روز با کلمه "روز" ===== */
+        #counter .days-number-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 6px 0 4px;
+        }
+        
+        #counter .days-number {
+            font-size: 38px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #b03060, #d44a7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            margin: 0;
+        }
+        
+        #counter .days-label-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #b03060 !important;
+            display: inline-block;
+            margin-right: 2px;
+        }
+        
+        body.night-mode #counter .days-label-text {
+            color: #d4e4ff !important;
+        }
+        
+        #counter .time-row {
+            font-size: 17px;
+            font-weight: 500;
+            color: #b03060 !important;
+            margin-top: 6px;
+            display: block;
+        }
+        #counter .time-row .highlight {
+            color: #d44a7a !important;
+            font-weight: 700;
+        }
+        #counter .passing-text {
+            font-size: 15px;
+            margin: 4px 0;
+            color: #b03060 !important;
+        }
+        #counter .divider-line {
+            width: 75px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4f7bd1, transparent);
+            margin: 6px auto;
+        }
+
+        #counter .date-text {
+            font-size: 14px;
+            margin-top: 6px;
+            color: #b03060 !important;
+        }
+        #counter .footer-text {
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 4px;
+            color: #b03060 !important;
         }
 
         button {
@@ -98,1041 +384,288 @@
             cursor: pointer;
             transition: .3s;
         }
+        button:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(176,48,96,.4); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(176, 48, 96, .4);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .welcome {
-            animation: show 1.5s;
-        }
-
-        .welcome h2 {
-            color: #b03060;
-            font-size: 28px;
-        }
-
-        .welcome p {
-            color: #555;
-            line-height: 2;
-        }
-
-        .menu {
-            display: none;
-            animation: show 1s;
-        }
-
-        .menu h1 {
-            color: #b03060;
-            font-size: 30px;
-            margin-bottom: 15px;
-        }
-
-        .menu .sub-title {
-            color: #888;
-            font-size: 15px;
-            margin-bottom: 20px;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        .menu-grid .left-col {
+        .welcome { 
+            animation: show 1.5s; 
+            transition: all 3.5s ease-in-out; 
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            align-items: center;
         }
+        .welcome h2 { color: #b03060 !important; font-size: 28px; transition: all 3.5s ease-in-out; }
+        .welcome p { color: #555 !important; line-height: 2; transition: all 3.5s ease-in-out; }
 
-        .menu-grid .right-col {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .menu { display: none; animation: show 1s; transition: all 3.5s ease-in-out; }
+        .menu h1 { color: #b03060 !important; font-size: 30px; margin-bottom: 15px; transition: all 3.5s ease-in-out; }
+        .menu .sub-title { color: #888 !important; font-size: 15px; margin-bottom: 20px; transition: all 3.5s ease-in-out; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: start; transition: all 3.5s ease-in-out; }
+        .menu-grid .left-col, .menu-grid .right-col { display: flex; flex-direction: column; gap: 20px; transition: all 3.5s ease-in-out; }
 
         .period-card {
-            background: linear-gradient(145deg, rgba(255, 245, 247, 0.9), rgba(255, 232, 238, 0.75));
+            background: linear-gradient(145deg, rgba(255,245,247,0.9), rgba(255,232,238,0.75));
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
             border-radius: 28px;
             padding: 22px 20px 20px;
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            box-shadow: 0 12px 35px rgba(176, 48, 96, 0.12);
+            border: 1px solid rgba(255,182,193,0.3);
+            box-shadow: 0 12px 35px rgba(176,48,96,0.12);
             position: relative;
             overflow: hidden;
             text-align: center;
             width: 100%;
             margin-top: 20px;
+            transition: all 3.5s ease-in-out;
         }
-
-        .period-card::before {
-            content: '🌸';
-            position: absolute;
-            top: -15px;
-            left: -10px;
-            font-size: 65px;
-            opacity: 0.12;
-            transform: rotate(-15deg);
-        }
-
-        .period-card::after {
-            content: '🌙';
-            position: absolute;
-            bottom: -15px;
-            right: -10px;
-            font-size: 55px;
-            opacity: 0.12;
-            transform: rotate(15deg);
-        }
-
-        .period-card .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .period-card .card-header .title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #b03060;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .period-card .card-header .title .icon {
-            font-size: 20px;
-        }
-
+        .period-card::before { content: '🌸'; position: absolute; top: -15px; left: -10px; font-size: 65px; opacity: 0.12; transform: rotate(-15deg); transition: all 3.5s ease-in-out; }
+        .period-card::after { content: '🌙'; position: absolute; bottom: -15px; right: -10px; font-size: 55px; opacity: 0.12; transform: rotate(15deg); transition: all 3.5s ease-in-out; }
+        .period-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 1; transition: all 3.5s ease-in-out; }
+        .period-card .card-header .title { font-size: 16px; font-weight: 700; color: #b03060 !important; display: flex; align-items: center; gap: 6px; transition: all 3.5s ease-in-out; }
         .period-card .card-header .settings-btn {
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #b03060;
-            padding: 0;
+            background: rgba(255,255,255,0.6); border: 1px solid rgba(255,182,193,0.3);
+            border-radius: 50%; width: 32px; height: 32px; font-size: 14px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+            color: #b03060 !important; padding: 0;
         }
-
-        .period-card .card-header .settings-btn:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: rotate(60deg);
-            box-shadow: 0 4px 15px rgba(176, 48, 96, 0.2);
-        }
-
-        .period-card .main-display {
-            position: relative;
-            z-index: 1;
-            padding: 3px 0;
-        }
-
+        .period-card .card-header .settings-btn:hover { background: rgba(255,255,255,0.9); transform: rotate(60deg); }
+        .period-card .main-display { position: relative; z-index: 1; padding: 3px 0; transition: all 3.5s ease-in-out; }
         .period-card .days-number {
-            font-size: 48px;
-            font-weight: 800;
+            font-size: 48px; font-weight: 800;
             background: linear-gradient(135deg, #b03060, #d44a7a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-            letter-spacing: -2px;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            line-height: 1; letter-spacing: -2px; transition: all 3.5s ease-in-out;
         }
-
-        .period-card .days-label {
-            font-size: 15px;
-            color: #b03060;
-            font-weight: 600;
-            margin-top: 4px;
-            -webkit-text-fill-color: #b03060;
-        }
-
-        .period-card .days-label .highlight {
-            color: #d44a7a;
-            font-weight: 700;
-        }
-
-        .period-card .period-stats {
-            display: flex;
-            justify-content: center;
-            gap: 18px;
-            margin: 10px 0 6px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .period-card .period-stats .stat-item {
-            text-align: center;
-            font-size: 13px;
-            color: #888;
-        }
-
-        .period-card .period-stats .stat-item .stat-number {
-            display: block;
-            font-size: 20px;
-            font-weight: 700;
-            color: #b03060;
-            -webkit-text-fill-color: #b03060;
-        }
-
-        .period-card .period-stats .stat-divider {
-            width: 1px;
-            background: rgba(176, 48, 96, 0.15);
-        }
-
+        .period-card .days-label { font-size: 15px; color: #b03060 !important; font-weight: 600; margin-top: 4px; transition: all 3.5s ease-in-out; }
+        .period-card .days-label .highlight { color: #d44a7a !important; font-weight: 700; transition: all 3.5s ease-in-out; }
+        .period-card .period-stats .stat-item { text-align: center; font-size: 13px; color: #888 !important; transition: all 3.5s ease-in-out; }
+        .period-card .period-stats .stat-item .stat-number { display: block; font-size: 20px; font-weight: 700; color: #b03060 !important; transition: all 3.5s ease-in-out; }
         .period-card .motivation-text {
-            font-size: 14px;
-            color: #c94f7a;
-            font-weight: 500;
-            margin-top: 10px;
-            padding: 8px 14px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 14px;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255, 182, 193, 0.2);
-            -webkit-text-fill-color: #c94f7a;
-            min-height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            font-size: 14px; color: #c94f7a !important; font-weight: 500; margin-top: 10px;
+            padding: 8px 14px; background: rgba(255,255,255,0.5); border-radius: 14px;
+            border: 1px solid rgba(255,182,193,0.2); min-height: 38px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: all 3.5s ease-in-out;
         }
-
-        .period-card .motivation-text .emoji {
-            font-size: 16px;
-            -webkit-text-fill-color: initial;
-        }
-
         .period-card .more-info-btn {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255, 182, 193, 0.2);
-            border-radius: 14px;
-            padding: 7px 16px;
-            font-size: 12px;
-            color: #b03060;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-            font-family: Vazirmatn, sans-serif;
-            font-weight: 600;
-            position: relative;
-            z-index: 1;
+            background: rgba(255,255,255,0.5); border: 1px solid rgba(255,182,193,0.2);
+            border-radius: 14px; padding: 7px 16px; font-size: 12px;
+            color: #b03060 !important; cursor: pointer; transition: 0.3s;
+            margin-top: 10px; font-weight: 600;
         }
+        .period-card .more-info-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.03); }
 
-        .period-card .more-info-btn:hover {
-            background: rgba(255, 255, 255, 0.8);
-            transform: scale(1.03);
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
+        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; transition: all 3.5s ease-in-out; }
         .card {
-            text-decoration: none;
-            color: #444;
-            background: rgba(255, 255, 255, .55);
-            padding: 20px 8px;
-            border-radius: 22px;
-            font-size: 30px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, .06);
-            transition: .3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80px;
+            text-decoration: none; color: #444 !important;
+            background: rgba(255,255,255,.55); padding: 20px 8px; border-radius: 22px;
+            font-size: 30px; backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,.06);
+            transition: all 3.5s ease-in-out;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 80px; position: relative;
         }
+        .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+        .card span { display: block; margin-top: 5px; font-size: 12px; color: #888 !important; transition: all 3.5s ease-in-out; }
+        .card .badge { font-size: 10px; padding: 1px 7px; min-width: 16px; margin-right: 4px; }
 
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, .12);
+        footer { margin-top: 30px; color: #888 !important; font-size: 14px; grid-column: 1 / -1; text-align: center; transition: all 3.5s ease-in-out; }
+
+        @keyframes show { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .password-overlay, .period-settings-overlay, .period-info-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(6px);
+            z-index: 2000; justify-content: center; align-items: center; padding: 20px;
         }
+        .password-overlay.active, .period-settings-overlay.active, .period-info-overlay.active { display: flex; }
 
-        .card span {
-            display: block;
-            margin-top: 5px;
-            font-size: 12px;
-            color: #888;
+        .password-modal, .period-settings-modal, .period-info-modal {
+            background: white; padding: 30px 25px 28px; border-radius: 28px;
+            max-width: 420px; width: 100%; text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+            animation: modalPop 0.4s ease; max-height: 90vh; overflow-y: auto;
+            transition: all 3.5s ease-in-out;
         }
-
-        #counter {
-            line-height: 2;
-            color: #b03060;
-        }
-
-        footer {
-            margin-top: 30px;
-            color: #888;
-            font-size: 14px;
-            grid-column: 1 / -1;
-            text-align: center;
-        }
-
-        @keyframes show {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* مودال تنظیمات */
-        .period-settings-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(6px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-            padding: 20px;
-        }
-
-        .period-settings-overlay.active {
-            display: flex;
-        }
-
-        .period-settings-modal {
-            background: white;
-            padding: 30px 25px 28px;
-            border-radius: 28px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
-            animation: modalPop 0.4s ease;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .period-settings-modal h4 {
-            color: #b03060;
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        .period-settings-modal p {
-            color: #888;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
-
-        .period-settings-modal .date-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            text-align: right;
-        }
-
-        .period-settings-modal .date-input-group label {
-            font-size: 13px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .period-settings-modal .date-input-group input[type="date"] {
-            padding: 10px 14px;
-            border: 2px solid #f0c4ce;
-            border-radius: 14px;
-            font-size: 15px;
-            font-family: Vazirmatn, sans-serif;
-            background: rgba(255, 255, 255, 0.8);
-            transition: 0.3s;
-            width: 100%;
-            text-align: center;
-            color: #555;
-        }
-
-        .period-settings-modal .date-input-group input[type="date"]:focus {
-            border-color: #b03060;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(176, 48, 96, 0.12);
-        }
-
-        .period-settings-modal .settings-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .period-settings-modal .settings-buttons button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: Vazirmatn, sans-serif;
-        }
-
-        .period-settings-modal .btn-save {
-            background: linear-gradient(135deg, #b03060, #d44a7a);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(176, 48, 96, 0.25);
-        }
-
-        .period-settings-modal .btn-save:hover {
-            transform: scale(1.03);
-        }
-
-        .period-settings-modal .btn-close-settings {
-            background: #f0f0f0;
-            color: #888;
-        }
-
-        .period-settings-modal .btn-close-settings:hover {
-            background: #e5e5e5;
-        }
-
-        .period-settings-modal .history-list {
-            margin-top: 12px;
-            text-align: right;
-            border-top: 1px solid #f0c4ce;
-            padding-top: 12px;
-        }
-
-        .period-settings-modal .history-list .history-title {
-            font-size: 13px;
-            color: #888;
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .period-settings-modal .history-list .history-title .count {
-            color: #b03060;
-            font-weight: 700;
-        }
-
-        .period-settings-modal .history-list .history-item {
-            font-size: 13px;
-            color: #555;
-            padding: 6px 0;
-            border-bottom: 1px solid #f5f5f5;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .period-settings-modal .history-list .history-item .date {
-            color: #b03060;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .period-settings-modal .history-list .history-item .date:hover {
-            color: #d44a7a;
-            transform: scale(1.02);
-        }
-
-        .period-settings-modal .history-list .history-item .actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .period-settings-modal .history-list .history-item .actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 2px 6px;
-            border-radius: 6px;
-            transition: 0.2s;
-            font-family: Vazirmatn, sans-serif;
-            width: auto;
-            box-shadow: none;
-        }
-
-        .period-settings-modal .history-list .history-item .actions .edit-btn {
-            color: #3498db;
-        }
-
-        .period-settings-modal .history-list .history-item .actions .edit-btn:hover {
-            background: rgba(52, 152, 219, 0.1);
-            transform: scale(1.1);
-        }
-
-        .period-settings-modal .history-list .history-item .actions .delete-btn {
-            color: #e74c3c;
-        }
-
-        .period-settings-modal .history-list .history-item .actions .delete-btn:hover {
-            background: rgba(231, 76, 60, 0.1);
-            transform: scale(1.1);
-        }
-
-        .period-settings-modal .cycle-info {
-            margin-top: 12px;
-            padding: 12px;
-            background: rgba(255, 245, 247, 0.5);
-            border-radius: 14px;
-            border: 1px solid rgba(255, 182, 193, 0.2);
-            text-align: center;
-        }
-
-        .period-settings-modal .cycle-info .label {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .period-settings-modal .cycle-info .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #b03060;
-            margin-top: 2px;
-        }
-
-        .period-info-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(6px);
-            z-index: 2001;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-            padding: 20px;
-        }
-
-        .period-info-overlay.active {
-            display: flex;
-        }
-
-        .period-info-modal {
-            background: white;
-            padding: 30px 25px 28px;
-            border-radius: 28px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
-            animation: modalPop 0.4s ease;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .period-info-modal h4 {
-            color: #b03060;
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        .period-info-modal .info-item {
-            text-align: right;
-            padding: 10px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .period-info-modal .info-item .label {
-            font-size: 13px;
-            color: #888;
-            font-weight: 600;
-        }
-
-        .period-info-modal .info-item .value {
-            font-size: 15px;
-            color: #b03060;
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        .period-info-modal .close-info-btn {
-            margin-top: 15px;
-            padding: 10px 30px;
-            background: #b03060;
-            color: #fff;
-            border: none;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: Vazirmatn, sans-serif;
-            transition: 0.3s;
-        }
-
-        .period-info-modal .close-info-btn:hover {
-            transform: scale(1.03);
-        }
-
-        /* مودال رمز */
-        .password-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(176, 48, 96, 0.4);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.4s;
-            padding: 20px;
-        }
-
-        .password-overlay.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
         .password-modal {
             background: linear-gradient(145deg, #fff5f7, #ffe8ee);
-            padding: 40px 30px 35px;
-            border-radius: 35px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 40px 100px rgba(176, 48, 96, 0.35), 0 0 0 2px rgba(255, 182, 193, 0.3);
-            animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(176,48,96,0.35), 0 0 0 2px rgba(255,182,193,0.3);
+            position: relative; overflow: hidden;
         }
+        .password-modal::before { content: '🌸'; position: absolute; top: -15px; right: -15px; font-size: 70px; opacity: 0.15; transform: rotate(25deg); }
+        .password-modal::after { content: '🌸'; position: absolute; bottom: -15px; left: -15px; font-size: 70px; opacity: 0.15; transform: rotate(-25deg); }
+        @keyframes modalPop { from { opacity: 0; transform: scale(0.85) translateY(40px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .password-modal::before {
-            content: '🌸';
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            font-size: 70px;
-            opacity: 0.15;
-            transform: rotate(25deg);
-        }
-
-        .password-modal::after {
-            content: '🌸';
-            position: absolute;
-            bottom: -15px;
-            left: -15px;
-            font-size: 70px;
-            opacity: 0.15;
-            transform: rotate(-25deg);
-        }
-
-        @keyframes modalPop {
-            from {
-                opacity: 0;
-                transform: scale(0.85) translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .password-modal .modal-logo {
-            font-size: 55px;
-            display: block;
-            margin-bottom: 6px;
-            animation: heartBeat 1.8s infinite;
-        }
-
-        @keyframes heartBeat {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.12);
-            }
-        }
-
-        .password-modal h3 {
-            color: #b03060;
-            font-size: 24px;
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .password-modal .sub-text {
-            color: #c94f7a;
-            font-size: 14px;
-            margin-bottom: 18px;
-            opacity: 0.8;
-        }
-
+        .password-modal .modal-logo { font-size: 55px; display: block; margin-bottom: 6px; animation: heartBeat 1.8s infinite; }
+        .password-modal h3 { color: #b03060 !important; font-size: 24px; margin-bottom: 4px; }
+        .password-modal .sub-text { color: #c94f7a !important; font-size: 14px; margin-bottom: 18px; opacity: 0.8; }
         .password-modal .love-words {
-            min-height: 80px;
-            padding: 18px 18px;
-            margin-bottom: 18px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 240, 245, 0.5));
-            border-radius: 20px;
-            border: 1px solid rgba(255, 182, 193, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
+            min-height: 80px; padding: 18px 18px; margin-bottom: 18px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,240,245,0.5));
+            border-radius: 20px; border: 1px solid rgba(255,182,193,0.3);
+            display: flex; justify-content: center; align-items: center; position: relative;
         }
-
-        .password-modal .love-words::before {
-            content: '“';
-            position: absolute;
-            top: 5px;
-            right: 12px;
-            font-size: 28px;
-            color: #d4a0b0;
-            opacity: 0.4;
-            font-family: serif;
-        }
-
-        .password-modal .love-words::after {
-            content: '”';
-            position: absolute;
-            bottom: 0px;
-            left: 12px;
-            font-size: 28px;
-            color: #d4a0b0;
-            opacity: 0.4;
-            font-family: serif;
-        }
-
+        .password-modal .love-words::before { content: '“'; position: absolute; top: 5px; right: 12px; font-size: 28px; color: #d4a0b0; opacity: 0.4; font-family: serif; }
+        .password-modal .love-words::after { content: '”'; position: absolute; bottom: 0px; left: 12px; font-size: 28px; color: #d4a0b0; opacity: 0.4; font-family: serif; }
         .password-modal .love-words .sentence {
-            font-size: 22px;
-            color: #b03060;
-            font-weight: 700;
-            animation: wordPop 0.7s ease;
-            line-height: 1.8;
-            padding: 0 15px;
+            font-size: 22px; color: #b03060 !important; font-weight: 700;
+            animation: wordPop 0.7s ease; line-height: 1.8; padding: 0 15px;
             background: linear-gradient(135deg, #b03060, #d44a7a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-
-        @keyframes wordPop {
-            0% {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
+        @keyframes wordPop { 0% { opacity: 0; transform: scale(0.9); } 50% { transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
 
         .password-modal input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #f0c4ce;
-            border-radius: 18px;
-            font-size: 24px;
-            text-align: center;
-            direction: ltr;
-            transition: 0.3s;
-            letter-spacing: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            color: #b03060;
-            font-weight: bold;
+            width: 100%; padding: 14px;
+            border: 2px solid #f0c4ce; border-radius: 18px;
+            font-size: 24px; text-align: center; direction: ltr;
+            transition: 0.3s; letter-spacing: 10px;
+            background: rgba(255,255,255,0.8); color: #b03060 !important; font-weight: bold;
         }
+        .password-modal input:focus { border-color: #b03060; outline: none; box-shadow: 0 0 0 4px rgba(176,48,96,0.12); background: white; }
+        .password-modal input.error { border-color: #e74c3c; animation: shake 0.5s; }
+        .password-modal input.success { border-color: #27ae60; background: #f0fff4; }
+        .password-modal input:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .password-modal input:focus {
-            border-color: #b03060;
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(176, 48, 96, 0.12);
-            background: white;
-        }
+        .password-modal .modal-error { color: #e74c3c !important; font-size: 14px; min-height: 26px; margin-top: 10px; font-weight: 500; }
+        .password-modal .modal-error.success-text { color: #27ae60 !important; }
+        .password-modal .modal-error.locked { color: #e67e22 !important; font-size: 15px; }
 
-        .password-modal input.error {
-            border-color: #e74c3c;
-            animation: shake 0.5s;
-        }
-
-        .password-modal input.success {
-            border-color: #27ae60;
-            background: #f0fff4;
-        }
-
-        .password-modal input:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .password-modal .modal-error {
-            color: #e74c3c;
-            font-size: 14px;
-            min-height: 26px;
-            margin-top: 10px;
-            font-weight: 500;
-        }
-
-        .password-modal .modal-error.success-text {
-            color: #27ae60;
-        }
-
-        .password-modal .modal-error.locked {
-            color: #e67e22;
-            font-size: 15px;
-        }
-
-        .password-modal .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .password-modal .modal-buttons button {
-            flex: 1;
-            padding: 12px 18px;
-            border: none;
-            border-radius: 18px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: .3s;
-            font-weight: 700;
-        }
-
+        .password-modal .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .password-modal .modal-buttons button { flex: 1; padding: 12px 18px; border: none; border-radius: 18px; font-size: 15px; cursor: pointer; transition: .3s; font-weight: 700; }
         .password-modal .btn-confirm {
-            background: linear-gradient(135deg, #b03060, #d44a7a);
-            color: #fff;
-            box-shadow: 0 6px 25px rgba(176, 48, 96, 0.3);
+            background: linear-gradient(135deg, #b03060, #d44a7a); color: #fff;
+            box-shadow: 0 6px 25px rgba(176,48,96,0.3);
         }
+        .password-modal .btn-confirm:hover:not(:disabled) { transform: scale(1.03); box-shadow: 0 8px 30px rgba(176,48,96,0.4); }
+        .password-modal .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .password-modal .btn-cancel { background: rgba(255,255,255,0.8); color: #888 !important; border: 1px solid #f0c4ce; }
+        .password-modal .btn-cancel:hover:not(:disabled) { background: rgba(255,255,255,0.95); }
+        .password-modal .btn-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .password-modal .btn-confirm:hover:not(:disabled) {
-            transform: scale(1.03);
-            box-shadow: 0 8px 30px rgba(176, 48, 96, 0.4);
-        }
+        .attempts-left { font-size: 13px; color: #888 !important; margin-top: 8px; }
+        .attempts-left span { color: #b03060 !important; font-weight: bold; font-size: 15px; }
 
-        .password-modal .btn-confirm:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .modal-hearts { position: absolute; font-size: 20px; opacity: 0.25; animation: floatModalHeart 6s infinite; }
+        .modal-hearts:nth-child(1) { top: 10px; left: 15px; animation-delay: 0s; }
+        .modal-hearts:nth-child(2) { bottom: 10px; right: 15px; animation-delay: 2s; }
+        .modal-hearts:nth-child(3) { top: 50%; left: 6px; animation-delay: 4s; font-size: 14px; }
+        .modal-hearts:nth-child(4) { top: 50%; right: 6px; animation-delay: 1s; font-size: 14px; }
+        @keyframes floatModalHeart { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(10deg); } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
-        .password-modal .btn-cancel {
-            background: rgba(255, 255, 255, 0.8);
-            color: #888;
-            border: 1px solid #f0c4ce;
+        .period-settings-modal h4, .period-info-modal h4 { color: #b03060 !important; font-size: 20px; margin-bottom: 4px; }
+        .period-settings-modal p, .period-info-modal p { color: #888 !important; font-size: 13px; margin-bottom: 15px; }
+        .date-input-group { display: flex; flex-direction: column; gap: 8px; text-align: right; }
+        .date-input-group label { font-size: 13px; color: #555 !important; font-weight: 600; }
+        .date-input-group input[type="date"] {
+            padding: 10px 14px; border: 2px solid #f0c4ce; border-radius: 14px;
+            font-size: 15px; background: rgba(255,255,255,0.8);
+            transition: 0.3s; width: 100%; text-align: center; color: #555 !important;
         }
+        .date-input-group input[type="date"]:focus { border-color: #b03060; outline: none; box-shadow: 0 0 0 3px rgba(176,48,96,0.12); }
+        .settings-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .settings-buttons button { flex: 1; padding: 10px; border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: Vazirmatn, sans-serif; }
+        .btn-save { background: linear-gradient(135deg, #b03060, #d44a7a); color: #fff; box-shadow: 0 4px 15px rgba(176,48,96,0.25); }
+        .btn-save:hover { transform: scale(1.03); }
+        .btn-close-settings { background: #f0f0f0; color: #888 !important; }
+        .btn-close-settings:hover { background: #e5e5e5; }
 
-        .password-modal .btn-cancel:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.95);
-        }
+        .history-list { margin-top: 12px; text-align: right; border-top: 1px solid #f0c4ce; padding-top: 12px; }
+        .history-title { font-size: 13px; color: #888 !important; font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .history-title .count { color: #b03060 !important; font-weight: 700; }
+        .history-item { font-size: 13px; color: #555 !important; padding: 6px 0; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; }
+        .history-item .date { color: #b03060 !important; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .history-item .date:hover { color: #d44a7a !important; }
+        .history-item .actions button { background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 6px; transition: 0.2s; font-family: Vazirmatn, sans-serif; width: auto; box-shadow: none; }
+        .history-item .actions .edit-btn { color: #3498db !important; }
+        .history-item .actions .edit-btn:hover { background: rgba(52,152,219,0.1); }
+        .history-item .actions .delete-btn { color: #e74c3c !important; }
+        .history-item .actions .delete-btn:hover { background: rgba(231,76,60,0.1); }
 
-        .password-modal .btn-cancel:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .cycle-info { margin-top: 12px; padding: 12px; background: rgba(255,245,247,0.5); border-radius: 14px; border: 1px solid rgba(255,182,193,0.2); text-align: center; }
+        .cycle-info .label { font-size: 12px; color: #888 !important; }
+        .cycle-info .value { font-size: 18px; font-weight: 700; color: #b03060 !important; margin-top: 2px; }
 
-        .modal-hearts {
-            position: absolute;
-            font-size: 20px;
-            opacity: 0.25;
-            animation: floatModalHeart 6s infinite;
-        }
-
-        .modal-hearts:nth-child(1) {
-            top: 10px;
-            left: 15px;
-            animation-delay: 0s;
-        }
-        .modal-hearts:nth-child(2) {
-            bottom: 10px;
-            right: 15px;
-            animation-delay: 2s;
-        }
-        .modal-hearts:nth-child(3) {
-            top: 50%;
-            left: 6px;
-            animation-delay: 4s;
-            font-size: 14px;
-        }
-        .modal-hearts:nth-child(4) {
-            top: 50%;
-            right: 6px;
-            animation-delay: 1s;
-            font-size: 14px;
-        }
-
-        @keyframes floatModalHeart {
-            0%,
-            100% {
-                transform: translateY(0) rotate(0);
-            }
-            50% {
-                transform: translateY(-10px) rotate(10deg);
-            }
-        }
-
-        @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-8px);
-            }
-            75% {
-                transform: translateX(8px);
-            }
-        }
-
-        .attempts-left {
-            font-size: 13px;
-            color: #888;
-            margin-top: 8px;
-        }
-
-        .attempts-left span {
-            color: #b03060;
-            font-weight: bold;
-            font-size: 15px;
-        }
+        .info-item { text-align: right; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+        .info-item .label { font-size: 13px; color: #888 !important; font-weight: 600; }
+        .info-item .value { font-size: 15px; color: #b03060 !important; font-weight: 700; margin-top: 2px; }
+        .close-info-btn { margin-top: 15px; padding: 10px 30px; background: #b03060; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: Vazirmatn, sans-serif; transition: 0.3s; }
+        .close-info-btn:hover { transform: scale(1.03); }
 
         @media (max-width: 768px) {
-            .menu-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .menu-grid .left-col,
-            .menu-grid .right-col {
-                gap: 15px;
-            }
-
-            .period-card {
-                padding: 18px 15px 16px;
-                margin-top: 0;
-            }
-
-            .period-card .days-number {
-                font-size: 40px;
-            }
-
-            .cards {
-                gap: 10px;
-            }
-
-            .card {
-                padding: 15px 6px;
-                font-size: 26px;
-                min-height: 70px;
-            }
-
-            .card span {
-                font-size: 11px;
-            }
-
-            .password-modal {
-                padding: 30px 20px 25px;
-            }
-
-            .password-modal .love-words .sentence {
-                font-size: 18px;
-            }
-
-            .container {
-                width: 96%;
-            }
+            .menu-grid { grid-template-columns: 1fr; gap: 15px; }
+            .period-card .days-number { font-size: 40px; }
+            .cards { gap: 10px; grid-template-columns: 1fr 1fr; }
+            .card { padding: 15px 6px; font-size: 26px; min-height: 70px; }
+            .card span { font-size: 11px; }
+            .password-modal { padding: 30px 20px 25px; }
+            .password-modal .love-words .sentence { font-size: 18px; }
+            .container { width: 96%; max-width: 520px; }
+            .badge { font-size: 10px; padding: 1px 6px; min-width: 16px; }
+            .glass { padding: 16px 20px; max-width: 380px; }
+            #counter .days-number { font-size: 30px; }
+            #counter .days-label-text { font-size: 16px; }
+            #counter .time-row { font-size: 15px; }
+            .heart-icon-wrapper .big-heart { font-size: 32px; }
+            .ecg-monitor { height: 40px; }
+            .ecg-heart-icon { font-size: 17px; }
+            .theme-btn { width: 45px; height: 45px; font-size: 22px; bottom: 15px; right: 15px; }
+            .moon { width: 60px; height: 60px; right: 15px; top: 20px !important; }
         }
-
         @media (max-width: 480px) {
-            .period-card .days-number {
-                font-size: 34px;
-            }
-
-            .period-card .period-stats .stat-item {
-                font-size: 11px;
-            }
-
-            .period-card .period-stats .stat-item .stat-number {
-                font-size: 17px;
-            }
-
-            .cards {
-                gap: 8px;
-            }
-
-            .card {
-                padding: 12px 4px;
-                font-size: 22px;
-                min-height: 60px;
-            }
-
-            .card span {
-                font-size: 10px;
-            }
+            .period-card .days-number { font-size: 34px; }
+            .period-card .period-stats .stat-item { font-size: 11px; }
+            .period-card .period-stats .stat-item .stat-number { font-size: 17px; }
+            .cards { gap: 8px; grid-template-columns: 1fr 1fr; }
+            .card { padding: 12px 4px; font-size: 22px; min-height: 60px; }
+            .card span { font-size: 10px; }
+            .glass { padding: 14px 16px; max-width: 320px; }
+            #counter .days-number { font-size: 26px; }
+            #counter .days-label-text { font-size: 14px; }
+            #counter .time-row { font-size: 13px; }
+            .heart-icon-wrapper .big-heart { font-size: 28px; }
+            .ecg-monitor { height: 35px; }
+            .ecg-heart-icon { font-size: 15px; }
+            .moon { width: 50px; height: 50px; right: 10px; top: 15px !important; }
         }
     </style>
 </head>
-
 <body>
 
     <div class="heart">🤍</div>
     <div class="heart">♡</div>
+    <div class="heart">❤️</div>
+    <div class="heart">💖</div>
     <div class="heart">🤍</div>
     <div class="heart">♡</div>
-    <div class="heart">🤍</div>
+    <div class="heart">❤️</div>
+    <div class="heart">💕</div>
 
-    <!-- مودال رمز -->
+    <div class="snowflakes" id="snowflakes"></div>
+
+    <div class="moon-stars">
+        <div class="moon"></div>
+        <span class="star">✦</span><span class="star">✧</span><span class="star">⋆</span>
+        <span class="star">✶</span><span class="star">✦</span><span class="star">✧</span>
+        <span class="star">⋆</span><span class="star">✶</span><span class="star">✦</span>
+        <span class="star">✧</span>
+    </div>
+
+    <button id="themeToggle" class="theme-btn" onclick="toggleTheme()" title="تغییر تم">🌙</button>
+
     <div class="password-overlay" id="passwordOverlay">
         <div class="password-modal">
-            <span class="modal-hearts">🌸</span>
-            <span class="modal-hearts">💗</span>
-            <span class="modal-hearts">🌺</span>
-            <span class="modal-hearts">💖</span>
-
+            <span class="modal-hearts">🌸</span><span class="modal-hearts">💗</span>
+            <span class="modal-hearts">🌺</span><span class="modal-hearts">💖</span>
             <span class="modal-logo">💕</span>
             <h3>به دنیای من خوش اومدی</h3>
             <p class="sub-text">✨ رمز عبور رو وارد کن تا ببینمت...</p>
-
-            <div class="love-words" id="loveWords">
-                <span class="sentence">🌸</span>
-            </div>
-
-            <input type="password" id="modalPassword" placeholder="• • • •" maxlength="4" autofocus>
+            <div class="love-words" id="loveWords"><span class="sentence">🌸</span></div>
+            <input type="password" id="modalPassword" placeholder="• • • •" maxlength="4" autofocus />
             <div class="modal-error" id="modalError"></div>
             <div class="attempts-left">💕 تلاش باقی‌مونده: <span id="attemptCount">3</span></div>
-
             <div class="modal-buttons">
                 <button class="btn-cancel" id="cancelBtn" onclick="closePasswordModal()">بی‌خیال</button>
                 <button class="btn-confirm" id="confirmBtn" onclick="confirmPassword()">بیا تو 💕</button>
@@ -1140,30 +673,22 @@
         </div>
     </div>
 
-    <!-- مودال تنظیمات تاریخ -->
     <div class="period-settings-overlay" id="periodSettingsOverlay">
         <div class="period-settings-modal">
             <h4>🌸 تنظیمات روزهای خاص</h4>
             <p>تاریخ شروع پریود رو به شمسی وارد کن</p>
-
             <div class="date-input-group">
                 <label for="lastPeriodDateShamsi">📅 تاریخ شروع (شمسی)</label>
-                <input type="date" id="lastPeriodDateShamsi">
+                <input type="date" id="lastPeriodDateShamsi" />
             </div>
-
-            <div class="cycle-info" id="cycleInfo">
+            <div class="cycle-info">
                 <div class="label">⏳ میانگین سیکل (بر اساس تاریخ‌های ثبت‌شده)</div>
                 <div class="value" id="avgCycleDisplay">-- روز</div>
             </div>
-
-            <div class="history-list" id="historyList">
-                <div class="history-title">
-                    <span>📋 تاریخ‌های ثبت‌شده</span>
-                    <span class="count" id="historyCount">۰</span>
-                </div>
+            <div class="history-list">
+                <div class="history-title"><span>📋 تاریخ‌های ثبت‌شده</span><span class="count" id="historyCount">۰</span></div>
                 <div id="historyItems">در حال بارگذاری...</div>
             </div>
-
             <div class="settings-buttons">
                 <button class="btn-close-settings" onclick="closePeriodSettings()">بی‌خیال</button>
                 <button class="btn-save" onclick="savePeriodDate()">ذخیره کن 💕</button>
@@ -1171,194 +696,165 @@
         </div>
     </div>
 
-    <!-- مودال توضیحات بیشتر -->
     <div class="period-info-overlay" id="periodInfoOverlay">
         <div class="period-info-modal">
             <h4>🌙 جزئیات روزهای خاص</h4>
             <div id="periodInfoContent">
-                <div class="info-item">
-                    <div class="label">📅 روز سیکل</div>
-                    <div class="value" id="infoCycleDay">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">🌸 وضعیت امروز</div>
-                    <div class="value" id="infoStatus">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">💕 روزهای تا پریود بعدی</div>
-                    <div class="value" id="infoDaysUntil">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">🌺 روزهای حساس (تخمک‌گزاری)</div>
-                    <div class="value" id="infoOvulation">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">💪 روزهای نزدیک پریود (احساسات)</div>
-                    <div class="value" id="infoPMS">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">📊 میانگین سیکل</div>
-                    <div class="value" id="infoAvgCycle">--</div>
-                </div>
+                <div class="info-item"><div class="label">📅 روز سیکل</div><div class="value" id="infoCycleDay">--</div></div>
+                <div class="info-item"><div class="label">🌸 وضعیت امروز</div><div class="value" id="infoStatus">--</div></div>
+                <div class="info-item"><div class="label">💕 روزهای تا پریود بعدی</div><div class="value" id="infoDaysUntil">--</div></div>
+                <div class="info-item"><div class="label">🌺 روزهای حساس (تخمک‌گزاری)</div><div class="value" id="infoOvulation">--</div></div>
+                <div class="info-item"><div class="label">💪 روزهای نزدیک پریود (احساسات)</div><div class="value" id="infoPMS">--</div></div>
+                <div class="info-item"><div class="label">📊 میانگین سیکل</div><div class="value" id="infoAvgCycle">--</div></div>
             </div>
             <button class="close-info-btn" onclick="closePeriodInfo()">متوجه شدم 💕</button>
         </div>
     </div>
 
-    <!-- کانتینر اصلی -->
     <div class="container">
-
         <div class="welcome" id="welcome">
             <div class="logo">🤍</div>
             <h2>سلام پریسا...</h2>
-            <p>
-                این فقط یک سایت نیست؛
-                <br>
-                یه ایده کوچیکه که با فکر تو ساخته شده ✨
-            </p>
-
+            <p>این فقط یک سایت نیست؛<br />یه ایده کوچیکه که با فکر تو ساخته شده ✨</p>
             <div class="glass">
-                <div id="counter">در حال محاسبه...</div>
-            </div>
+                <div id="counter">
+                    <b>⏳ از شبی که سرنوشت اسم تو را وارد زندگی من کرد...</b>
+                    <br>
+                    
+                    <!-- ===== نوار قلب (بالای عدد روز) ===== -->
+                    <div class="ecg-container">
+                        <span class="ecg-heart-icon">💓</span>
+                        <div class="ecg-monitor">
+                            <div class="baseline"></div>
+                            <svg viewBox="0 0 1600 50" preserveAspectRatio="none">
+                                <polyline points="
+                                    0,25
+                                    60,25 70,25 80,25 90,25
+                                    100,11 110,41 120,25
+                                    130,25 140,25
+                                    150,21 155,21 160,21 165,13 170,32 175,21 180,21 185,21
+                                    195,25 205,25 215,25 225,25
+                                    235,21 240,21 245,21 250,9 255,37 260,21 265,21 270,21
+                                    280,25 290,25 300,25
+                                    320,25 330,25
+                                    340,21 350,21 360,21 370,9 380,37 390,21 400,21 410,21
+                                    420,25 430,25 440,25 450,25
+                                    470,25 480,25
+                                    490,21 500,21 510,21 520,13 530,29 540,21 550,21 560,21
+                                    580,25 590,25 600,25
 
-            <button onclick="openPasswordModal()" id="enterBtn">ورود به دنیای ما 🤍</button>
+                                    750,25 760,25 770,25 780,25
+                                    790,11 800,41 810,25
+                                    820,25 830,25
+                                    840,21 845,21 850,21 855,13 860,32 865,21 870,21 875,21
+                                    885,25 895,25 905,25 915,25
+                                    925,21 930,21 935,21 940,9 945,37 950,21 955,21 960,21
+                                    970,25 980,25 990,25
+                                    1010,25 1020,25
+                                    1030,21 1040,21 1050,21 1060,9 1070,37 1080,21 1090,21 1100,21
+                                    1110,25 1120,25 1130,25 1140,25
+                                    1160,25 1170,25
+                                    1180,21 1190,21 1200,21 1210,13 1220,29 1230,21 1240,21 1250,21
+                                    1270,25 1280,25 1290,25
+
+                                    1400,25 1410,25 1420,25 1430,25
+                                    1440,11 1450,41 1460,25
+                                    1470,25 1480,25 1490,21 1500,21 1510,21 1520,13 1530,32 1540,21 1550,21 1560,21
+                                    1580,25 1590,25 1600,25
+                                " />
+                            </svg>
+                        </div>
+                        <span class="ecg-heart-icon">💓</span>
+                    </div>
+                    
+                    <!-- ===== عدد روز با کلمه "روز" ===== -->
+                    <div class="days-number-wrapper">
+                        <span class="heart-icon-wrapper"><span class="big-heart">❤️</span></span>
+                        <span class="days-number" id="daysDisplay">۰</span>
+                        <span class="days-label-text">روز</span>
+                    </div>
+                    
+                    <span class="time-row">
+                        🕒 <span id="hoursDisplay">۰</span> ساعت &nbsp; ⏰ <span id="minutesDisplay">۰</span> دقیقه &nbsp; ✨ <span id="secondsDisplay">۰</span> ثانیه
+                    </span>
+                    <div class="passing-text">میگذره</div>
+                    <div class="divider-line"></div>
+                    <div class="date-text">📅 ۱۵ اسفند ۱۴۰۱ - ساعت ۲۳:۰۰</div>
+                    <div class="footer-text">و هنوز داستان ما ادامه داره... 🤍</div>
+                </div>
+            </div>
+            <button onclick="enter()" id="enterBtn">ورود به دنیای ما 🤍</button>
         </div>
 
         <div class="menu" id="menu">
             <h1>دنیای پریسا ✨</h1>
             <p class="sub-title">هر قسمت یه داستان کوچیک داره...</p>
-
             <div class="menu-grid">
                 <div class="left-col">
                     <div class="period-card">
                         <div class="card-header">
-                            <div class="title">
-                                <span class="icon">🌙</span>
-                                روزهای خاص من
-                            </div>
+                            <div class="title"><span class="icon">🌙</span>روزهای خاص من</div>
                             <button class="settings-btn" onclick="openPeriodSettings()" title="تنظیم تاریخ">⚙️</button>
                         </div>
-
                         <div class="main-display">
                             <div class="days-number" id="daysUntilPeriod">--</div>
                             <div class="days-label" id="daysLabel">تا <span class="highlight">فرارسیدن روزهای نرم</span></div>
                         </div>
-
                         <div class="period-stats">
-                            <div class="stat-item" style="margin: 0 auto;">
+                            <div class="stat-item" style="margin:0 auto;">
                                 <span class="stat-number" id="moodStatus">🌸</span>
                                 <span id="moodText">معمولی</span>
                             </div>
                         </div>
-
-                        <div class="motivation-text" id="motivationText">
-                            <span class="emoji">💕</span> تاریخ رو تنظیم کن تا ببینم
-                        </div>
-
+                        <div class="motivation-text" id="motivationText"><span class="emoji">💕</span> تاریخ رو تنظیم کن تا ببینم</div>
                         <button class="more-info-btn" onclick="openPeriodInfo()">📊 توضیحات بیشتر</button>
                     </div>
                 </div>
-
                 <div class="right-col">
                     <div class="cards">
-                        <a class="card" href="#">
-                            💌
-                            <span>نامه‌ها</span>
-                        </a>
-                        <a class="card" href="surprises/surprises.html">
-                            🎁
-                            <span>سوپرایزها</span>
-                        </a>
-                        <a class="card" href="#">
-                            📸
-                            <span>خاطرات</span>
-                        </a>
-                        <a class="card" href="game and test/game and test.html">
-                            🧠
-                            <span>بازی و تست‌ها</span>
-                        </a>
-                        <a class="card" href="celebrations/celebrations.html">
-                            🎉
-                            <span>تبریکات</span>
-                        </a>
-                        <a class="card" href="secret/index.html">
-                            🔒
-                            <span>اتاق مخفی</span>
-                        </a>
+                        <a class="card" href="#"><span>💌</span><span>نامه‌ها <span class="badge">0</span></span></a>
+                        <a class="card" href="surprises/surprises.html?v=1"><span>🎁</span><span>سوپرایزها <span class="badge">0</span></span></a>
+                        <a class="card" href="#"><span>📸</span><span>خاطرات <span class="badge">0</span></span></a>
+                        <a class="card" href="game and test/game and test.html?v=1"><span>🧠</span><span>بازی و تست‌ها <span class="badge">0</span></span></a>
+                        <a class="card" href="celebrations/celebrations.html?v=1"><span>🎉</span><span>تبریکات <span class="badge">0</span></span></a>
+                        <a class="card" href="secret/index.html?v=1"><span>🔒</span><span>اتاق مخفی <span class="badge">0</span></span></a>
                     </div>
                 </div>
             </div>
-
             <footer>ساخته شده با عشق 🤍</footer>
         </div>
-
     </div>
 
     <script>
-        // =============================================
-        // تنظیمات Google Sheets (جایگزین Supabase)
-        // =============================================
-        // 🔴 این آدرس رو با آدرس API خودت جایگزین کن
         const SHEET_API_URL = 'https://api.sheetbest.com/sheets/6651ac4f-6b3e-4ac1-ae8e-7180bb2ca35d';
-
         const dbClient = {
-            // ===== Periods =====
             async savePeriod(date) {
                 const response = await fetch(SHEET_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'period',
-                        date: date,
-                        text: '',
-                        responded: '',
-                        response: ''
-                    })
+                    body: JSON.stringify({ type: 'period', date: date, text: '', responded: '', response: '' })
                 });
                 if (!response.ok) throw new Error(await response.text());
                 return await response.json();
             },
-
             async getPeriods() {
                 const response = await fetch(SHEET_API_URL);
                 if (!response.ok) throw new Error(await response.text());
                 const allData = await response.json();
-                // فقط ردیف‌هایی که type === 'period' هستند را برمی‌گرداند
-                const periods = allData.filter(row => row.type === 'period');
-                // تبدیل به فرمت مورد انتظار
-                return periods.map((item, index) => ({
-                    id: index + 1,
-                    period_date: item.date
-                }));
+                return allData.filter(row => row.type === 'period').map((item, index) => ({ id: index + 1, period_date: item.date }));
             },
-
             async deletePeriod(id) {
-                // Sheet.best از حذف با شناسه پشتیبانی می‌کند
-                // چون شناسه واقعی در دیتابیس نداریم، باید همه را بگیریم و حذف کنیم
                 const allData = await this.getPeriods();
                 const period = allData[id - 1];
                 if (!period) throw new Error('ردیف پیدا نشد');
-
-                // حذف با استفاده از اندیس ردیف (ردیف اول + id)
-                const response = await fetch(`${SHEET_API_URL}/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' }
-                });
+                const response = await fetch(`${SHEET_API_URL}/${id}`, { method: 'DELETE' });
                 if (!response.ok) throw new Error(await response.text());
                 return true;
             }
         };
 
-        // =============================================
-        // رمز عبور
-        // =============================================
         const CORRECT_PASSWORD = "7880";
-        let attempts = 3;
-        let isLocked = false;
-        let lockTimer = null;
-        let lockEndTime = null;
-        let currentSentence = "";
-
+        let attempts = 3, isLocked = false, lockTimer = null, lockEndTime = null, currentSentence = "";
         const sentences = [
             "دوستت دارم بی‌نهایت، با تمام وجودم ❤️",
             "تو قشنگ‌ترین رویایی هستی که به واقعیت پیوست",
@@ -1382,9 +878,7 @@
             "دوست داشتن تو بزرگترین نعمت زندگی منه"
         ];
 
-        function getRandomSentence() {
-            return sentences[Math.floor(Math.random() * sentences.length)];
-        }
+        function getRandomSentence() { return sentences[Math.floor(Math.random() * sentences.length)]; }
 
         function openPasswordModal() {
             if (isLocked) { showLockMessage(); return; }
@@ -1458,36 +952,23 @@
             document.getElementById('cancelBtn').disabled = true;
             showLockMessage();
             if (lockTimer) clearInterval(lockTimer);
-            lockTimer = setInterval(() => {
-                updateLockTimer();
-                if (!isLocked) { clearInterval(lockTimer);
-                    lockTimer = null; }
-            }, 1000);
+            lockTimer = setInterval(() => { updateLockTimer(); if (!isLocked) { clearInterval(lockTimer);
+                    lockTimer = null; } }, 1000);
         }
 
         function confirmPassword() {
             if (isLocked) { showLockMessage(); return; }
-
             const input = document.getElementById('modalPassword');
             const errorDiv = document.getElementById('modalError');
             const entered = input.value.trim();
-
             errorDiv.textContent = '';
             input.classList.remove('error', 'success');
-
-            if (entered === '') {
-                errorDiv.textContent = '💕 رمز رو وارد کن عزیزم...';
+            if (entered === '') { errorDiv.textContent = '💕 رمز رو وارد کن عزیزم...';
                 input.classList.add('error');
-                input.focus();
-                return;
-            }
-            if (entered.length < 4) {
-                errorDiv.textContent = '💕 باید ۴ رقم باشه...';
+                input.focus(); return; }
+            if (entered.length < 4) { errorDiv.textContent = '💕 باید ۴ رقم باشه...';
                 input.classList.add('error');
-                input.focus();
-                return;
-            }
-
+                input.focus(); return; }
             if (entered === CORRECT_PASSWORD) {
                 input.classList.add('success');
                 errorDiv.className = 'modal-error success-text';
@@ -1497,12 +978,12 @@
                 input.disabled = true;
                 attempts = 3;
                 document.getElementById('attemptCount').textContent = attempts;
-
                 setTimeout(() => {
                     closePasswordModal();
                     document.getElementById("welcome").style.display = "none";
                     document.getElementById("menu").style.display = "block";
                     loadPeriods();
+                    loadBadgeCounts();
                 }, 1000);
             } else {
                 attempts--;
@@ -1526,137 +1007,94 @@
             if (e.key === 'Enter' && !isLocked) { e.preventDefault();
                 confirmPassword(); }
         });
-
         document.getElementById('passwordOverlay').addEventListener('click', function(e) {
             if (e.target === this && !isLocked) closePasswordModal();
         });
 
-        // =============================================
-        // تبدیل تاریخ شمسی به میلادی
-        // =============================================
         function shamsiToGregorian(shamsiDate) {
             const parts = shamsiDate.split('-').map(Number);
             if (parts.length !== 3) return null;
-            let year = parts[0] + 621;
-            let month = parts[1];
-            let day = parts[2];
-            return new Date(year, month - 1, day);
+            const year = parts[0] + 621;
+            const month = parts[1] - 1;
+            const day = parts[2];
+            return new Date(year, month, day, 12, 0, 0);
         }
 
         function gregorianToShamsi(date) {
-            const year = date.getFullYear() - 621;
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
+            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const year = localDate.getFullYear() - 621;
+            const month = String(localDate.getMonth() + 1).padStart(2, '0');
+            const day = String(localDate.getDate()).padStart(2, '0');
             return `${year}/${month}/${day}`;
         }
 
-        // =============================================
-        // تاریخ‌های پریود (با Google Sheets)
-        // =============================================
         const DEFAULT_CYCLE = 28;
 
         async function savePeriodDate() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             const shamsiDate = dateInput.value;
-
-            if (!shamsiDate) {
-                alert('لطفاً یک تاریخ رو انتخاب کن عزیزم 💕');
-                return;
-            }
-
+            if (!shamsiDate) { alert('لطفاً یک تاریخ رو انتخاب کن عزیزم 💕'); return; }
             const gregorianDate = shamsiToGregorian(shamsiDate);
-            if (!gregorianDate) {
-                alert('تاریخ رو درست وارد کن عزیزم 💕');
-                return;
-            }
-
+            if (!gregorianDate) { alert('تاریخ رو درست وارد کن عزیزم 💕'); return; }
             const dateStr = gregorianDate.toISOString().split('T')[0];
-
             try {
                 await dbClient.savePeriod(dateStr);
                 closePeriodSettings();
                 await loadPeriods();
                 updateCycleInfo();
-            } catch (error) {
-                alert('❌ خطا در ذخیره تاریخ: ' + error.message);
-            }
+                loadBadgeCounts();
+            } catch (error) { alert('❌ خطا در ذخیره تاریخ: ' + error.message); }
         }
 
         async function deletePeriodDate(id) {
             if (!confirm('آیا مطمئنی که میخوای این تاریخ رو حذف کنی؟ 💕')) return;
-
             try {
                 await dbClient.deletePeriod(id);
                 await loadPeriods();
                 updateCycleInfo();
-            } catch (error) {
-                alert('❌ خطا در حذف: ' + error.message);
-            }
+                loadBadgeCounts();
+            } catch (error) { alert('❌ خطا در حذف: ' + error.message); }
         }
 
         async function loadPeriods() {
             try {
                 const data = await dbClient.getPeriods();
                 const history = data.map(item => item.period_date);
-
-                // به‌روزرسانی تاریخچه
                 const container = document.getElementById('historyItems');
                 const count = document.getElementById('historyCount');
-
                 count.textContent = history.length;
-
-                if (history.length === 0) {
-                    container.innerHTML = 'هنوز تاریخی ثبت نشده';
-                    updatePeriodDisplay(history);
-                    return;
-                }
-
+                if (history.length === 0) { container.innerHTML = 'هنوز تاریخی ثبت نشده';
+                    updatePeriodDisplay(history); return; }
                 let html = '';
                 const sorted = [...history].reverse();
-                sorted.forEach((date, index) => {
+                sorted.forEach((date) => {
                     const d = new Date(date + 'T00:00:00');
                     const shamsi = gregorianToShamsi(d);
                     const isLast = date === history[history.length - 1];
                     const label = isLast ? ' ✨' : '';
                     const item = data.find(p => p.period_date === date);
                     const rowId = data.indexOf(item) + 1;
-
-                    html += `
-                                <div class="history-item">
-                                    <span class="date" onclick="editPeriodDate('${date}')" title="برای ویرایش کلیک کن">
-                                        📅 ${shamsi}${label}
-                                    </span>
-                                    <span class="actions">
-                                        <button class="edit-btn" onclick="editPeriodDate('${date}')" title="ویرایش">✏️</button>
-                                        <button class="delete-btn" onclick="deletePeriodDate('${rowId}')" title="حذف">❌</button>
-                                    </span>
-                                </div>
-                            `;
+                    html += `<div class="history-item"><span class="date" onclick="editPeriodDate('${date}')" title="برای ویرایش کلیک کن">📅 ${shamsi}${label}</span><span class="actions"><button class="edit-btn" onclick="editPeriodDate('${date}')" title="ویرایش">✏️</button><button class="delete-btn" onclick="deletePeriodDate('${rowId}')" title="حذف">❌</button></span></div>`;
                 });
                 container.innerHTML = html;
-
                 updatePeriodDisplay(history);
                 updateCycleInfo();
             } catch (error) {
                 console.error('Error loading periods:', error);
                 document.getElementById('historyItems').innerHTML =
-                `<div class="empty-msg">❌ خطا در دریافت تاریخ‌ها: ${error.message}</div>`;
+                    `<div class="empty-msg">❌ خطا در دریافت تاریخ‌ها: ${error.message}</div>`;
             }
         }
 
         function calculateAverageCycle(history) {
             if (history.length < 2) return null;
-
             const dates = history.map(d => new Date(d + 'T00:00:00')).sort((a, b) => a - b);
-
-            let totalDays = 0;
-            let count = 0;
+            let totalDays = 0,
+                count = 0;
             for (let i = 1; i < dates.length; i++) {
                 const diff = Math.floor((dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24));
-                if (diff > 20 && diff < 45) {
-                    totalDays += diff;
-                    count++;
-                }
+                if (diff > 20 && diff < 45) { totalDays += diff;
+                    count++; }
             }
             return count > 0 ? Math.round(totalDays / count) : null;
         }
@@ -1665,7 +1103,6 @@
             const daysElement = document.getElementById('daysUntilPeriod');
             const daysLabel = document.getElementById('daysLabel');
             const motivationElement = document.getElementById('motivationText');
-
             if (!history || history.length === 0) {
                 daysElement.textContent = '✨';
                 document.getElementById('moodStatus').textContent = '🌸';
@@ -1674,24 +1111,17 @@
                 daysLabel.innerHTML = `تا <span class="highlight">فرارسیدن روزهای نرم</span>`;
                 return;
             }
-
             const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
             const cycleLength = calculateAverageCycle(history) || DEFAULT_CYCLE;
-
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
             const diffTime = today - lastDate;
             const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
             let cycleDay = (daysSince % cycleLength) + 1;
             if (cycleDay > cycleLength) cycleDay = 1;
-
             let daysUntil = cycleLength - cycleDay;
             if (daysUntil < 0) daysUntil = 0;
-
             daysElement.textContent = daysUntil;
-
             let gradient;
             if (daysUntil <= 3 && daysUntil > 0) {
                 gradient = 'linear-gradient(135deg, #e74c3c, #ff6b6b)';
@@ -1706,28 +1136,14 @@
                 gradient = 'linear-gradient(135deg, #b03060, #d44a7a)';
                 daysLabel.innerHTML = `تا <span class="highlight">فرارسیدن روزهای نرم</span> ✨`;
             }
-
             daysElement.style.background = gradient;
             daysElement.style.webkitBackgroundClip = 'text';
             daysElement.style.webkitTextFillColor = 'transparent';
             daysElement.style.backgroundClip = 'text';
-
-            // وضعیت احساسی
             const mood = getMoodStatus(cycleDay, cycleLength);
             document.getElementById('moodStatus').textContent = mood.emoji;
             document.getElementById('moodText').textContent = mood.text;
-
-            const msgs = [
-                { emoji: '💕', text: 'همیشه کنارتم، قوی باش' },
-                { emoji: '🌸', text: 'زیباترین دختر دنیا، به خودت افتخار کن' },
-                { emoji: '💪', text: 'قوی‌ترینی، می‌دونم که می‌تونی' },
-                { emoji: '🌙', text: 'مثل ماه، همیشه درخشان و زیبا' },
-                { emoji: '✨', text: 'تو خاص‌ترینی، هیچوقت فراموش نکن' },
-                { emoji: '💗', text: 'دوستت دارم، همیشه و تا ابد' },
-                { emoji: '🌺', text: 'کنارتم تا همیشه، بهت افتخار میکنم' },
-                { emoji: '🌟', text: 'تو ستاره‌ی زندگی منی، بدرخش' },
-                { emoji: '💖', text: 'هر روزت پر از عشق و آرامش' }
-            ];
+            const msgs = [{ emoji: '💕', text: 'همیشه کنارتم، قوی باش' }, { emoji: '🌸', text: 'زیباترین دختر دنیا، به خودت افتخار کن' }, { emoji: '💪', text: 'قوی‌ترینی، می‌دونم که می‌تونی' }, { emoji: '🌙', text: 'مثل ماه، همیشه درخشان و زیبا' }, { emoji: '✨', text: 'تو خاص‌ترینی، هیچوقت فراموش نکن' }, { emoji: '💗', text: 'دوستت دارم، همیشه و تا ابد' }, { emoji: '🌺', text: 'کنارتم تا همیشه، بهت افتخار میکنم' }, { emoji: '🌟', text: 'تو ستاره‌ی زندگی منی، بدرخش' }, { emoji: '💖', text: 'هر روزت پر از عشق و آرامش' }];
             const idx = cycleDay <= 5 ? 0 : cycleDay <= 12 ? 1 : cycleDay <= 20 ? 2 : 3;
             const msg = msgs[idx % msgs.length];
             motivationElement.innerHTML = `<span class="emoji">${msg.emoji}</span> ${msg.text}`;
@@ -1743,11 +1159,9 @@
 
         function updateCycleInfo() {
             const display = document.getElementById('avgCycleDisplay');
-
             dbClient.getPeriods().then(data => {
                 const history = data.map(item => item.period_date);
                 const avg = calculateAverageCycle(history);
-
                 if (history.length < 2) {
                     display.textContent = `${DEFAULT_CYCLE} روز (پیش‌فرض)`;
                     display.style.fontSize = '14px';
@@ -1770,19 +1184,15 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             document.getElementById('lastPeriodDateShamsi').value = `${persianYear}-${month}-${day}`;
-
-            // حذف تاریخ قبلی
             dbClient.getPeriods().then(data => {
                 const item = data.find(p => p.period_date === dateStr);
                 if (item) {
                     const id = data.indexOf(item) + 1;
-                    dbClient.deletePeriod(id).then(() => {
-                        loadPeriods();
+                    dbClient.deletePeriod(id).then(() => { loadPeriods();
                         updateCycleInfo();
-                    });
+                        loadBadgeCounts(); });
                 }
             });
-
             document.getElementById('lastPeriodDateShamsi').focus();
             document.getElementById('lastPeriodDateShamsi').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -1791,7 +1201,6 @@
             document.getElementById('periodSettingsOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
             loadPeriods();
-
             const now = new Date();
             const persianYear = now.getFullYear() - 621;
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -1803,63 +1212,38 @@
             document.getElementById('periodSettingsOverlay').classList.remove('active');
             document.body.style.overflow = '';
         }
-
         document.getElementById('periodSettingsOverlay').addEventListener('click', function(e) {
             if (e.target === this) closePeriodSettings();
         });
 
-        // =============================================
-        // توضیحات بیشتر
-        // =============================================
         async function openPeriodInfo() {
             try {
                 const data = await dbClient.getPeriods();
                 const history = data.map(item => item.period_date);
-
-                if (history.length === 0) {
-                    alert('💕 اول تاریخ رو تنظیم کن تا بتونم بهت بگم');
-                    return;
-                }
-
+                if (history.length === 0) { alert('💕 اول تاریخ رو تنظیم کن تا بتونم بهت بگم'); return; }
                 const cycleLength = calculateAverageCycle(history) || DEFAULT_CYCLE;
-
                 const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
                 const diffTime = today - lastDate;
                 const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
                 let cycleDay = (daysSince % cycleLength) + 1;
                 if (cycleDay > cycleLength) cycleDay = 1;
                 let daysUntil = cycleLength - cycleDay;
                 if (daysUntil < 0) daysUntil = 0;
-
-                let status = '';
-                let emoji = '';
-                if (cycleDay <= 5) {
-                    status = 'روزهای پریود 🌸';
-                    emoji = '🌙';
-                } else if (cycleDay <= 9) {
-                    status = 'روزهای انرژی ✨';
-                    emoji = '🌿';
-                } else if (cycleDay >= Math.floor(cycleLength / 2) - 2 && cycleDay <= Math.floor(cycleLength / 2) + 2) {
-                    status = 'نزدیک تخمک‌گزاری 🌺';
-                    emoji = '💖';
-                } else if (cycleDay >= cycleLength - 5) {
-                    status = 'نزدیک پریود 🌙';
-                    emoji = '🌊';
-                } else {
-                    status = 'روزهای معمولی 🌸';
-                    emoji = '💕';
-                }
-
+                let status = '',
+                    emoji = '';
+                if (cycleDay <= 5) { status = 'روزهای پریود 🌸';
+                    emoji = '🌙'; } else if (cycleDay <= 9) { status = 'روزهای انرژی ✨';
+                    emoji = '🌿'; } else if (cycleDay >= Math.floor(cycleLength / 2) - 2 && cycleDay <= Math.floor(cycleLength / 2) + 2) { status = 'نزدیک تخمک‌گزاری 🌺';
+                    emoji = '💖'; } else if (cycleDay >= cycleLength - 5) { status = 'نزدیک پریود 🌙';
+                    emoji = '🌊'; } else { status = 'روزهای معمولی 🌸';
+                    emoji = '💕'; }
                 const ovulationDay = Math.floor(cycleLength / 2);
                 const ovulationStart = ovulationDay - 2;
                 const ovulationEnd = ovulationDay + 2;
                 const pmsStart = cycleLength - 5;
                 const avgCycle = calculateAverageCycle(history);
-
                 document.getElementById('infoCycleDay').textContent = `${cycleDay} از ${cycleLength} روز`;
                 document.getElementById('infoStatus').innerHTML = `${emoji} ${status}`;
                 document.getElementById('infoDaysUntil').textContent = `${daysUntil} روز`;
@@ -1869,27 +1253,92 @@
                     `از روز ${pmsStart} به بعد (${cycleDay >= pmsStart ? '🌙 الان در این بازه هستی!' : '⚠️ هنوز نرسیده'})`;
                 document.getElementById('infoAvgCycle').textContent =
                     avgCycle ? `${avgCycle} روز (بر اساس ${history.length} تاریخ)` : 'هنوز داده کافی نیست';
-
                 document.getElementById('periodInfoOverlay').classList.add('active');
                 document.body.style.overflow = 'hidden';
-            } catch (error) {
-                alert('❌ خطا: ' + error.message);
-            }
+            } catch (error) { alert('❌ خطا: ' + error.message); }
         }
 
         function closePeriodInfo() {
             document.getElementById('periodInfoOverlay').classList.remove('active');
             document.body.style.overflow = '';
         }
-
         document.getElementById('periodInfoOverlay').addEventListener('click', function(e) {
             if (e.target === this) closePeriodInfo();
         });
 
-        // =============================================
-        // شمارشگر زمان
-        // =============================================
+        async function loadBadgeCounts() {
+            try {
+                const response = await fetch(SHEET_API_URL);
+                if (!response.ok) throw new Error('خطا در دریافت داده‌ها');
+                const allData = await response.json();
+                const counts = {};
+                allData.forEach(row => { const type = row.type; if (type) { counts[type] = (counts[type] || 0) + 1; } });
+
+                function updateBadge(selector, count) {
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        const badge = element.querySelector('.badge');
+                        if (badge) {
+                            badge.textContent = count || 0;
+                            badge.style.display = (count && count > 0) ? 'inline-block' : 'none';
+                        }
+                    }
+                }
+                updateBadge('a.card[href="#"]:nth-of-type(1)', counts['message']);
+                updateBadge('a.card[href="#"]:nth-of-type(3)', counts['memory']);
+                const secretCount = (counts['message'] || 0) + (counts['memory'] || 0) + (counts['secret'] || 0) + (counts[
+                    'crazy'] || 0);
+                updateBadge('a.card[href="secret/index.html?v=1"]', secretCount);
+            } catch (error) { console.error('خطا در دریافت تعداد:', error); }
+        }
+
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakes');
+            const emojis = ['❄', '❅', '❆', '✦'];
+            for (let i = 0; i < 60; i++) {
+                const flake = document.createElement('span');
+                flake.className = 'snowflake';
+                flake.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                flake.style.left = Math.random() * 100 + '%';
+                flake.style.fontSize = (6 + Math.random() * 14) + 'px';
+                flake.style.animationDuration = (8 + Math.random() * 12) + 's';
+                flake.style.animationDelay = (Math.random() * 15) + 's';
+                flake.style.opacity = 0.3 + Math.random() * 0.5;
+                container.appendChild(flake);
+            }
+        }
+        createSnowflakes();
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            body.classList.toggle('night-mode');
+            if (body.classList.contains('night-mode')) {
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'night');
+            } else {
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'day');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            if (savedTheme === 'night') { body.classList.add('night-mode');
+                btn.textContent = '☀️'; } else { body.classList.remove('night-mode');
+                btn.textContent = '🌙'; }
+        }
+
+        function enter() { openPasswordModal(); }
+
         const start = new Date("2023-03-06T23:00:00");
+
+        function toPersian(num) {
+            const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return num.toString().split('').map(d => persianNumbers[parseInt(d)] || d).join('');
+        }
 
         function updateCounter() {
             let diff = Date.now() - start.getTime();
@@ -1900,30 +1349,21 @@
             let minutes = Math.floor(diff / 60000);
             diff %= 60000;
             let seconds = Math.floor(diff / 1000);
-
-            document.getElementById("counter").innerHTML =
-                `<b>⏳ از شبی که سرنوشت اسم تو را وارد زندگی من کرد...</b>
-                 <br>
-                 <span style="font-size:32px">❤️ ${days} روز</span>
-                 <br>
-                 🕒 ${hours} ساعت &nbsp; ⏰ ${minutes} دقیقه &nbsp; ✨ ${seconds} ثانیه
-                 <br>
-                 میگذره
-                 <br><br>
-                 📅 ۱۵ اسفند ۱۴۰۱ - ساعت ۲۳:۰۰
-                 <br>
-                 <i>و هنوز داستان ما ادامه داره... 🤍</i>`;
+            const daysDisplay = document.getElementById('daysDisplay');
+            const hoursDisplay = document.getElementById('hoursDisplay');
+            const minutesDisplay = document.getElementById('minutesDisplay');
+            const secondsDisplay = document.getElementById('secondsDisplay');
+            if (daysDisplay) daysDisplay.textContent = toPersian(days);
+            if (hoursDisplay) hoursDisplay.textContent = toPersian(hours);
+            if (minutesDisplay) minutesDisplay.textContent = toPersian(minutes);
+            if (secondsDisplay) secondsDisplay.textContent = toPersian(seconds);
         }
-
         updateCounter();
         setInterval(updateCounter, 1000);
 
-        // =============================================
-        // اجرای اولیه
-        // =============================================
-        loadPeriods();
+        document.addEventListener('DOMContentLoaded', function() { loadTheme();
+            loadPeriods();
+            loadBadgeCounts(); });
     </script>
-
 </body>
-
 </html>
