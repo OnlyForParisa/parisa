@@ -8,7 +8,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <style>
-        /* ... تمام استایل‌های قبلی یکسان ... */
+        /* ... تمام استایل‌های قبلی ... */
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
         * { box-sizing: border-box; font-family: Vazirmatn, sans-serif; margin: 0; padding: 0; }
         html, body { width: 100%; height: 100%; overflow: hidden; }
@@ -413,6 +413,7 @@
             transition: all 3.5s ease-in-out;
         }
 
+        /* ===== باکس پریودی ===== */
         .period-card {
             background: linear-gradient(145deg, rgba(255,245,247,0.9), rgba(255,232,238,0.75));
             backdrop-filter: blur(15px);
@@ -464,38 +465,186 @@
         }
         .period-card .more-info-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.03); }
 
+        /* ===== دکمه‌های وضعیت پریود ===== */
+        .period-status-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .period-status-buttons button {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #fff;
+            flex: 1;
+            min-width: 100px;
+        }
+        .btn-period-started {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        .btn-period-started:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
+        }
+        .btn-period-not-started {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+        .btn-period-not-started:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(243, 156, 18, 0.4);
+        }
+        .btn-period-check {
+            background: linear-gradient(135deg, #3498db, #5dade2);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        .btn-period-check:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(52, 152, 219, 0.4);
+        }
+
+        /* ===== تنظیمات ایمیل ===== */
+        .email-settings {
+            background: rgba(255,255,255,0.3);
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        body.night-mode .email-settings {
+            background: rgba(30,40,80,0.3);
+            border-color: rgba(100,180,255,0.1);
+        }
+        .email-settings .email-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #b03060 !important;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        body.night-mode .email-settings .email-title {
+            color: #d4e4ff !important;
+        }
+        .email-settings .email-input-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .email-settings .email-input-group input {
+            flex: 1;
+            min-width: 120px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 2px solid rgba(176,48,96,0.15);
+            background: rgba(255,255,255,0.6);
+            color: #333;
+            font-size: 13px;
+            outline: none;
+            transition: .3s;
+            font-family: Vazirmatn, sans-serif;
+        }
+        body.night-mode .email-settings .email-input-group input {
+            background: rgba(20,30,60,0.4);
+            border-color: rgba(100,180,255,0.15);
+            color: #c8d8f0;
+        }
+        .email-settings .email-input-group input:focus {
+            border-color: #b03060;
+            box-shadow: 0 0 20px rgba(176,48,96,0.1);
+        }
+        body.night-mode .email-settings .email-input-group input:focus {
+            border-color: #4488cc;
+            box-shadow: 0 0 20px rgba(68,136,204,0.1);
+        }
+        .email-settings .btn-save-email {
+            padding: 8px 18px;
+            border-radius: 12px;
+            border: none;
+            background: #b03060;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+        }
+        body.night-mode .email-settings .btn-save-email {
+            background: #335588;
+        }
+        .email-settings .btn-save-email:hover {
+            transform: scale(1.05);
+        }
+        .email-settings .email-hint {
+            font-size: 11px;
+            color: #888 !important;
+            margin-top: 6px;
+            opacity: 0.7;
+        }
+        body.night-mode .email-settings .email-hint {
+            color: #8899bb !important;
+        }
+
+        /* ===== ۶ باکس منو (برجسته و بزرگ‌تر) ===== */
         .cards { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
+            gap: 16px; 
             transition: all 3.5s ease-in-out;
         }
         .card {
             text-decoration: none; 
             color: #444 !important;
-            background: rgba(255,255,255,.55); 
-            padding: 20px 8px; 
+            background: linear-gradient(145deg, rgba(255,245,247,0.85), rgba(255,232,238,0.65));
+            padding: 22px 12px; 
             border-radius: 22px;
-            font-size: 30px; 
+            font-size: 34px; 
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 20px rgba(0,0,0,.06);
+            box-shadow: 0 8px 25px rgba(176,48,96,0.08), 0 4px 12px rgba(176,48,96,0.04);
             transition: all 0.3s ease-in-out;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center;
-            min-height: 80px; 
+            min-height: 100px; 
             position: relative;
             cursor: pointer;
             will-change: transform;
+            border: 1px solid rgba(255,182,193,0.15);
         }
-        .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
-        .card span { display: block; margin-top: 5px; font-size: 12px; color: #888 !important; transition: all 3.5s ease-in-out; }
+        .card:hover { 
+            transform: translateY(-6px) scale(1.02); 
+            box-shadow: 0 16px 40px rgba(176,48,96,0.12), 0 6px 20px rgba(176,48,96,0.06);
+            border-color: rgba(255,182,193,0.3);
+        }
+        body.night-mode .card {
+            background: linear-gradient(145deg, rgba(30,40,80,0.6), rgba(20,30,60,0.4));
+            border-color: rgba(100,180,255,0.08);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        body.night-mode .card:hover {
+            box-shadow: 0 16px 40px rgba(0,100,255,0.08);
+            border-color: rgba(100,180,255,0.15);
+        }
+        .card span { 
+            display: block; 
+            margin-top: 8px; 
+            font-size: 13px; 
+            color: #888 !important; 
+            transition: all 3.5s ease-in-out;
+        }
         .card .badge { 
-            font-size: 10px; 
-            padding: 1px 7px; 
-            min-width: 16px; 
-            margin-right: 4px;
+            font-size: 11px; 
+            padding: 2px 9px; 
+            min-width: 20px; 
+            margin-right: 6px;
             transition: all 0.3s ease;
         }
         .card .badge.zero {
@@ -647,9 +796,31 @@
         .history-item .actions .delete-btn { color: #e74c3c !important; }
         .history-item .actions .delete-btn:hover { background: rgba(231,76,60,0.1); }
 
-        .cycle-info { margin-top: 12px; padding: 12px; background: rgba(255,245,247,0.5); border-radius: 14px; border: 1px solid rgba(255,182,193,0.2); text-align: center; }
-        .cycle-info .label { font-size: 12px; color: #888 !important; }
-        .cycle-info .value { font-size: 18px; font-weight: 700; color: #b03060 !important; margin-top: 2px; }
+        .cycle-info { 
+            margin-top: 12px; 
+            padding: 12px; 
+            background: rgba(255,245,247,0.5); 
+            border-radius: 14px; 
+            border: 1px solid rgba(255,182,193,0.2); 
+            text-align: center; 
+        }
+        .cycle-info .label { 
+            font-size: 12px; 
+            color: #555 !important; 
+            font-weight: 600; 
+        }
+        body.night-mode .cycle-info .label { 
+            color: #b0c4e8 !important; 
+        }
+        .cycle-info .value { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: #b03060 !important; 
+            margin-top: 2px; 
+        }
+        body.night-mode .cycle-info .value { 
+            color: #d4e4ff !important; 
+        }
 
         .info-item { text-align: right; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
         .info-item .label { font-size: 13px; color: #888 !important; font-weight: 600; }
@@ -701,9 +872,14 @@
         @media (max-width: 768px) {
             .menu-grid { grid-template-columns: 1fr; gap: 15px; }
             .period-card .days-number { font-size: 40px; }
-            .cards { gap: 10px; grid-template-columns: 1fr 1fr; }
-            .card { padding: 15px 6px; font-size: 26px; min-height: 70px; }
-            .card span { font-size: 11px; }
+            .cards { gap: 12px; }
+            .card { 
+                padding: 16px 8px; 
+                font-size: 28px; 
+                min-height: 80px; 
+            }
+            .card span { font-size: 12px; }
+            .card .badge { font-size: 10px; padding: 1px 7px; min-width: 16px; }
             .password-modal { padding: 30px 20px 25px; }
             .password-modal .love-words .sentence { font-size: 18px; }
             .container { width: 96%; max-width: 520px; }
@@ -717,14 +893,20 @@
             .ecg-heart-icon { font-size: 17px; }
             .theme-btn { width: 45px; height: 45px; font-size: 22px; bottom: 15px; right: 15px; }
             .moon { width: 60px; height: 60px; right: 15px; top: 20px !important; }
+            .period-status-buttons button { font-size: 12px; padding: 6px 12px; min-width: 80px; }
+            .email-settings .email-input-group input { font-size: 12px; padding: 6px 10px; }
         }
         @media (max-width: 480px) {
             .period-card .days-number { font-size: 34px; }
             .period-card .period-stats .stat-item { font-size: 11px; }
             .period-card .period-stats .stat-item .stat-number { font-size: 17px; }
-            .cards { gap: 8px; grid-template-columns: 1fr 1fr; }
-            .card { padding: 12px 4px; font-size: 22px; min-height: 60px; }
-            .card span { font-size: 10px; }
+            .cards { gap: 10px; }
+            .card { 
+                padding: 14px 6px; 
+                font-size: 24px; 
+                min-height: 70px; 
+            }
+            .card span { font-size: 11px; }
             .glass { padding: 14px 16px; max-width: 320px; }
             #counter .days-number { font-size: 26px; }
             #counter .days-label-text { font-size: 14px; }
@@ -799,6 +981,22 @@
                 <div class="history-title"><span>📋 تاریخ‌های ثبت‌شده</span><span class="count" id="historyCount">۰</span></div>
                 <div id="historyItems">در حال بارگذاری...</div>
             </div>
+            
+            <div class="period-status-buttons">
+                <button class="btn-period-started" onclick="handlePeriodStatus('started')">✅ پریود شدم</button>
+                <button class="btn-period-not-started" onclick="handlePeriodStatus('not_started')">❌ پریود نشدم</button>
+            </div>
+            
+            <div class="email-settings">
+                <div class="email-title">📧 تنظیمات ایمیل یادآوری</div>
+                <div class="email-input-group">
+                    <input type="email" id="emailPrisa" placeholder="ایمیل پریسا" />
+                    <input type="email" id="emailPartner" placeholder="ایمیل پارتنر" />
+                    <button class="btn-save-email" onclick="saveEmails()">💾 ذخیره</button>
+                </div>
+                <div class="email-hint">📌 ۲ روز مانده به پریود، ایمیل یادآوری ارسال می‌شود.</div>
+            </div>
+            
             <div class="settings-buttons">
                 <button class="btn-close-settings" onclick="closePeriodSettings()">بی‌خیال</button>
                 <button class="btn-save" onclick="savePeriodDate()">ذخیره کن 💕</button>
@@ -1017,18 +1215,15 @@
             const currentCount = counts[type] || 0;
             
             if (currentCount > 0) {
-                // صفر کردن Badge (بدون اعلان در صفحه دوم)
                 counts[type] = 0;
                 saveBadgeCounts(counts);
                 updateBadgeUI(type, 0);
             }
-            
-            // اجازه ادامه لینک
             return true;
         }
         
         // =============================================
-        // سیستم اعلان (فقط برای صفحه اول)
+        // سیستم اعلان
         // =============================================
         let notificationTimeout = null;
         
@@ -1059,7 +1254,6 @@
                 updateBadgeUI(type, counts[type] || 0);
             });
             
-            // نمایش اعلان برای بخش‌های جدید (فقط در صفحه اول)
             let hasNew = false;
             let newMessages = [];
             const nameMap = {
@@ -1078,7 +1272,6 @@
                 }
             });
             
-            // فقط اگر صفحه اول (welcome) نمایش داده میشه و مورد جدید هست
             if (hasNew && document.getElementById('welcome').style.display !== 'none') {
                 setTimeout(() => {
                     showNotification(`🔔 ${newMessages.join(' • ')}`);
@@ -1245,6 +1438,9 @@
             if (e.target === this && !isLocked) closePasswordModal();
         });
 
+        // =============================================
+        // تبدیل تاریخ شمسی به میلادی
+        // =============================================
         function shamsiToGregorian(shamsiDate) {
             const parts = shamsiDate.split('-').map(Number);
             if (parts.length !== 3) return null;
@@ -1264,21 +1460,37 @@
 
         const DEFAULT_CYCLE = 28;
 
+        // =============================================
+        // ذخیره و مدیریت تاریخ پریود
+        // =============================================
         async function savePeriodDate() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             const shamsiDate = dateInput.value;
             if (!shamsiDate) { alert('لطفاً یک تاریخ رو انتخاب کن عزیزم 💕'); return; }
+            
             const gregorianDate = shamsiToGregorian(shamsiDate);
             if (!gregorianDate) { alert('تاریخ رو درست وارد کن عزیزم 💕'); return; }
+            
             const dateStr = gregorianDate.toISOString().split('T')[0];
+            
             try {
+                const existingData = await dbClient.getPeriods();
+                const exists = existingData.some(item => item.period_date === dateStr);
+                
+                if (exists) {
+                    alert('⚠️ این تاریخ قبلاً ثبت شده!');
+                    return;
+                }
+                
                 await dbClient.savePeriod(dateStr);
                 closePeriodSettings();
                 await loadPeriods();
                 updateCycleInfo();
                 loadBadgeCounts();
                 showNotification('🌸 تاریخ با موفقیت ذخیره شد!');
-            } catch (error) { alert('❌ خطا در ذخیره تاریخ: ' + error.message); }
+            } catch (error) { 
+                alert('❌ خطا در ذخیره تاریخ: ' + error.message); 
+            }
         }
 
         async function deletePeriodDate(id) {
@@ -1299,8 +1511,13 @@
                 const container = document.getElementById('historyItems');
                 const count = document.getElementById('historyCount');
                 count.textContent = history.length;
-                if (history.length === 0) { container.innerHTML = 'هنوز تاریخی ثبت نشده';
-                    updatePeriodDisplay(history); return; }
+                
+                if (history.length === 0) { 
+                    container.innerHTML = 'هنوز تاریخی ثبت نشده';
+                    updatePeriodDisplay(history); 
+                    return; 
+                }
+                
                 let html = '';
                 const sorted = [...history].reverse();
                 sorted.forEach((date) => {
@@ -1322,23 +1539,43 @@
             }
         }
 
+        // =============================================
+        // محاسبات سیکل
+        // =============================================
         function calculateAverageCycle(history) {
             if (history.length < 2) return null;
             const dates = history.map(d => new Date(d + 'T00:00:00')).sort((a, b) => a - b);
-            let totalDays = 0,
-                count = 0;
+            let totalDays = 0, count = 0;
             for (let i = 1; i < dates.length; i++) {
                 const diff = Math.floor((dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24));
-                if (diff > 20 && diff < 45) { totalDays += diff;
-                    count++; }
+                if (diff > 20 && diff < 45) { totalDays += diff; count++; }
             }
             return count > 0 ? Math.round(totalDays / count) : null;
+        }
+
+        function getCycleDayAndDaysUntil(history, cycleLength) {
+            if (!history || history.length === 0) return { cycleDay: 0, daysUntil: 0 };
+            
+            const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            const diffTime = today - lastDate;
+            const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            let cycleDay = (daysSince % cycleLength) + 1;
+            if (cycleDay > cycleLength) cycleDay = 1;
+            let daysUntil = cycleLength - cycleDay;
+            if (daysUntil < 0) daysUntil = 0;
+            
+            return { cycleDay, daysUntil };
         }
 
         function updatePeriodDisplay(history) {
             const daysElement = document.getElementById('daysUntilPeriod');
             const daysLabel = document.getElementById('daysLabel');
             const motivationElement = document.getElementById('motivationText');
+            
             if (!history || history.length === 0) {
                 daysElement.textContent = '✨';
                 document.getElementById('moodStatus').textContent = '🌸';
@@ -1347,17 +1584,12 @@
                 daysLabel.innerHTML = `تا <span class="highlight">فرارسیدن روزهای نرم</span>`;
                 return;
             }
-            const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
+            
             const cycleLength = calculateAverageCycle(history) || DEFAULT_CYCLE;
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const diffTime = today - lastDate;
-            const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            let cycleDay = (daysSince % cycleLength) + 1;
-            if (cycleDay > cycleLength) cycleDay = 1;
-            let daysUntil = cycleLength - cycleDay;
-            if (daysUntil < 0) daysUntil = 0;
+            const { cycleDay, daysUntil } = getCycleDayAndDaysUntil(history, cycleLength);
+            
             daysElement.textContent = daysUntil;
+            
             let gradient;
             if (daysUntil <= 3 && daysUntil > 0) {
                 gradient = 'linear-gradient(135deg, #e74c3c, #ff6b6b)';
@@ -1372,14 +1604,27 @@
                 gradient = 'linear-gradient(135deg, #b03060, #d44a7a)';
                 daysLabel.innerHTML = `تا <span class="highlight">فرارسیدن روزهای نرم</span> ✨`;
             }
+            
             daysElement.style.background = gradient;
             daysElement.style.webkitBackgroundClip = 'text';
             daysElement.style.webkitTextFillColor = 'transparent';
             daysElement.style.backgroundClip = 'text';
+            
             const mood = getMoodStatus(cycleDay, cycleLength);
             document.getElementById('moodStatus').textContent = mood.emoji;
             document.getElementById('moodText').textContent = mood.text;
-            const msgs = [{ emoji: '💕', text: 'همیشه کنارتم، قوی باش' }, { emoji: '🌸', text: 'زیباترین دختر دنیا، به خودت افتخار کن' }, { emoji: '💪', text: 'قوی‌ترینی، می‌دونم که می‌تونی' }, { emoji: '🌙', text: 'مثل ماه، همیشه درخشان و زیبا' }, { emoji: '✨', text: 'تو خاص‌ترینی، هیچوقت فراموش نکن' }, { emoji: '💗', text: 'دوستت دارم، همیشه و تا ابد' }, { emoji: '🌺', text: 'کنارتم تا همیشه، بهت افتخار میکنم' }, { emoji: '🌟', text: 'تو ستاره‌ی زندگی منی، بدرخش' }, { emoji: '💖', text: 'هر روزت پر از عشق و آرامش' }];
+            
+            const msgs = [
+                { emoji: '💕', text: 'همیشه کنارتم، قوی باش' },
+                { emoji: '🌸', text: 'زیباترین دختر دنیا، به خودت افتخار کن' },
+                { emoji: '💪', text: 'قوی‌ترینی، می‌دونم که می‌تونی' },
+                { emoji: '🌙', text: 'مثل ماه، همیشه درخشان و زیبا' },
+                { emoji: '✨', text: 'تو خاص‌ترینی، هیچوقت فراموش نکن' },
+                { emoji: '💗', text: 'دوستت دارم، همیشه و تا ابد' },
+                { emoji: '🌺', text: 'کنارتم تا همیشه، بهت افتخار میکنم' },
+                { emoji: '🌟', text: 'تو ستاره‌ی زندگی منی، بدرخش' },
+                { emoji: '💖', text: 'هر روزت پر از عشق و آرامش' }
+            ];
             const idx = cycleDay <= 5 ? 0 : cycleDay <= 12 ? 1 : cycleDay <= 20 ? 2 : 3;
             const msg = msgs[idx % msgs.length];
             motivationElement.innerHTML = `<span class="emoji">${msg.emoji}</span> ${msg.text}`;
@@ -1414,29 +1659,120 @@
             });
         }
 
+        // =============================================
+        // ویرایش تاریخ
+        // =============================================
         function editPeriodDate(dateStr) {
             const d = new Date(dateStr + 'T00:00:00');
             const persianYear = d.getFullYear() - 621;
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             document.getElementById('lastPeriodDateShamsi').value = `${persianYear}-${month}-${day}`;
+            
             dbClient.getPeriods().then(data => {
                 const item = data.find(p => p.period_date === dateStr);
                 if (item) {
                     const id = data.indexOf(item) + 1;
-                    dbClient.deletePeriod(id).then(() => { loadPeriods();
+                    dbClient.deletePeriod(id).then(() => { 
+                        loadPeriods();
                         updateCycleInfo();
-                        loadBadgeCounts(); });
+                        loadBadgeCounts(); 
+                    });
                 }
             });
             document.getElementById('lastPeriodDateShamsi').focus();
             document.getElementById('lastPeriodDateShamsi').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        // =============================================
+        // وضعیت پریود (دکمه‌های جدید)
+        // =============================================
+        async function handlePeriodStatus(status) {
+            const now = new Date();
+            const persianYear = now.getFullYear() - 621;
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayShamsi = `${persianYear}-${month}-${day}`;
+            
+            try {
+                if (status === 'started') {
+                    const gregorianDate = shamsiToGregorian(todayShamsi);
+                    const dateStr = gregorianDate.toISOString().split('T')[0];
+                    
+                    const existingData = await dbClient.getPeriods();
+                    const exists = existingData.some(item => item.period_date === dateStr);
+                    
+                    if (!exists) {
+                        await dbClient.savePeriod(dateStr);
+                        showNotification('✅ پریود امروز ثبت شد!');
+                    } else {
+                        showNotification('⚠️ تاریخ امروز قبلاً ثبت شده!');
+                    }
+                    
+                    const partnerEmail = localStorage.getItem('partner_email');
+                    if (partnerEmail) {
+                        // ارسال ایمیل از طریق Apps Script با استفاده از fetch
+                        try {
+                            await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+                                method: 'POST',
+                                mode: 'no-cors',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: partnerEmail,
+                                    subject: '📋 وضعیت پریسا',
+                                    body: `پریسا امروز (${todayShamsi}) پریود شد.\n\nلطفاً با محبت و آرامش بیشتری باهاش رفتار کن. ❤️`
+                                })
+                            });
+                        } catch(e) {}
+                    }
+                    
+                } else if (status === 'not_started') {
+                    showNotification('⏳ اگر پریود نشدی، لطفاً تاریخ جدید ثبت کن.');
+                    openPeriodSettings();
+                }
+                
+                await loadPeriods();
+                updateCycleInfo();
+                loadBadgeCounts();
+            } catch (error) {
+                alert('❌ خطا: ' + error.message);
+            }
+        }
+
+        // =============================================
+        // تنظیمات ایمیل (ذخیره در localStorage)
+        // =============================================
+        function saveEmails() {
+            const prisaEmail = document.getElementById('emailPrisa').value.trim();
+            const partnerEmail = document.getElementById('emailPartner').value.trim();
+            
+            if (prisaEmail) {
+                localStorage.setItem('prisa_email', prisaEmail);
+            }
+            if (partnerEmail) {
+                localStorage.setItem('partner_email', partnerEmail);
+            }
+            
+            showNotification('📧 ایمیل‌ها با موفقیت ذخیره شدند!');
+        }
+
+        function loadEmails() {
+            const prisaEmail = localStorage.getItem('prisa_email') || '';
+            const partnerEmail = localStorage.getItem('partner_email') || '';
+            
+            document.getElementById('emailPrisa').value = prisaEmail;
+            document.getElementById('emailPartner').value = partnerEmail;
+        }
+
+        // =============================================
+        // باز و بسته کردن مودال‌ها
+        // =============================================
         function openPeriodSettings() {
             document.getElementById('periodSettingsOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
             loadPeriods();
+            loadEmails();
+            
             const now = new Date();
             const persianYear = now.getFullYear() - 621;
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -1448,6 +1784,7 @@
             document.getElementById('periodSettingsOverlay').classList.remove('active');
             document.body.style.overflow = '';
         }
+        
         document.getElementById('periodSettingsOverlay').addEventListener('click', function(e) {
             if (e.target === this) closePeriodSettings();
         });
@@ -1457,29 +1794,25 @@
                 const data = await dbClient.getPeriods();
                 const history = data.map(item => item.period_date);
                 if (history.length === 0) { alert('💕 اول تاریخ رو تنظیم کن تا بتونم بهت بگم'); return; }
+                
                 const cycleLength = calculateAverageCycle(history) || DEFAULT_CYCLE;
-                const lastDate = new Date(history[history.length - 1] + 'T00:00:00');
-                const now = new Date();
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const diffTime = today - lastDate;
-                const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                let cycleDay = (daysSince % cycleLength) + 1;
-                if (cycleDay > cycleLength) cycleDay = 1;
-                let daysUntil = cycleLength - cycleDay;
-                if (daysUntil < 0) daysUntil = 0;
-                let status = '',
-                    emoji = '';
-                if (cycleDay <= 5) { status = 'روزهای پریود 🌸';
-                    emoji = '🌙'; } else if (cycleDay <= 9) { status = 'روزهای انرژی ✨';
-                    emoji = '🌿'; } else if (cycleDay >= Math.floor(cycleLength / 2) - 2 && cycleDay <= Math.floor(cycleLength / 2) + 2) { status = 'نزدیک تخمک‌گزاری 🌺';
-                    emoji = '💖'; } else if (cycleDay >= cycleLength - 5) { status = 'نزدیک پریود 🌙';
-                    emoji = '🌊'; } else { status = 'روزهای معمولی 🌸';
-                    emoji = '💕'; }
+                const { cycleDay, daysUntil } = getCycleDayAndDaysUntil(history, cycleLength);
+                
+                let status = '', emoji = '';
+                if (cycleDay <= 5) { status = 'روزهای پریود 🌸'; emoji = '🌙'; } 
+                else if (cycleDay <= 9) { status = 'روزهای انرژی ✨'; emoji = '🌿'; } 
+                else if (cycleDay >= Math.floor(cycleLength / 2) - 2 && cycleDay <= Math.floor(cycleLength / 2) + 2) { 
+                    status = 'نزدیک تخمک‌گزاری 🌺'; emoji = '💖'; 
+                } else if (cycleDay >= cycleLength - 5) { 
+                    status = 'نزدیک پریود 🌙'; emoji = '🌊'; 
+                } else { status = 'روزهای معمولی 🌸'; emoji = '💕'; }
+                
                 const ovulationDay = Math.floor(cycleLength / 2);
                 const ovulationStart = ovulationDay - 2;
                 const ovulationEnd = ovulationDay + 2;
                 const pmsStart = cycleLength - 5;
                 const avgCycle = calculateAverageCycle(history);
+                
                 document.getElementById('infoCycleDay').textContent = `${cycleDay} از ${cycleLength} روز`;
                 document.getElementById('infoStatus').innerHTML = `${emoji} ${status}`;
                 document.getElementById('infoDaysUntil').textContent = `${daysUntil} روز`;
@@ -1489,9 +1822,12 @@
                     `از روز ${pmsStart} به بعد (${cycleDay >= pmsStart ? '🌙 الان در این بازه هستی!' : '⚠️ هنوز نرسیده'})`;
                 document.getElementById('infoAvgCycle').textContent =
                     avgCycle ? `${avgCycle} روز (بر اساس ${history.length} تاریخ)` : 'هنوز داده کافی نیست';
+                    
                 document.getElementById('periodInfoOverlay').classList.add('active');
                 document.body.style.overflow = 'hidden';
-            } catch (error) { alert('❌ خطا: ' + error.message); }
+            } catch (error) { 
+                alert('❌ خطا: ' + error.message); 
+            }
         }
 
         function closePeriodInfo() {
@@ -1502,6 +1838,9 @@
             if (e.target === this) closePeriodInfo();
         });
 
+        // =============================================
+        // سیستم Badge
+        // =============================================
         async function loadBadgeCounts() {
             try {
                 const response = await fetch(SHEET_API_URL);
@@ -1531,6 +1870,9 @@
             }
         }
 
+        // =============================================
+        // برف
+        // =============================================
         function createSnowflakes() {
             const container = document.getElementById('snowflakes');
             const emojis = ['❄', '❅', '❆', '✦'];
@@ -1548,6 +1890,9 @@
         }
         createSnowflakes();
 
+        // =============================================
+        // تم شب/روز
+        // =============================================
         function toggleTheme() {
             const body = document.body;
             const btn = document.getElementById('themeToggle');
@@ -1572,6 +1917,9 @@
 
         function enter() { openPasswordModal(); }
 
+        // =============================================
+        // شمارشگر زمان
+        // =============================================
         const start = new Date("2023-03-06T23:00:00");
 
         function toPersian(num) {
@@ -1605,6 +1953,7 @@
             loadPeriods();
             loadBadgeCounts();
             loadAllBadges();
+            loadEmails();
         });
     </script>
 </body>
