@@ -200,11 +200,6 @@
             font-weight: 600;
             color: #b03060 !important;
         }
-        #counter .big-number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #b03060 !important;
-        }
 
         button {
             border: none;
@@ -860,7 +855,6 @@
             .container { width: 96%; max-width: 520px; }
             .badge { font-size: 10px; padding: 1px 6px; min-width: 16px; }
             .glass { padding: 16px 20px; max-width: 380px; }
-            #counter .big-number { font-size: 26px; }
             .theme-btn { width: 45px; height: 45px; font-size: 22px; bottom: 15px; right: 15px; }
             .moon { width: 60px; height: 60px; right: 15px; top: 20px !important; }
             .period-status-buttons button { font-size: 12px; padding: 6px 12px; min-width: 80px; }
@@ -884,7 +878,6 @@
             }
             .card span { font-size: 12px; }
             .glass { padding: 14px 16px; max-width: 320px; }
-            #counter .big-number { font-size: 22px; }
             .moon { width: 50px; height: 50px; right: 10px; top: 15px !important; }
         }
     </style>
@@ -1096,6 +1089,7 @@
         // =============================================
         // ===== تنظیمات Supabase =====
         // =============================================
+        // 🔑 این دو خط رو با اطلاعات خودتون عوض کنید:
         const SUPABASE_URL = 'https://zcossaztlqzznmhxuphx.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjb3NzYXp0bHF6em5taHh1cGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMDI4MDMsImV4cCI6MjEwMTY3ODgwM30.ahdN6aNQyyn2_5Q7PtUZD3yYl_xcncJ0GUSr0UetUJQ';
 
@@ -1117,7 +1111,7 @@
         // =============================================
 
         // ۱۵ اسفند ۱۴۰۱ = ۶ مارس ۲۰۲۳
-        const START_DATE = new Date(2023, 2, 6); // سال, ماه(۰=ژانویه), روز
+        const START_DATE = new Date(2023, 2, 6);
 
         function updateCounter() {
             try {
@@ -1141,77 +1135,55 @@
             }
         }
 
-        // هر ثانیه یکبار آپدیت کن
         setInterval(updateCounter, 1000);
-        updateCounter(); // اولین بار بلافاصله اجرا کن
+        updateCounter();
 
         console.log('✅ شمارشگر لحظه‌ای فعال شد!');
-        console.log('📅 تاریخ شروع: ۱۵ اسفند ۱۴۰۱');
 
         // =============================================
-        // ===== توابع قابل دسترس از HTML =====
+        // ===== سیستم رمز =====
         // =============================================
-        
-        window.toggleTheme = function() {
-            try {
-                const body = document.body;
-                const btn = document.getElementById('themeToggle');
-                body.classList.toggle('night-mode');
-                if (body.classList.contains('night-mode')) {
-                    if (btn) btn.textContent = '☀️';
-                    localStorage.setItem('theme', 'night');
-                } else {
-                    if (btn) btn.textContent = '🌙';
-                    localStorage.setItem('theme', 'day');
-                }
-            } catch (e) {
-                console.error('خطا در تغییر تم:', e);
-            }
-        };
-
-        window.enter = function() {
-            try {
-                openPasswordModal();
-            } catch (e) {
-                console.error('خطا در ورود:', e);
-            }
-        };
+        const CORRECT_PASSWORD = "7880";
+        let attempts = 3;
+        let isLocked = false;
+        let lockTimer = null;
+        let lockEndTime = null;
 
         // =============================================
-        // ===== dbClient با Supabase =====
+        // ===== dbClient با Supabase (بهینه‌شده) =====
         // =============================================
         const dbClient = {
             async getRowsByType(type) {
                 const { data, error } = await supabaseClient
                     .from('messages')
-                    .select('*')
+                    .select('id, type, title, content, date')
                     .eq('type', type)
                     .eq('is_deleted', false)
-                    .order('date', { ascending: false });
+                    .order('date', { ascending: false })
+                    .limit(100);
                 
                 if (error) throw new Error(error.message);
-                return data;
+                return data || [];
             },
 
             async saveRow(data) {
                 const { data: saved, error } = await supabaseClient
                     .from('messages')
                     .insert([data])
-                    .select();
+                    .select('id');
                 
                 if (error) throw new Error(error.message);
-                return saved[0];
+                return saved ? saved[0] : null;
             },
 
             async updateRow(id, updates) {
-                const { data, error } = await supabaseClient
+                const { error } = await supabaseClient
                     .from('messages')
                     .update(updates)
-                    .eq('id', id)
-                    .select();
+                    .eq('id', id);
                 
                 if (error) throw new Error(error.message);
-                return data[0];
+                return true;
             },
 
             async deleteRow(id) {
@@ -1229,34 +1201,57 @@
                 return data;
             },
 
+            // ===== توابع پریود (بهینه‌شده) =====
             async savePeriod(date) {
-                const { data, error } = await supabaseClient
-                    .from('period_dates')
-                    .insert([{ period_date: date }])
-                    .select();
-                
-                if (error) throw new Error(error.message);
-                return data[0];
+                try {
+                    const cleanDate = date.split('T')[0];
+                    console.log('📅 ذخیره تاریخ:', cleanDate);
+                    
+                    const { error } = await supabaseClient
+                        .from('period_dates')
+                        .insert([{ period_date: cleanDate }]);
+                    
+                    if (error) throw new Error(error.message);
+                    console.log('✅ تاریخ ذخیره شد');
+                    return { period_date: cleanDate };
+                } catch (error) {
+                    console.error('❌ خطا در savePeriod:', error);
+                    throw error;
+                }
             },
 
             async getPeriods() {
-                const { data, error } = await supabaseClient
-                    .from('period_dates')
-                    .select('id, period_date')
-                    .order('period_date', { ascending: false });
-                
-                if (error) throw new Error(error.message);
-                return data;
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('period_dates')
+                        .select('id, period_date')
+                        .order('period_date', { ascending: false })
+                        .limit(50);
+                    
+                    if (error) throw new Error(error.message);
+                    return data || [];
+                } catch (error) {
+                    console.error('❌ خطا در getPeriods:', error);
+                    return [];
+                }
             },
 
             async deletePeriod(id) {
-                const { error } = await supabaseClient
-                    .from('period_dates')
-                    .delete()
-                    .eq('id', id);
-                
-                if (error) throw new Error(error.message);
-                return true;
+                try {
+                    console.log('🗑️ در حال حذف:', id);
+                    
+                    const { error } = await supabaseClient
+                        .from('period_dates')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw new Error(error.message);
+                    console.log('✅ حذف شد');
+                    return true;
+                } catch (error) {
+                    console.error('❌ خطا در deletePeriod:', error);
+                    throw error;
+                }
             },
 
             async saveEmails(prisaEmail, partnerEmail) {
@@ -1305,7 +1300,6 @@
         // =============================================
         function getTodayShamsi() {
             const now = new Date();
-            // تبدیل ساده برای نمایش
             const year = now.getFullYear() - 621;
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
@@ -1326,10 +1320,87 @@
                 window.notificationTimeout = setTimeout(() => {
                     notif.classList.remove('show');
                     notif.classList.add('hide');
-                }, 4000);
+                }, 3000);
             } catch (e) {
                 console.error('خطا در نمایش نوتیفیکیشن:', e);
             }
+        }
+
+        function showLockMessage() {
+            const errorDiv = document.getElementById('modalError');
+            if (!errorDiv) return;
+            errorDiv.className = 'modal-error locked';
+            if (lockEndTime) {
+                const remaining = Math.ceil((lockEndTime - Date.now()) / 1000);
+                const mins = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                errorDiv.textContent = `🔒 صبر کن عزیزم... ${mins} دقیقه و ${secs} ثانیه دیگه`;
+            } else {
+                errorDiv.textContent = '🔒 ۵ دقیقه دیگه دوباره امتحان کن';
+            }
+            const overlay = document.getElementById('passwordOverlay');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function lockSystem() {
+            isLocked = true;
+            lockEndTime = Date.now() + 5 * 60 * 1000;
+            const enterBtn = document.getElementById('enterBtn');
+            if (enterBtn) enterBtn.disabled = true;
+            const input = document.getElementById('modalPassword');
+            if (input) input.disabled = true;
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            if (confirmBtn) confirmBtn.disabled = true;
+            if (cancelBtn) cancelBtn.disabled = true;
+            showLockMessage();
+            if (lockTimer) clearInterval(lockTimer);
+            lockTimer = setInterval(() => { 
+                if (isLocked && lockEndTime) {
+                    if (Date.now() >= lockEndTime) {
+                        isLocked = false;
+                        lockEndTime = null;
+                        const enterBtn2 = document.getElementById('enterBtn');
+                        if (enterBtn2) enterBtn2.disabled = false;
+                        const errorDiv2 = document.getElementById('modalError');
+                        if (errorDiv2) {
+                            errorDiv2.textContent = '';
+                            errorDiv2.className = 'modal-error';
+                        }
+                        const input2 = document.getElementById('modalPassword');
+                        if (input2) {
+                            input2.disabled = false;
+                            input2.value = '';
+                            input2.classList.remove('error', 'success');
+                        }
+                        const confirmBtn2 = document.getElementById('confirmBtn');
+                        const cancelBtn2 = document.getElementById('cancelBtn');
+                        if (confirmBtn2) confirmBtn2.disabled = false;
+                        if (cancelBtn2) cancelBtn2.disabled = false;
+                        clearInterval(lockTimer);
+                        lockTimer = null;
+                        attempts = 3;
+                        const attemptCount = document.getElementById('attemptCount');
+                        if (attemptCount) attemptCount.textContent = attempts;
+                    } else {
+                        const remaining = Math.ceil((lockEndTime - Date.now()) / 1000);
+                        const mins = Math.floor(remaining / 60);
+                        const secs = remaining % 60;
+                        const errorDiv3 = document.getElementById('modalError');
+                        const overlay3 = document.getElementById('passwordOverlay');
+                        if (errorDiv3 && overlay3 && overlay3.classList.contains('active')) {
+                            errorDiv3.className = 'modal-error locked';
+                            errorDiv3.textContent = `🔒 صبر کن... ${mins} دقیقه و ${secs} ثانیه`;
+                        }
+                    }
+                } else {
+                    clearInterval(lockTimer);
+                    lockTimer = null;
+                }
+            }, 1000);
         }
 
         // =============================================
@@ -1435,75 +1506,90 @@
         }
 
         // =============================================
-        // ===== سیستم رمز =====
+        // ===== توابع قابل دسترس از HTML =====
         // =============================================
-        const CORRECT_PASSWORD = "7880";
-        let attempts = 3, isLocked = false, lockTimer = null, lockEndTime = null, currentSentence = "";
-        const sentences = [
-            "دوستت دارم بی‌نهایت، با تمام وجودم ❤️",
-            "تو قشنگ‌ترین رویایی هستی که به واقعیت پیوست",
-            "کنار تو بودن یعنی آرامش واقعی",
-            "عشق زندگی من فقط تویی، همیشه و تا ابد",
-            "با تو بودن یعنی خوشبختیِ محض، واقعاً",
-            "نگاه تو دنیایی از عشق و آرامشه",
-            "صدای تو مثل موسیقی آرامش‌بخش روح منه",
-            "تو تمام دنیای منی، هیچ‌کس جای تو رو نداره",
-            "بهترین اتفاق زندگی من این بود که تو رو دیدم",
-            "همیشه با هم میمونیم، تو قولش رو بهم دادی",
-            "تو مثل خورشید، زندگی منو روشن کردی",
-            "لبخند تو زیباترین چیزی‌ه که تو این دنیا دیدم",
-            "زندگی با تو معنا پیدا کرد، ممنونم که هستی",
-            "کنار تویی که خوشحالم، همیشه اینو میدونم",
-            "تو بهترین هدیه‌ای بودی که خدا بهم داد",
-            "دلم مال توئه، از همون روز اول که دیدمت",
-            "عاشق تک تک لحظه‌های وجودت هستم",
-            "تقدیر ما رو به هم رسوند، و من شکرگزارم",
-            "تو همونی که همیشه میخواستم، و پیدا کردمت",
-            "دوست داشتن تو بزرگترین نعمت زندگی منه"
-        ];
+        
+        window.toggleTheme = function() {
+            try {
+                const body = document.body;
+                const btn = document.getElementById('themeToggle');
+                body.classList.toggle('night-mode');
+                if (body.classList.contains('night-mode')) {
+                    if (btn) btn.textContent = '☀️';
+                    localStorage.setItem('theme', 'night');
+                } else {
+                    if (btn) btn.textContent = '🌙';
+                    localStorage.setItem('theme', 'day');
+                }
+            } catch (e) {
+                console.error('خطا در تغییر تم:', e);
+            }
+        };
 
-        function getRandomSentence() { 
-            return sentences[Math.floor(Math.random() * sentences.length)]; 
-        }
-
-        function openPasswordModal() {
-            if (isLocked) { showLockMessage(); return; }
-            currentSentence = getRandomSentence();
-            const overlay = document.getElementById('passwordOverlay');
-            if (overlay) {
-                overlay.classList.add('active');
+        window.enter = function() {
+            try {
+                if (isLocked) { 
+                    showLockMessage(); 
+                    return; 
+                }
+                
+                const overlay = document.getElementById('passwordOverlay');
+                if (overlay) {
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    
+                    const sentences = [
+                        "دوستت دارم بی‌نهایت، با تمام وجودم ❤️",
+                        "تو قشنگ‌ترین رویایی هستی که به واقعیت پیوست",
+                        "کنار تو بودن یعنی آرامش واقعی",
+                        "عشق زندگی من فقط تویی، همیشه و تا ابد",
+                        "با تو بودن یعنی خوشبختیِ محض، واقعاً",
+                        "نگاه تو دنیایی از عشق و آرامشه",
+                        "صدای تو مثل موسیقی آرامش‌بخش روح منه",
+                        "تو تمام دنیای منی، هیچ‌کس جای تو رو نداره",
+                        "بهترین اتفاق زندگی من این بود که تو رو دیدم",
+                        "همیشه با هم میمونیم، تو قولش رو بهم دادی",
+                        "تو مثل خورشید، زندگی منو روشن کردی",
+                        "لبخند تو زیباترین چیزی‌ه که تو این دنیا دیدم",
+                        "زندگی با تو معنا پیدا کرد، ممنونم که هستی",
+                        "کنار تویی که خوشحالم، همیشه اینو میدونم",
+                        "تو بهترین هدیه‌ای بودی که خدا بهم داد",
+                        "دلم مال توئه، از همون روز اول که دیدمت",
+                        "عاشق تک تک لحظه‌های وجودت هستم",
+                        "تقدیر ما رو به هم رسوند، و من شکرگزارم",
+                        "تو همونی که همیشه میخواستم، و پیدا کردمت",
+                        "دوست داشتن تو بزرگترین نعمت زندگی منه"
+                    ];
+                    const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
+                    const loveWords = document.getElementById('loveWords');
+                    if (loveWords) {
+                        loveWords.innerHTML = `<span class="sentence">${randomSentence}</span>`;
+                    }
+                    
+                    const input = document.getElementById('modalPassword');
+                    if (input) {
+                        input.value = '';
+                        input.classList.remove('error', 'success');
+                        input.disabled = false;
+                        setTimeout(() => input.focus(), 300);
+                    }
+                    
+                    const errorDiv = document.getElementById('modalError');
+                    if (errorDiv) {
+                        errorDiv.textContent = '';
+                        errorDiv.className = 'modal-error';
+                    }
+                    
+                    if (!isLocked) {
+                        attempts = 3;
+                        const attemptCount = document.getElementById('attemptCount');
+                        if (attemptCount) attemptCount.textContent = attempts;
+                    }
+                }
+            } catch (e) {
+                console.error('خطا در ورود:', e);
             }
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => {
-                const input = document.getElementById('modalPassword');
-                if (input) input.focus();
-            }, 400);
-            resetModal();
-        }
-
-        function resetModal() {
-            const input = document.getElementById('modalPassword');
-            if (input) {
-                input.value = '';
-                input.classList.remove('error', 'success');
-                input.disabled = false;
-            }
-            const errorDiv = document.getElementById('modalError');
-            if (errorDiv) {
-                errorDiv.textContent = '';
-                errorDiv.className = 'modal-error';
-            }
-            const confirmBtn = document.getElementById('confirmBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            if (confirmBtn) confirmBtn.disabled = false;
-            if (cancelBtn) cancelBtn.disabled = false;
-            const loveWords = document.getElementById('loveWords');
-            if (loveWords) {
-                loveWords.innerHTML = `<span class="sentence">${currentSentence}</span>`;
-            }
-            const attemptCount = document.getElementById('attemptCount');
-            if (attemptCount) attemptCount.textContent = attempts;
-        }
+        };
 
         window.closePasswordModal = function() {
             const overlay = document.getElementById('passwordOverlay');
@@ -1513,111 +1599,56 @@
             document.body.style.overflow = '';
         };
 
-        function showLockMessage() {
-            const errorDiv = document.getElementById('modalError');
-            if (!errorDiv) return;
-            errorDiv.className = 'modal-error locked';
-            if (lockEndTime) {
-                const remaining = Math.ceil((lockEndTime - Date.now()) / 1000);
-                const mins = Math.floor(remaining / 60);
-                const secs = remaining % 60;
-                errorDiv.textContent = `🔒 صبر کن عزیزم... ${mins} دقیقه و ${secs} ثانیه دیگه`;
-            } else {
-                errorDiv.textContent = '🔒 ۵ دقیقه دیگه دوباره امتحان کن';
-            }
-            const overlay = document.getElementById('passwordOverlay');
-            if (overlay) {
-                overlay.classList.add('active');
-            }
-            document.body.style.overflow = 'hidden';
-        }
-
-        function updateLockTimer() {
-            if (!isLocked || !lockEndTime) return;
-            if (Date.now() >= lockEndTime) {
-                isLocked = false;
-                lockEndTime = null;
-                const enterBtn = document.getElementById('enterBtn');
-                if (enterBtn) enterBtn.disabled = false;
-                const errorDiv = document.getElementById('modalError');
-                if (errorDiv) {
-                    errorDiv.textContent = '';
-                    errorDiv.className = 'modal-error';
-                }
-                resetModal();
-                return;
-            }
-            const remaining = Math.ceil((lockEndTime - Date.now()) / 1000);
-            const mins = Math.floor(remaining / 60);
-            const secs = remaining % 60;
-            const errorDiv = document.getElementById('modalError');
-            const overlay = document.getElementById('passwordOverlay');
-            if (errorDiv && overlay && overlay.classList.contains('active')) {
-                errorDiv.className = 'modal-error locked';
-                errorDiv.textContent = `🔒 صبر کن... ${mins} دقیقه و ${secs} ثانیه`;
-            }
-        }
-
-        function lockSystem() {
-            isLocked = true;
-            lockEndTime = Date.now() + 5 * 60 * 1000;
-            const enterBtn = document.getElementById('enterBtn');
-            if (enterBtn) enterBtn.disabled = true;
-            const input = document.getElementById('modalPassword');
-            if (input) input.disabled = true;
-            const confirmBtn = document.getElementById('confirmBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            if (confirmBtn) confirmBtn.disabled = true;
-            if (cancelBtn) cancelBtn.disabled = true;
-            showLockMessage();
-            if (lockTimer) clearInterval(lockTimer);
-            lockTimer = setInterval(() => { 
-                updateLockTimer(); 
-                if (!isLocked) { 
-                    clearInterval(lockTimer);
-                    lockTimer = null; 
-                } 
-            }, 1000);
-        }
-
         window.confirmPassword = function() {
-            if (isLocked) { showLockMessage(); return; }
+            if (isLocked) { 
+                showLockMessage(); 
+                return; 
+            }
+            
             const input = document.getElementById('modalPassword');
             const errorDiv = document.getElementById('modalError');
             if (!input || !errorDiv) return;
+            
             const entered = input.value.trim();
             errorDiv.textContent = '';
             input.classList.remove('error', 'success');
+            
             if (entered === '') { 
                 errorDiv.textContent = '💕 رمز رو وارد کن عزیزم...';
                 input.classList.add('error');
                 input.focus(); 
                 return; 
             }
+            
             if (entered.length < 4) { 
                 errorDiv.textContent = '💕 باید ۴ رقم باشه...';
                 input.classList.add('error');
                 input.focus(); 
                 return; 
             }
+            
             if (entered === CORRECT_PASSWORD) {
                 input.classList.add('success');
                 errorDiv.className = 'modal-error success-text';
                 errorDiv.textContent = '💕 آفرین! دارم باز میکنم...';
+                
                 const confirmBtn = document.getElementById('confirmBtn');
                 const cancelBtn = document.getElementById('cancelBtn');
                 if (confirmBtn) confirmBtn.disabled = true;
                 if (cancelBtn) cancelBtn.disabled = true;
                 input.disabled = true;
+                
                 attempts = 3;
                 const attemptCount = document.getElementById('attemptCount');
                 if (attemptCount) attemptCount.textContent = attempts;
+                
                 setTimeout(() => {
                     window.closePasswordModal();
                     const welcome = document.getElementById("welcome");
                     const menu = document.getElementById("menu");
                     if (welcome) welcome.style.display = "none";
                     if (menu) menu.style.display = "block";
+                    
                     loadPeriods();
                     loadBadgeCounts();
                     loadAllBadges();
@@ -1627,6 +1658,7 @@
                 attempts--;
                 const attemptCount = document.getElementById('attemptCount');
                 if (attemptCount) attemptCount.textContent = attempts;
+                
                 if (attempts <= 0) {
                     errorDiv.className = 'modal-error locked';
                     errorDiv.textContent = '🔒 ۳ بار اشتباه! ۵ دقیقه صبر کن...';
@@ -1634,6 +1666,7 @@
                     lockSystem();
                     return;
                 }
+                
                 errorDiv.className = 'modal-error';
                 errorDiv.textContent = `💔 نه عزیزم... ${attempts} تلاش دیگه داری`;
                 input.classList.add('error');
@@ -1679,10 +1712,13 @@
         });
 
         // =============================================
-        // ===== مدیریت پریود (توابع سراسری) =====
+        // ===== مدیریت پریود (بهینه‌شده با کش) =====
         // =============================================
         const DEFAULT_CYCLE = 28;
         let periodDropdownOpen = false;
+        let cachedHistory = null;
+        let cacheTime = 0;
+        const CACHE_DURATION = 5000; // ۵ ثانیه
 
         window.togglePeriodDropdown = function() {
             const list = document.getElementById('periodDropdownList');
@@ -1751,56 +1787,75 @@
         }
 
         window.selectPeriodDate = function(date) {
-            const d = new Date(date + 'T00:00:00Z');
-            const shamsi = `${d.getUTCFullYear() - 621}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
-            const input = document.getElementById('lastPeriodDateShamsi');
-            if (input) input.value = shamsi;
-            
-            const list = document.getElementById('periodDropdownList');
-            const arrow = document.getElementById('periodDropdownArrow');
-            if (list) list.classList.remove('open');
-            if (arrow) arrow.classList.remove('open');
-            periodDropdownOpen = false;
-            
-            showNotification(`📅 تاریخ ${shamsi} انتخاب شد`);
+            try {
+                const d = new Date(date + 'T00:00:00Z');
+                if (isNaN(d.getTime())) {
+                    showNotification('❌ تاریخ نامعتبر!');
+                    return;
+                }
+                
+                const year = d.getUTCFullYear() - 621;
+                const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+                const day = String(d.getUTCDate()).padStart(2, '0');
+                const shamsi = `${year}-${month}-${day}`;
+                
+                const input = document.getElementById('lastPeriodDateShamsi');
+                if (input) {
+                    input.value = shamsi;
+                    console.log('📅 تاریخ انتخاب شد:', shamsi);
+                }
+                
+                const list = document.getElementById('periodDropdownList');
+                const arrow = document.getElementById('periodDropdownArrow');
+                if (list) list.classList.remove('open');
+                if (arrow) arrow.classList.remove('open');
+                periodDropdownOpen = false;
+                
+                showNotification(`📅 تاریخ ${shamsi} انتخاب شد`);
+            } catch (error) {
+                console.error('❌ خطا در selectPeriodDate:', error);
+                showNotification('❌ خطا در انتخاب تاریخ');
+            }
         };
 
         window.savePeriodDate = async function() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             if (!dateInput) return;
+            
             const shamsiDate = dateInput.value;
             if (!shamsiDate) { 
                 showNotification('⚠️ لطفاً یک تاریخ رو انتخاب کن عزیزم 💕');
                 return; 
             }
             
-            // تبدیل ساده شمسی به میلادی
-            const parts = shamsiDate.split('-').map(Number);
-            const jYear = parts[0];
-            const jMonth = parts[1];
-            const jDay = parts[2];
-            
-            let gYear = jYear + 621;
-            let gMonth = jMonth;
-            let gDay = jDay;
-            
-            if (jMonth < 3) {
-                gYear = jYear + 622;
-                gMonth = jMonth + 10;
-            } else {
-                gMonth = jMonth - 2;
-            }
-            
-            const gregorianDate = new Date(gYear, gMonth - 1, gDay);
-            
-            if (isNaN(gregorianDate.getTime())) { 
-                showNotification('⚠️ تاریخ رو درست وارد کن عزیزم 💕');
-                return; 
-            }
-            
-            const dateStr = gregorianDate.toISOString().split('T')[0];
-            
             try {
+                const parts = shamsiDate.split('-').map(Number);
+                if (parts.length !== 3 || parts.some(isNaN)) {
+                    showNotification('⚠️ تاریخ رو درست وارد کن!');
+                    return;
+                }
+                
+                const [jYear, jMonth, jDay] = parts;
+                
+                let gYear, gMonth, gDay;
+                if (jMonth < 3) {
+                    gYear = jYear + 622;
+                    gMonth = jMonth + 10;
+                } else {
+                    gYear = jYear + 621;
+                    gMonth = jMonth - 2;
+                }
+                gDay = jDay;
+                
+                const gregorianDate = new Date(gYear, gMonth - 1, gDay);
+                if (isNaN(gregorianDate.getTime())) {
+                    showNotification('⚠️ تاریخ رو درست وارد کن!');
+                    return;
+                }
+                
+                const dateStr = gregorianDate.toISOString().split('T')[0];
+                console.log('📅 تاریخ میلادی:', dateStr);
+                
                 const existingData = await dbClient.getPeriods();
                 const exists = existingData.some(item => item.period_date === dateStr);
                 
@@ -1811,6 +1866,10 @@
                 
                 await dbClient.savePeriod(dateStr);
                 
+                // ریست کش
+                cachedHistory = null;
+                cacheTime = 0;
+                
                 await Promise.all([
                     loadPeriods(),
                     updateCycleInfo(),
@@ -1818,7 +1877,6 @@
                 ]);
                 
                 showNotification(`🌸 تاریخ ${shamsiDate} با موفقیت ذخیره شد!`);
-                
                 dateInput.value = getTodayShamsi();
                 
                 const list = document.getElementById('periodDropdownList');
@@ -1827,9 +1885,9 @@
                 if (arrow) arrow.classList.remove('open');
                 periodDropdownOpen = false;
                 
-            } catch (error) { 
+            } catch (error) {
+                console.error('❌ خطا:', error);
                 showNotification('❌ خطا: ' + error.message);
-                console.error(error);
             }
         };
 
@@ -1843,32 +1901,33 @@
                 return;
             }
             
-            const parts = shamsiDate.split('-').map(Number);
-            const jYear = parts[0];
-            const jMonth = parts[1];
-            const jDay = parts[2];
-            
-            let gYear = jYear + 621;
-            let gMonth = jMonth;
-            let gDay = jDay;
-            
-            if (jMonth < 3) {
-                gYear = jYear + 622;
-                gMonth = jMonth + 10;
-            } else {
-                gMonth = jMonth - 2;
-            }
-            
-            const gregorianDate = new Date(gYear, gMonth - 1, gDay);
-            
-            if (isNaN(gregorianDate.getTime())) {
-                showNotification('⚠️ تاریخ رو درست وارد کن عزیزم 💕');
-                return;
-            }
-            
-            const dateStr = gregorianDate.toISOString().split('T')[0];
-            
             try {
+                const parts = shamsiDate.split('-').map(Number);
+                if (parts.length !== 3 || parts.some(isNaN)) {
+                    showNotification('⚠️ تاریخ رو درست وارد کن!');
+                    return;
+                }
+                
+                const [jYear, jMonth, jDay] = parts;
+                
+                let gYear, gMonth, gDay;
+                if (jMonth < 3) {
+                    gYear = jYear + 622;
+                    gMonth = jMonth + 10;
+                } else {
+                    gYear = jYear + 621;
+                    gMonth = jMonth - 2;
+                }
+                gDay = jDay;
+                
+                const gregorianDate = new Date(gYear, gMonth - 1, gDay);
+                if (isNaN(gregorianDate.getTime())) {
+                    showNotification('⚠️ تاریخ رو درست وارد کن!');
+                    return;
+                }
+                
+                const dateStr = gregorianDate.toISOString().split('T')[0];
+                
                 const existingData = await dbClient.getPeriods();
                 const exists = existingData.some(item => item.period_date === dateStr);
                 
@@ -1879,6 +1938,10 @@
                 
                 await dbClient.savePeriod(dateStr);
                 
+                // ریست کش
+                cachedHistory = null;
+                cacheTime = 0;
+                
                 await Promise.all([
                     loadPeriods(),
                     updateCycleInfo(),
@@ -1886,7 +1949,6 @@
                 ]);
                 
                 showNotification(`✅ تاریخ ${shamsiDate} با موفقیت ثبت شد! 🌸`);
-                
                 dateInput.value = getTodayShamsi();
                 
                 const list = document.getElementById('periodDropdownList');
@@ -1895,21 +1957,29 @@
                 if (arrow) arrow.classList.remove('open');
                 periodDropdownOpen = false;
                 
-            } catch (error) { 
+            } catch (error) {
+                console.error('❌ خطا:', error);
                 showNotification('❌ خطا: ' + error.message);
-                console.error(error);
             }
         };
 
         window.deletePeriodDate = async function(rowId) {
-            if (rowId === null || rowId === undefined) {
-                showNotification('❌ خطا: شناسه تاریخ پیدا نشد!');
+            if (!rowId) {
+                showNotification('❌ شناسه تاریخ پیدا نشد!');
+                console.error('❌ rowId is null or undefined');
                 return;
             }
             
             if (!confirm('آیا مطمئنی که میخوای این تاریخ رو حذف کنی؟ 💕')) return;
+            
             try {
+                console.log('🗑️ حذف با شناسه:', rowId);
+                
                 await dbClient.deletePeriod(rowId);
+                
+                // ریست کش
+                cachedHistory = null;
+                cacheTime = 0;
                 
                 await Promise.all([
                     loadPeriods(),
@@ -1918,16 +1988,28 @@
                 ]);
                 
                 showNotification('🗑️ تاریخ با موفقیت حذف شد');
-            } catch (error) { 
+                console.log('✅ حذف موفق');
+                
+            } catch (error) {
+                console.error('❌ خطا در حذف:', error);
                 showNotification('❌ خطا در حذف: ' + error.message);
-                console.error('Delete error:', error);
             }
         };
 
         async function loadPeriods() {
             try {
+                // استفاده از کش
+                if (cachedHistory && (Date.now() - cacheTime) < CACHE_DURATION) {
+                    updatePeriodDisplay(cachedHistory);
+                    updateCycleInfo();
+                    return;
+                }
+                
                 const data = await dbClient.getPeriods();
                 const history = data.map(item => item.period_date);
+                
+                cachedHistory = history;
+                cacheTime = Date.now();
                 
                 updatePeriodDisplay(history);
                 updateCycleInfo();
@@ -2043,6 +2125,22 @@
         function updateCycleInfo() {
             const display = document.getElementById('avgCycleDisplay');
             if (!display) return;
+            
+            // استفاده از کش
+            if (cachedHistory) {
+                const avg = calculateAverageCycle(cachedHistory);
+                if (cachedHistory.length < 2) {
+                    display.textContent = `${DEFAULT_CYCLE} روز (پیش‌فرض)`;
+                    display.style.fontSize = '14px';
+                    display.style.color = '#888';
+                } else {
+                    display.textContent = `${avg} روز`;
+                    display.style.fontSize = '18px';
+                    display.style.color = '#b03060';
+                }
+                return;
+            }
+            
             dbClient.getPeriods().then(data => {
                 const history = data.map(item => item.period_date);
                 const avg = calculateAverageCycle(history);
@@ -2069,20 +2167,17 @@
             try {
                 if (status === 'started') {
                     const parts = todayShamsi.split('-').map(Number);
-                    const jYear = parts[0];
-                    const jMonth = parts[1];
-                    const jDay = parts[2];
+                    const [jYear, jMonth, jDay] = parts;
                     
-                    let gYear = jYear + 621;
-                    let gMonth = jMonth;
-                    let gDay = jDay;
-                    
+                    let gYear, gMonth, gDay;
                     if (jMonth < 3) {
                         gYear = jYear + 622;
                         gMonth = jMonth + 10;
                     } else {
+                        gYear = jYear + 621;
                         gMonth = jMonth - 2;
                     }
+                    gDay = jDay;
                     
                     const gregorianDate = new Date(gYear, gMonth - 1, gDay);
                     const dateStr = gregorianDate.toISOString().split('T')[0];
@@ -2092,6 +2187,8 @@
                     
                     if (!exists) {
                         await dbClient.savePeriod(dateStr);
+                        cachedHistory = null;
+                        cacheTime = 0;
                         showNotification('✅ پریود امروز ثبت شد!');
                     } else {
                         showNotification('⚠️ تاریخ امروز قبلاً ثبت شده!');
@@ -2296,6 +2393,7 @@
                 console.log('✅ همه چیز آماده است!');
                 console.log('📅 تاریخ شروع: ۱۵ اسفند ۱۴۰۱');
                 console.log('🕐 شمارشگر لحظه‌ای فعال شد!');
+                console.log('🔑 رمز عبور: 7880');
             } catch (e) {
                 console.error('❌ خطا در مقداردهی اولیه:', e);
             }
