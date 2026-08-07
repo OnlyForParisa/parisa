@@ -1089,7 +1089,6 @@
         // =============================================
         // ===== تنظیمات Supabase =====
         // =============================================
-        // 🔑 این دو خط رو با اطلاعات خودتون عوض کنید:
         const SUPABASE_URL = 'https://zcossaztlqzznmhxuphx.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjb3NzYXp0bHF6em5taHh1cGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMDI4MDMsImV4cCI6MjEwMTY3ODgwM30.ahdN6aNQyyn2_5Q7PtUZD3yYl_xcncJ0GUSr0UetUJQ';
 
@@ -1098,7 +1097,7 @@
         console.log('✅ Supabase متصل شد!');
 
         // =============================================
-        // ===== تبدیلات تاریخ (اصلاح شده - دقیق) =====
+        // ===== تبدیلات تاریخ =====
         // =============================================
 
         function toPersian(num) {
@@ -1106,7 +1105,6 @@
             return num.toString().split('').map(d => persianNumbers[parseInt(d)] || d).join('');
         }
 
-        // تبدیل شمسی به میلادی (دقیق)
         function shamsiToGregorian(shamsiDate) {
             try {
                 const parts = shamsiDate.split('-').map(Number);
@@ -1117,7 +1115,6 @@
                 const gDaysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
                 const jDaysInMonth = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
                 
-                // محاسبه روز از اول سال شمسی
                 let jDayOfYear = 0;
                 for (let i = 1; i < jm; i++) {
                     jDayOfYear += jDaysInMonth[i];
@@ -1125,7 +1122,6 @@
                 }
                 jDayOfYear += jd - 1;
                 
-                // محاسبه سال و روز میلادی
                 let gy = jy + 621;
                 let gDayOfYear = jDayOfYear + 79;
                 
@@ -1137,7 +1133,6 @@
                     }
                 }
                 
-                // محاسبه ماه و روز میلادی
                 let gm = 1;
                 for (let i = 1; i <= 12; i++) {
                     let daysInMonth = gDaysInMonth[i];
@@ -1159,7 +1154,6 @@
             }
         }
 
-        // تبدیل میلادی به شمسی (دقیق)
         function gregorianToShamsi(date) {
             try {
                 const gy = date.getFullYear();
@@ -1215,10 +1209,9 @@
         }
 
         // =============================================
-        // ===== شمارشگر زمان (لحظه‌ای) =====
+        // ===== شمارشگر زمان =====
         // =============================================
 
-        // ۱۵ اسفند ۱۴۰۱ = ۶ مارس ۲۰۲۳
         const START_DATE = new Date(2023, 2, 6);
 
         function updateCounter() {
@@ -1258,11 +1251,12 @@
         let lockEndTime = null;
 
         // =============================================
-        // ===== dbClient با Supabase (بهینه‌شده) =====
+        // ===== dbClient با Supabase =====
         // =============================================
         const dbClient = {
             async getRowsByType(type) {
-                const { data, error } = await supabaseClient                    .from('messages')
+                const { data, error } = await supabaseClient
+                    .from('messages')
                     .select('id, type, title, content, date')
                     .eq('type', type)
                     .eq('is_deleted', false)
@@ -1308,7 +1302,6 @@
                 return data;
             },
 
-            // ===== توابع پریود (بهینه‌شده) =====
             async savePeriod(date) {
                 try {
                     const cleanDate = date.split('T')[0];
@@ -1503,7 +1496,7 @@
         }
 
         // =============================================
-        // ===== سیستم Badge =====
+        // ===== سیستم Badge (اصلاح شده) =====
         // =============================================
         const BADGE_STORAGE_KEY = 'parisa_badge_counts';
         
@@ -1537,12 +1530,16 @@
         
         window.handleCardClick = function(event, type) {
             try {
+                // ✅ وقتی کاربر روی کارت کلیک میکنه، badge رو صفر کن
                 const counts = getBadgeCounts();
                 const currentCount = counts[type] || 0;
                 if (currentCount > 0) {
                     counts[type] = 0;
                     saveBadgeCounts(counts);
                     updateBadgeUI(type, 0);
+                    
+                    // ✅ زمان آخرین بازدید رو ذخیره کن
+                    localStorage.setItem('parisa_last_visit', new Date().toISOString());
                 }
                 return true;
             } catch (e) {
@@ -1556,12 +1553,17 @@
                 const types = ['message', 'surprise', 'memory', 'game', 'celebration'];
                 const badgeCounts = getBadgeCounts();
                 
+                // ✅ دریافت زمان آخرین بازدید از localStorage
+                const lastVisit = localStorage.getItem('parisa_last_visit') || '2000-01-01';
+                
                 for (const type of types) {
+                    // ✅ فقط پیام‌هایی که بعد از آخرین بازدید اضافه شدن
                     const { count, error } = await supabaseClient
                         .from('messages')
                         .select('*', { count: 'exact', head: true })
                         .eq('type', type)
-                        .eq('is_deleted', false);
+                        .eq('is_deleted', false)
+                        .gt('date', lastVisit);  // فقط جدیدتر از آخرین بازدید
                     
                     if (error) throw error;
                     
@@ -1577,11 +1579,13 @@
                     badgeCounts[key] = count || 0;
                 }
                 
+                // ✅ برای اتاق مخفی هم فقط پیام‌های جدیدتر از آخرین بازدید
                 const { count: totalCount, error: totalError } = await supabaseClient
                     .from('messages')
                     .select('*', { count: 'exact', head: true })
-                    .eq('is_deleted', false);
-                
+                    .eq('is_deleted', false)
+                    .gt('date', lastVisit);  // فقط جدیدتر از آخرین بازدید
+                    
                 if (!totalError) {
                     badgeCounts.secret = totalCount || 0;
                 }
@@ -1741,6 +1745,9 @@
                 const attemptCount = document.getElementById('attemptCount');
                 if (attemptCount) attemptCount.textContent = attempts;
                 
+                // ✅ ذخیره زمان فعلی به عنوان آخرین بازدید
+                localStorage.setItem('parisa_last_visit', new Date().toISOString());
+                
                 setTimeout(() => {
                     window.closePasswordModal();
                     const welcome = document.getElementById("welcome");
@@ -1811,7 +1818,7 @@
         });
 
         // =============================================
-        // ===== مدیریت پریود (با تبدیل تاریخ درست) =====
+        // ===== مدیریت پریود =====
         // =============================================
         const DEFAULT_CYCLE = 28;
         let periodDropdownOpen = false;
@@ -1916,7 +1923,6 @@
             }
         };
 
-        // ===== تابع ذخیره تاریخ (اصلاح شده با تبدیل درست) =====
         window.savePeriodDate = async function() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             if (!dateInput) return;
@@ -1928,7 +1934,6 @@
             }
             
             try {
-                // ✅ استفاده از تابع درست تبدیل شمسی به میلادی
                 const gregorianDate = shamsiToGregorian(shamsiDate);
                 if (isNaN(gregorianDate.getTime())) {
                     showNotification('⚠️ تاریخ رو درست وارد کن!');
@@ -1939,7 +1944,6 @@
                 console.log('📅 تاریخ شمسی وارد شده:', shamsiDate);
                 console.log('📅 تاریخ میلادی معادل:', dateStr);
                 
-                // بررسی تکراری نبودن
                 const existingData = await dbClient.getPeriods();
                 const exists = existingData.some(item => item.period_date === dateStr);
                 
@@ -1950,7 +1954,6 @@
                 
                 await dbClient.savePeriod(dateStr);
                 
-                // ریست کش
                 cachedHistory = null;
                 cacheTime = 0;
                 
@@ -1976,7 +1979,6 @@
             }
         };
 
-        // ===== تابع ثبت سریع (اصلاح شده) =====
         window.savePeriodQuick = async function() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             if (!dateInput) return;
@@ -1988,7 +1990,6 @@
             }
             
             try {
-                // ✅ استفاده از تابع درست تبدیل
                 const gregorianDate = shamsiToGregorian(shamsiDate);
                 if (isNaN(gregorianDate.getTime())) {
                     showNotification('⚠️ تاریخ رو درست وارد کن!');
@@ -2008,7 +2009,6 @@
                 
                 await dbClient.savePeriod(dateStr);
                 
-                // ریست کش
                 cachedHistory = null;
                 cacheTime = 0;
                 
@@ -2048,7 +2048,6 @@
                 
                 await dbClient.deletePeriod(rowId);
                 
-                // ریست کش
                 cachedHistory = null;
                 cacheTime = 0;
                 
@@ -2235,7 +2234,6 @@
             
             try {
                 if (status === 'started') {
-                    // ✅ استفاده از تابع درست تبدیل
                     const gregorianDate = shamsiToGregorian(todayShamsi);
                     const dateStr = gregorianDate.toISOString().split('T')[0];
                     
@@ -2447,6 +2445,12 @@
                 loadAllBadges();
                 loadEmails();
                 updateCounter();
+                
+                // هر ۱۰ ثانیه badge رو به‌روز کن
+                setInterval(() => {
+                    loadBadgeCounts();
+                }, 10000);
+                
                 console.log('✅ همه چیز آماده است!');
                 console.log('📅 تاریخ شروع: ۱۵ اسفند ۱۴۰۱');
                 console.log('🕐 شمارشگر لحظه‌ای فعال شد!');
