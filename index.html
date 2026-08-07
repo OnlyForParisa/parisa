@@ -1318,7 +1318,7 @@
         const SHEET_API_URL = 'https://api.sheetbest.com/sheets/6651ac4f-6b3e-4ac1-ae8e-7180bb2ca35d';
         
         // =============================================
-        // dbClient - ارتباط با SheetBest (روش نهایی)
+        // dbClient - ارتباط با SheetBest
         // =============================================
         const dbClient = {
             async savePeriod(date) {
@@ -1336,11 +1336,9 @@
                 if (!response.ok) throw new Error(await response.text());
                 const allData = await response.json();
                 
-                // فیلتر کردن و برگرداندن با id عددی
                 return allData
                     .filter(row => row.type === 'period')
                     .map((item, index) => {
-                        // استفاده از اندیس به عنوان id
                         return { 
                             id: index,
                             period_date: item.date
@@ -1349,12 +1347,145 @@
             },
             
             async deletePeriod(id) {
-                // حذف با id عددی
                 const response = await fetch(`${SHEET_API_URL}/${id}`, { method: 'DELETE' });
                 if (!response.ok) throw new Error(await response.text());
                 return true;
             }
         };
+
+        // =============================================
+        // ===== توابع تبدیل تاریخ (نسخه اصلاح‌شده) =====
+        // =============================================
+
+        // ۱. تبدیل شمسی به میلادی (با الگوریتم دقیق)
+        function shamsiToGregorian(shamsiDate) {
+            // ورودی: "1401-12-15"
+            const parts = shamsiDate.split('-').map(Number);
+            let jy = parts[0];
+            let jm = parts[1];
+            let jd = parts[2];
+            
+            // الگوریتم دقیق تبدیل شمسی به میلادی
+            const gy = (jy <= 979) ? 621 : 622;
+            let gYear = jy + gy;
+            let gMonth = 0;
+            let gDay = 0;
+            
+            // محاسبه روزهای گذشته از ابتدای سال شمسی
+            const jDaysInMonth = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+            let jDayOfYear = 0;
+            for (let i = 1; i < jm; i++) {
+                jDayOfYear += jDaysInMonth[i];
+                if (i === 12 && (jy % 4 === 0)) jDayOfYear++; // کبیسه شمسی
+            }
+            jDayOfYear += jd - 1;
+            
+            // تبدیل به میلادی
+            const gDaysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            let gDayOfYear = jDayOfYear + 79;
+            if (gDayOfYear > 365) {
+                gDayOfYear -= 365;
+                gYear++;
+            }
+            
+            // محاسبه ماه و روز میلادی
+            let monthDays = 0;
+            for (let i = 1; i <= 12; i++) {
+                let daysInMonth = gDaysInMonth[i];
+                if (i === 2 && (gYear % 4 === 0 && (gYear % 100 !== 0 || gYear % 400 === 0))) {
+                    daysInMonth = 29; // کبیسه میلادی
+                }
+                if (gDayOfYear < daysInMonth) {
+                    gMonth = i;
+                    gDay = gDayOfYear + 1;
+                    break;
+                }
+                gDayOfYear -= daysInMonth;
+            }
+            
+            return new Date(Date.UTC(gYear, gMonth - 1, gDay, 0, 0, 0));
+        }
+
+        // ۲. تبدیل میلادی به شمسی (با الگوریتم دقیق)
+        function gregorianToShamsi(date) {
+            const gYear = date.getUTCFullYear();
+            const gMonth = date.getUTCMonth() + 1;
+            const gDay = date.getUTCDate();
+            
+            // الگوریتم دقیق تبدیل میلادی به شمسی
+            const gy = (gYear <= 1600) ? 621 : 622;
+            let jYear = gYear - gy;
+            
+            // محاسبه روزهای گذشته از ابتدای سال میلادی
+            const gDaysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            let gDayOfYear = 0;
+            for (let i = 1; i < gMonth; i++) {
+                gDayOfYear += gDaysInMonth[i];
+                if (i === 2 && (gYear % 4 === 0 && (gYear % 100 !== 0 || gYear % 400 === 0))) {
+                    gDayOfYear++; // کبیسه میلادی
+                }
+            }
+            gDayOfYear += gDay - 1;
+            
+            // تبدیل به شمسی
+            let jDayOfYear = gDayOfYear - 79;
+            if (jDayOfYear < 0) {
+                jDayOfYear += 365;
+                jYear--;
+                if (jYear % 4 === 0) jDayOfYear++; // کبیسه شمسی
+            }
+            
+            const jDaysInMonth = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+            let jMonth = 0;
+            let jDay = 0;
+            for (let i = 1; i <= 12; i++) {
+                let daysInMonth = jDaysInMonth[i];
+                if (i === 12 && (jYear % 4 === 0)) daysInMonth = 30; // کبیسه شمسی
+                if (jDayOfYear < daysInMonth) {
+                    jMonth = i;
+                    jDay = jDayOfYear + 1;
+                    break;
+                }
+                jDayOfYear -= daysInMonth;
+            }
+            
+            return `${jYear}/${String(jMonth).padStart(2, '0')}/${String(jDay).padStart(2, '0')}`;
+        }
+
+        // ۳. تاریخ امروز شمسی
+        function getTodayShamsi() {
+            const now = new Date();
+            const result = gregorianToShamsi(now);
+            return result.replace(/\//g, '-');
+        }
+
+        // ۴. تاریخ شروع (۱۵ اسفند ۱۴۰۱)
+        function getStartDate() {
+            const startShamsi = '1401-12-15';
+            return shamsiToGregorian(startShamsi);
+        }
+
+        // ۵. نمایش تاریخ به صورت نوشتاری (مثلاً "۱۵ اسفند ۱۴۰۱")
+        function getShamsiDateDisplay(shamsiDate) {
+            const parts = shamsiDate.replace(/\//g, '-').split('-');
+            const monthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 
+                                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+            const month = parseInt(parts[1]);
+            return `${parts[2]} ${monthNames[month - 1]} ${parts[0]}`;
+        }
+
+        // ۶. به‌روزرسانی نمایش تاریخ در صفحه
+        function updateDateDisplay() {
+            const now = new Date();
+            const shamsi = gregorianToShamsi(now);
+            const display = getShamsiDateDisplay(shamsi);
+            const dateElement = document.querySelector('.date-text');
+            if (dateElement) {
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                dateElement.textContent = `📅 ${display} - ساعت ${hours}:${minutes}`;
+            }
+        }
 
         // =============================================
         // سیستم Badge
@@ -1586,6 +1717,7 @@
                     loadPeriods();
                     loadBadgeCounts();
                     loadAllBadges();
+                    updateDateDisplay();
                 }, 1000);
             } else {
                 attempts--;
@@ -1612,33 +1744,6 @@
         document.getElementById('passwordOverlay').addEventListener('click', function(e) {
             if (e.target === this && !isLocked) closePasswordModal();
         });
-
-        // =============================================
-        // تبدیل تاریخ (اصلاح‌شده با UTC)
-        // =============================================
-        function shamsiToGregorian(shamsiDate) {
-            const parts = shamsiDate.split('-').map(Number);
-            if (parts.length !== 3) return null;
-            const year = parts[0] + 621;
-            const month = parts[1] - 1;
-            const day = parts[2];
-            return new Date(Date.UTC(year, month, day, 0, 0, 0));
-        }
-
-        function gregorianToShamsi(date) {
-            const year = date.getUTCFullYear() - 621;
-            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            const day = String(date.getUTCDate()).padStart(2, '0');
-            return `${year}/${month}/${day}`;
-        }
-
-        function getTodayShamsi() {
-            const now = new Date();
-            const year = now.getFullYear() - 621;
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
 
         const DEFAULT_CYCLE = 28;
 
@@ -2201,9 +2306,9 @@
         function enter() { openPasswordModal(); }
 
         // =============================================
-        // شمارشگر زمان
+        // شمارشگر زمان (با تاریخ اصلاح‌شده)
         // =============================================
-        const start = new Date("2023-03-06T23:00:00");
+        const start = getStartDate(); // ۱۵ اسفند ۱۴۰۱
 
         function toPersian(num) {
             const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -2237,6 +2342,7 @@
             loadBadgeCounts();
             loadAllBadges();
             loadEmails();
+            updateDateDisplay();
         });
     </script>
 </body>
