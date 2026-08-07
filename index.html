@@ -1098,12 +1098,120 @@
         console.log('✅ Supabase متصل شد!');
 
         // =============================================
-        // ===== تبدیلات تاریخ =====
+        // ===== تبدیلات تاریخ (اصلاح شده - دقیق) =====
         // =============================================
 
         function toPersian(num) {
             const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
             return num.toString().split('').map(d => persianNumbers[parseInt(d)] || d).join('');
+        }
+
+        // تبدیل شمسی به میلادی (دقیق)
+        function shamsiToGregorian(shamsiDate) {
+            try {
+                const parts = shamsiDate.split('-').map(Number);
+                let jy = parts[0];
+                let jm = parts[1];
+                let jd = parts[2];
+                
+                const gDaysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                const jDaysInMonth = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+                
+                // محاسبه روز از اول سال شمسی
+                let jDayOfYear = 0;
+                for (let i = 1; i < jm; i++) {
+                    jDayOfYear += jDaysInMonth[i];
+                    if (i === 12 && (jy % 4 === 0)) jDayOfYear++;
+                }
+                jDayOfYear += jd - 1;
+                
+                // محاسبه سال و روز میلادی
+                let gy = jy + 621;
+                let gDayOfYear = jDayOfYear + 79;
+                
+                if (gDayOfYear > 365) {
+                    gDayOfYear -= 365;
+                    gy++;
+                    if ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0) {
+                        gDayOfYear--;
+                    }
+                }
+                
+                // محاسبه ماه و روز میلادی
+                let gm = 1;
+                for (let i = 1; i <= 12; i++) {
+                    let daysInMonth = gDaysInMonth[i];
+                    if (i === 2 && ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)) {
+                        daysInMonth = 29;
+                    }
+                    if (gDayOfYear < daysInMonth) {
+                        gm = i;
+                        break;
+                    }
+                    gDayOfYear -= daysInMonth;
+                }
+                let gd = gDayOfYear + 1;
+                
+                return new Date(gy, gm - 1, gd);
+            } catch (e) {
+                console.error('خطا در تبدیل شمسی به میلادی:', e);
+                return new Date();
+            }
+        }
+
+        // تبدیل میلادی به شمسی (دقیق)
+        function gregorianToShamsi(date) {
+            try {
+                const gy = date.getFullYear();
+                const gm = date.getMonth() + 1;
+                const gd = date.getDate();
+                
+                const startOfYear = new Date(gy, 0, 0);
+                let gDayOfYear = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
+                
+                let jy = gy - 621;
+                let jDayOfYear = gDayOfYear - 79;
+                
+                if (jDayOfYear < 0) {
+                    jDayOfYear += 365;
+                    jy--;
+                    if ((jy % 4 === 0 && jy % 100 !== 0) || jy % 400 === 0) {
+                        jDayOfYear++;
+                    }
+                }
+                
+                const jDaysInMonth = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+                let jm = 1;
+                for (let i = 1; i <= 12; i++) {
+                    let daysInMonth = jDaysInMonth[i];
+                    if (i === 12 && (jy % 4 === 0)) daysInMonth = 30;
+                    
+                    if (jDayOfYear < daysInMonth) {
+                        jm = i;
+                        break;
+                    }
+                    jDayOfYear -= daysInMonth;
+                }
+                let jd = jDayOfYear + 1;
+                
+                return { year: jy, month: jm, day: jd };
+            } catch (e) {
+                console.error('خطا در تبدیل میلادی به شمسی:', e);
+                return { year: 1405, month: 1, day: 1 };
+            }
+        }
+
+        function getTodayShamsi() {
+            const now = new Date();
+            const shamsi = gregorianToShamsi(now);
+            return `${shamsi.year}-${String(shamsi.month).padStart(2, '0')}-${String(shamsi.day).padStart(2, '0')}`;
+        }
+
+        function getShamsiDisplay(shamsiDate) {
+            const parts = shamsiDate.split('-').map(Number);
+            const monthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 
+                                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+            return `${parts[2]} ${monthNames[parts[1] - 1]} ${parts[0]}`;
         }
 
         // =============================================
@@ -1154,8 +1262,7 @@
         // =============================================
         const dbClient = {
             async getRowsByType(type) {
-                const { data, error } = await supabaseClient
-                    .from('messages')
+                const { data, error } = await supabaseClient                    .from('messages')
                     .select('id, type, title, content, date')
                     .eq('type', type)
                     .eq('is_deleted', false)
@@ -1205,7 +1312,7 @@
             async savePeriod(date) {
                 try {
                     const cleanDate = date.split('T')[0];
-                    console.log('📅 ذخیره تاریخ:', cleanDate);
+                    console.log('📅 ذخیره تاریخ میلادی:', cleanDate);
                     
                     const { error } = await supabaseClient
                         .from('period_dates')
@@ -1298,14 +1405,6 @@
         // =============================================
         // ===== توابع کمکی =====
         // =============================================
-        function getTodayShamsi() {
-            const now = new Date();
-            const year = now.getFullYear() - 621;
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
         function showNotification(message) {
             try {
                 const notif = document.getElementById('notification');
@@ -1712,13 +1811,13 @@
         });
 
         // =============================================
-        // ===== مدیریت پریود (بهینه‌شده با کش) =====
+        // ===== مدیریت پریود (با تبدیل تاریخ درست) =====
         // =============================================
         const DEFAULT_CYCLE = 28;
         let periodDropdownOpen = false;
         let cachedHistory = null;
         let cacheTime = 0;
-        const CACHE_DURATION = 5000; // ۵ ثانیه
+        const CACHE_DURATION = 5000;
 
         window.togglePeriodDropdown = function() {
             const list = document.getElementById('periodDropdownList');
@@ -1753,7 +1852,8 @@
                 for (let i = 0; i < Math.min(sorted.length, 20); i++) {
                     const date = sorted[i];
                     const d = new Date(date + 'T00:00:00Z');
-                    const shamsi = `${d.getUTCFullYear() - 621}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+                    const shamsi = gregorianToShamsi(d);
+                    const shamsiStr = `${shamsi.year}-${String(shamsi.month).padStart(2, '0')}-${String(shamsi.day).padStart(2, '0')}`;
                     
                     const item = data.find(p => p.period_date === date);
                     const rowId = item ? item.id : null;
@@ -1761,7 +1861,7 @@
                     html += `
                         <div class="period-dropdown-item">
                             <span class="date-icon">📅</span>
-                            <span class="date-text" onclick="window.selectPeriodDate('${date}')">${shamsi}</span>
+                            <span class="date-text" onclick="window.selectPeriodDate('${date}')">${shamsiStr}</span>
                             <button onclick="event.stopPropagation(); window.deletePeriodDate('${rowId}')" 
                                     style="background:none;border:none;cursor:pointer;font-size:14px;color:#e74c3c;padding:0 4px;opacity:0.5;transition:opacity 0.2s;"
                                     onmouseover="this.style.opacity='1'" 
@@ -1794,15 +1894,13 @@
                     return;
                 }
                 
-                const year = d.getUTCFullYear() - 621;
-                const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-                const day = String(d.getUTCDate()).padStart(2, '0');
-                const shamsi = `${year}-${month}-${day}`;
+                const shamsi = gregorianToShamsi(d);
+                const shamsiStr = `${shamsi.year}-${String(shamsi.month).padStart(2, '0')}-${String(shamsi.day).padStart(2, '0')}`;
                 
                 const input = document.getElementById('lastPeriodDateShamsi');
                 if (input) {
-                    input.value = shamsi;
-                    console.log('📅 تاریخ انتخاب شد:', shamsi);
+                    input.value = shamsiStr;
+                    console.log('📅 تاریخ انتخاب شد:', shamsiStr);
                 }
                 
                 const list = document.getElementById('periodDropdownList');
@@ -1811,13 +1909,14 @@
                 if (arrow) arrow.classList.remove('open');
                 periodDropdownOpen = false;
                 
-                showNotification(`📅 تاریخ ${shamsi} انتخاب شد`);
+                showNotification(`📅 تاریخ ${shamsiStr} انتخاب شد`);
             } catch (error) {
                 console.error('❌ خطا در selectPeriodDate:', error);
                 showNotification('❌ خطا در انتخاب تاریخ');
             }
         };
 
+        // ===== تابع ذخیره تاریخ (اصلاح شده با تبدیل درست) =====
         window.savePeriodDate = async function() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             if (!dateInput) return;
@@ -1829,33 +1928,18 @@
             }
             
             try {
-                const parts = shamsiDate.split('-').map(Number);
-                if (parts.length !== 3 || parts.some(isNaN)) {
-                    showNotification('⚠️ تاریخ رو درست وارد کن!');
-                    return;
-                }
-                
-                const [jYear, jMonth, jDay] = parts;
-                
-                let gYear, gMonth, gDay;
-                if (jMonth < 3) {
-                    gYear = jYear + 622;
-                    gMonth = jMonth + 10;
-                } else {
-                    gYear = jYear + 621;
-                    gMonth = jMonth - 2;
-                }
-                gDay = jDay;
-                
-                const gregorianDate = new Date(gYear, gMonth - 1, gDay);
+                // ✅ استفاده از تابع درست تبدیل شمسی به میلادی
+                const gregorianDate = shamsiToGregorian(shamsiDate);
                 if (isNaN(gregorianDate.getTime())) {
                     showNotification('⚠️ تاریخ رو درست وارد کن!');
                     return;
                 }
                 
                 const dateStr = gregorianDate.toISOString().split('T')[0];
-                console.log('📅 تاریخ میلادی:', dateStr);
+                console.log('📅 تاریخ شمسی وارد شده:', shamsiDate);
+                console.log('📅 تاریخ میلادی معادل:', dateStr);
                 
+                // بررسی تکراری نبودن
                 const existingData = await dbClient.getPeriods();
                 const exists = existingData.some(item => item.period_date === dateStr);
                 
@@ -1876,7 +1960,8 @@
                     loadBadgeCounts()
                 ]);
                 
-                showNotification(`🌸 تاریخ ${shamsiDate} با موفقیت ذخیره شد!`);
+                const shamsiDisplay = getShamsiDisplay(shamsiDate);
+                showNotification(`🌸 تاریخ ${shamsiDisplay} با موفقیت ذخیره شد!`);
                 dateInput.value = getTodayShamsi();
                 
                 const list = document.getElementById('periodDropdownList');
@@ -1891,6 +1976,7 @@
             }
         };
 
+        // ===== تابع ثبت سریع (اصلاح شده) =====
         window.savePeriodQuick = async function() {
             const dateInput = document.getElementById('lastPeriodDateShamsi');
             if (!dateInput) return;
@@ -1902,31 +1988,15 @@
             }
             
             try {
-                const parts = shamsiDate.split('-').map(Number);
-                if (parts.length !== 3 || parts.some(isNaN)) {
-                    showNotification('⚠️ تاریخ رو درست وارد کن!');
-                    return;
-                }
-                
-                const [jYear, jMonth, jDay] = parts;
-                
-                let gYear, gMonth, gDay;
-                if (jMonth < 3) {
-                    gYear = jYear + 622;
-                    gMonth = jMonth + 10;
-                } else {
-                    gYear = jYear + 621;
-                    gMonth = jMonth - 2;
-                }
-                gDay = jDay;
-                
-                const gregorianDate = new Date(gYear, gMonth - 1, gDay);
+                // ✅ استفاده از تابع درست تبدیل
+                const gregorianDate = shamsiToGregorian(shamsiDate);
                 if (isNaN(gregorianDate.getTime())) {
                     showNotification('⚠️ تاریخ رو درست وارد کن!');
                     return;
                 }
                 
                 const dateStr = gregorianDate.toISOString().split('T')[0];
+                console.log('📅 تاریخ شمسی:', shamsiDate, '→ میلادی:', dateStr);
                 
                 const existingData = await dbClient.getPeriods();
                 const exists = existingData.some(item => item.period_date === dateStr);
@@ -1948,7 +2018,8 @@
                     loadBadgeCounts()
                 ]);
                 
-                showNotification(`✅ تاریخ ${shamsiDate} با موفقیت ثبت شد! 🌸`);
+                const shamsiDisplay = getShamsiDisplay(shamsiDate);
+                showNotification(`✅ تاریخ ${shamsiDisplay} با موفقیت ثبت شد! 🌸`);
                 dateInput.value = getTodayShamsi();
                 
                 const list = document.getElementById('periodDropdownList');
@@ -1998,7 +2069,6 @@
 
         async function loadPeriods() {
             try {
-                // استفاده از کش
                 if (cachedHistory && (Date.now() - cacheTime) < CACHE_DURATION) {
                     updatePeriodDisplay(cachedHistory);
                     updateCycleInfo();
@@ -2126,7 +2196,6 @@
             const display = document.getElementById('avgCycleDisplay');
             if (!display) return;
             
-            // استفاده از کش
             if (cachedHistory) {
                 const avg = calculateAverageCycle(cachedHistory);
                 if (cachedHistory.length < 2) {
@@ -2166,20 +2235,8 @@
             
             try {
                 if (status === 'started') {
-                    const parts = todayShamsi.split('-').map(Number);
-                    const [jYear, jMonth, jDay] = parts;
-                    
-                    let gYear, gMonth, gDay;
-                    if (jMonth < 3) {
-                        gYear = jYear + 622;
-                        gMonth = jMonth + 10;
-                    } else {
-                        gYear = jYear + 621;
-                        gMonth = jMonth - 2;
-                    }
-                    gDay = jDay;
-                    
-                    const gregorianDate = new Date(gYear, gMonth - 1, gDay);
+                    // ✅ استفاده از تابع درست تبدیل
+                    const gregorianDate = shamsiToGregorian(todayShamsi);
                     const dateStr = gregorianDate.toISOString().split('T')[0];
                     
                     const existingData = await dbClient.getPeriods();
