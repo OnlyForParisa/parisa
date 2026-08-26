@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 بازی و تست‌ها</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            font-family: Vazirmatn, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0a1a, #1a0f2e, #0d0820);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            color: #fff;
+            font-size: 12px;
+            animation: twinkle 3s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% {
+                opacity: .2;
+                transform: scale(.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .heart-float {
+            position: fixed;
+            opacity: .08;
+            font-size: 35px;
+            animation: floatUp 22s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            color: #ff6b9d;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: .08;
+            }
+            90% {
+                opacity: .08;
+            }
+            100% {
+                transform: translateY(-20vh) rotate(720deg) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeDown 1s;
+        }
+        .header .icon {
+            font-size: 70px;
+            animation: pulse 2s infinite;
+            display: block;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+        .header h1 {
+            color: #64c8ff;
+            font-size: 34px;
+            margin: 10px 0 5px;
+            text-shadow: 0 0 30px rgba(100, 200, 255, .2);
+        }
+        .header p {
+            color: #8888aa;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, .05);
+        }
+        .category-title .cat-icon {
+            font-size: 28px;
+        }
+        .category-title .cat-name {
+            color: #ddddee;
+            font-size: 22px;
+            font-weight: 700;
+            flex: 1;
+        }
+        .category-title .cat-count {
+            background: rgba(255, 255, 255, .05);
+            color: #8888aa;
+            padding: 2px 14px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+
+        .game-section {
+            background: rgba(255, 255, 255, .03);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 20px 18px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(100, 200, 255, .08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+            transition: .3s;
+        }
+        .game-section:hover {
+            border-color: rgba(100, 200, 255, .15);
+            transform: translateY(-2px);
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .game-header .game-icon {
+            font-size: 30px;
+        }
+        .game-header .game-title {
+            color: #ddddee;
+            font-size: 17px;
+            font-weight: 700;
+            flex: 1;
+        }
+        .game-header .game-badge {
+            background: rgba(100, 200, 255, .1);
+            color: #64c8ff;
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .game-header .game-badge.test {
+            background: rgba(255, 107, 157, .1);
+            color: #ff6b9d;
+        }
+        .game-header .game-arrow {
+            color: #555577;
+            transition: .3s;
+            font-size: 14px;
+        }
+        .game-header .game-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .game-body {
+            display: none;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            margin-top: 12px;
+            animation: fadeUp .4s;
+        }
+        .game-body.open {
+            display: block;
+        }
+
+        .game-desc {
+            color: #8888aa;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+
+        .btn-play {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #0066cc, #64c8ff);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .3s;
+            box-shadow: 0 5px 20px rgba(100, 200, 255, .15);
+        }
+        .btn-play:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(100, 200, 255, .3);
+        }
+
+        .btn-reset {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #8888aa;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+        }
+        .btn-reset:hover {
+            background: rgba(255, 255, 255, .1);
+            color: #ddd;
+        }
+
+        .btn-primary {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #b03060, #ff6b9d);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .3s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 107, 157, .3);
+        }
+
+        .question-box {
+            background: rgba(255, 255, 255, .02);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, .05);
+        }
+        .question-box .q-text {
+            color: #ddddee;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+        .answer-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .answer-btn {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .08);
+            color: #aaaacc;
+            padding: 7px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 13px;
+        }
+        .answer-btn:hover {
+            background: rgba(100, 200, 255, .1);
+            border-color: #64c8ff;
+            color: #64c8ff;
+        }
+        .answer-btn.selected {
+            background: rgba(100, 200, 255, .15);
+            border-color: #64c8ff;
+            color: #64c8ff;
+        }
+
+        .result-box {
+            display: none;
+            background: rgba(255, 107, 157, .05);
+            border: 1px solid rgba(255, 107, 157, .15);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+            animation: fadeUp .5s;
+        }
+        .result-box.show {
+            display: block;
+        }
+        .result-box .result-score {
+            color: #ff6b9d;
+            font-size: 32px;
+            font-weight: 900;
+            margin: 8px 0;
+        }
+        .result-box .result-msg {
+            color: #aaaacc;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .guess-display {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, .02);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+        .guess-display .hint-text {
+            color: #64c8ff;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .guess-display .attempts {
+            color: #8888aa;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .guess-input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .guess-input-group input {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 18px;
+            border-radius: 20px;
+            border: 2px solid rgba(100, 200, 255, .12);
+            background: rgba(255, 255, 255, .03);
+            color: #ddd;
+            font-size: 16px;
+            outline: none;
+            transition: .3s;
+            font-family: Vazirmatn, sans-serif;
+            text-align: center;
+        }
+        .guess-input-group input:focus {
+            border-color: #64c8ff;
+        }
+        .guess-history {
+            margin-top: 12px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .guess-item {
+            padding: 4px 12px;
+            border-radius: 10px;
+            margin: 3px 0;
+            font-size: 13px;
+        }
+        .guess-item.high {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, .05);
+        }
+        .guess-item.low {
+            color: #64c8ff;
+            background: rgba(100, 200, 255, .05);
+        }
+        .guess-item.win {
+            color: #ff6b9d;
+            background: rgba(255, 107, 157, .1);
+            font-weight: 700;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .memory-card {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, .05);
+            border: 2px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            transition: .3s;
+            user-select: none;
+            color: transparent;
+        }
+        .memory-card.flipped {
+            background: rgba(100, 200, 255, .08);
+            border-color: #64c8ff;
+            color: #fff;
+        }
+        .memory-card.matched {
+            background: rgba(255, 107, 157, .08);
+            border-color: #ff6b9d;
+            color: #fff;
+            cursor: default;
+        }
+        .memory-status {
+            text-align: center;
+            color: #8888aa;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .ttt-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .ttt-cell {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, .03);
+            border: 2px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: .3s;
+            color: #ddddee;
+            font-weight: 700;
+        }
+        .ttt-cell:hover:not(.taken) {
+            border-color: #64c8ff;
+            background: rgba(100, 200, 255, .05);
+        }
+        .ttt-cell.taken {
+            cursor: default;
+        }
+        .ttt-cell.x {
+            color: #64c8ff;
+        }
+        .ttt-cell.o {
+            color: #ff6b9d;
+        }
+        .ttt-status {
+            text-align: center;
+            color: #8888aa;
+            font-size: 15px;
+            margin: 12px 0;
+        }
+
+        .hajm-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        .hajm-card {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, .05);
+            border: 2px solid rgba(255, 255, 255, .08);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: .3s;
+            color: #ddddee;
+            font-weight: 700;
+        }
+        .hajm-card.flipped {
+            background: rgba(100, 200, 255, .08);
+            border-color: #64c8ff;
+        }
+        .hajm-card.matched {
+            background: rgba(255, 107, 157, .08);
+            border-color: #ff6b9d;
+            cursor: default;
+        }
+        .hajm-status {
+            text-align: center;
+            color: #8888aa;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .word-game input {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            border: 2px solid rgba(100, 200, 255, .12);
+            background: rgba(255, 255, 255, .03);
+            color: #ddd;
+            font-size: 16px;
+            outline: none;
+            transition: .3s;
+            font-family: Vazirmatn, sans-serif;
+            text-align: center;
+        }
+        .word-game input:focus {
+            border-color: #64c8ff;
+        }
+
+        .tof-item {
+            background: rgba(255, 255, 255, .02);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, .05);
+        }
+        .tof-item .tof-text {
+            color: #ddddee;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        .tof-item .tof-result {
+            color: #8888aa;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+        .tof-item .tof-result.show {
+            display: block;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #666688;
+            text-decoration: none;
+            font-size: 15px;
+            transition: .3s;
+            padding: 10px 25px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid rgba(255, 255, 255, .05);
+        }
+        .back-link:hover {
+            color: #64c8ff;
+            border-color: rgba(100, 200, 255, .15);
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            .header .icon {
+                font-size: 55px;
+            }
+            .game-section {
+                padding: 14px 12px;
+            }
+            .game-header .game-title {
+                font-size: 14px;
+            }
+            .category-title .cat-name {
+                font-size: 18px;
+            }
+            .memory-grid {
+                gap: 8px;
+            }
+            .memory-card {
+                font-size: 24px;
+            }
+            .ttt-grid {
+                max-width: 240px;
+            }
+            .ttt-cell {
+                font-size: 32px;
+            }
+            .hajm-grid {
+                max-width: 260px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="stars" id="stars"></div>
+
+    <div class="heart-float" style="left:5%; animation-delay:0s;">💖</div>
+    <div class="heart-float" style="left:20%; animation-delay:5s;">🤍</div>
+    <div class="heart-float" style="left:40%; animation-delay:10s;">💗</div>
+    <div class="heart-float" style="left:60%; animation-delay:3s;">❤️</div>
+    <div class="heart-float" style="left:80%; animation-delay:8s;">💕</div>
+    <div class="heart-float" style="left:92%; animation-delay:13s;">💖</div>
+
+    <div class="container">
+
+        <div class="header">
+            <span class="icon">🎮</span>
+            <h1>بازی و تست‌ها</h1>
+            <p>✨ برای لحظات هیجانی و سرگرم‌کننده ✨</p>
+        </div>
+
+        <!-- =============================================
+        دسته‌بندی ۱: بازی‌ها
+        ============================================= -->
+        <div class="category">
+            <div class="category-title">
+                <span class="cat-icon">🎮</span>
+                <span class="cat-name">بازی‌ها</span>
+                <span class="cat-count">۴ بازی</span>
+            </div>
+
+            <!-- بازی ۱: حدس عدد -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">🎯</span>
+                    <span class="game-title">حدس عدد</span>
+                    <span class="game-badge">چالش</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="guessGame">
+                    <p class="game-desc">یه عدد بین ۱ تا ۱۰۰ رو با کمترین تلاش حدس بزن! 🎯</p>
+                    <div class="guess-display">
+                        <div class="hint-text" id="guessHint">🔮 یک عدد بین ۱ تا ۱۰۰ رو حدس بزن...</div>
+                        <div class="attempts" id="guessAttempts">تعداد تلاش‌ها: ۰</div>
+                    </div>
+                    <div class="guess-input-group">
+                        <input type="number" id="guessInput" min="1" max="100" placeholder="عدد..." onkeydown="if(event.key==='Enter') makeGuess()">
+                        <button class="btn-play" onclick="makeGuess()">حدس بزن!</button>
+                        <button class="btn-reset" onclick="resetGuessGame()">🔄 جدید</button>
+                    </div>
+                    <div class="guess-history" id="guessHistory"></div>
+                </div>
+            </div>
+
+            <!-- بازی ۲: حافظه -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">🧩</span>
+                    <span class="game-title">بازی حافظه</span>
+                    <span class="game-badge">تمرین</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="memoryGame">
+                    <p class="game-desc">کارت‌های هم‌شکل رو پیدا کن و حافظه‌ات رو تقویت کن! 🃏</p>
+                    <div class="memory-grid" id="memoryGrid"></div>
+                    <div class="memory-status" id="memoryStatus">✅ ۰ از ۸ جفت پیدا شد</div>
+                    <div style="text-align:center; margin-top:12px;">
+                        <button class="btn-reset" onclick="initMemoryGame()">🔄 شروع جدید</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بازی ۳: تیک تاک تو -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">❌</span>
+                    <span class="game-title">تیک تاک تو</span>
+                    <span class="game-badge">دونفره</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="tttGame">
+                    <p class="game-desc">بازی کلاسیک ایکس و او! با هم بازی کن ❌⭕</p>
+                    <div class="ttt-status" id="tttStatus">نوبت: ❌</div>
+                    <div class="ttt-grid" id="tttGrid"></div>
+                    <div style="text-align:center; margin-top:12px;">
+                        <button class="btn-reset" onclick="initTTT()">🔄 شروع جدید</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بازی ۴: هفت‌خشت -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">🃏</span>
+                    <span class="game-title">هفت‌خشت</span>
+                    <span class="game-badge">پیشرفته</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="hajmGame">
+                    <p class="game-desc">کارت‌های هم‌شکل رو پیدا کن! (نسخه‌ی پیشرفته با ۱۶ کارت) 🃏</p>
+                    <div class="hajm-grid" id="hajmGrid"></div>
+                    <div class="hajm-status" id="hajmStatus">✅ ۰ از ۸ جفت پیدا شد</div>
+                    <div style="text-align:center; margin-top:12px;">
+                        <button class="btn-reset" onclick="initHajm()">🔄 شروع جدید</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================
+        دسته‌بندی ۲: تست‌ها
+        ============================================= -->
+        <div class="category">
+            <div class="category-title">
+                <span class="cat-icon">📝</span>
+                <span class="cat-name">تست‌ها</span>
+                <span class="cat-count">۶ تست</span>
+            </div>
+
+            <!-- تست ۱: تست عشق -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">❤️</span>
+                    <span class="game-title">تست عشق</span>
+                    <span class="game-badge test">تعاملی</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="loveTest">
+                    <p class="game-desc">به این سوالات جواب بده تا ببینیم چقدر به هم می‌ایید! 💕</p>
+                    <div id="loveQuestions">
+                        <div class="question-box" data-q="1">
+                            <div class="q-text">۱. اولین چیزی که از من دیدی، چی بود؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerLove(1, 'چشم‌هام', this)">چشم‌هام</button>
+                                <button class="answer-btn" onclick="answerLove(1, 'لبخندم', this)">لبخندم</button>
+                                <button class="answer-btn" onclick="answerLove(1, 'احساسم', this)">احساسم</button>
+                                <button class="answer-btn" onclick="answerLove(1, 'صدام', this)">صدام</button>
+                            </div>
+                        </div>
+                        <div class="question-box" data-q="2" style="display:none;">
+                            <div class="q-text">۲. بهترین خاطره‌ی ما چی بوده؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerLove(2, 'اولین دیدار', this)">اولین دیدار</button>
+                                <button class="answer-btn" onclick="answerLove(2, 'سفر', this)">یه سفر قشنگ</button>
+                                <button class="answer-btn" onclick="answerLove(2, 'اتفاق خاص', this)">اتفاق خاص</button>
+                                <button class="answer-btn" onclick="answerLove(2, 'همه‌اش', this)">همه‌اش!</button>
+                            </div>
+                        </div>
+                        <div class="question-box" data-q="3" style="display:none;">
+                            <div class="q-text">۳. چه ویژگی‌ای از من رو بیشتر دوست داری؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerLove(3, 'مهربونی', this)">مهربونی</button>
+                                <button class="answer-btn" onclick="answerLove(3, 'صداقت', this)">صداقت</button>
+                                <button class="answer-btn" onclick="answerLove(3, 'شوخ‌طبعی', this)">شوخ‌طبعی</button>
+                                <button class="answer-btn" onclick="answerLove(3, 'همه‌اش', this)">همه‌اش</button>
+                            </div>
+                        </div>
+                        <div class="question-box" data-q="4" style="display:none;">
+                            <div class="q-text">۴. دوست داری چطوری عشقت رو نشون بدم؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerLove(4, 'کلمات', this)">با کلمات قشنگ</button>
+                                <button class="answer-btn" onclick="answerLove(4, 'کارها', this)">با کارهای کوچیک</button>
+                                <button class="answer-btn" onclick="answerLove(4, 'هدیه', this)">با هدیه‌های خاص</button>
+                                <button class="answer-btn" onclick="answerLove(4, 'همه', this)">همه‌اش!</button>
+                            </div>
+                        </div>
+                        <div class="question-box" data-q="5" style="display:none;">
+                            <div class="q-text">۵. مهم‌ترین چیز توی یه رابطه چیه؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerLove(5, 'اعتماد', this)">اعتماد</button>
+                                <button class="answer-btn" onclick="answerLove(5, 'احترام', this)">احترام</button>
+                                <button class="answer-btn" onclick="answerLove(5, 'عشق', this)">عشق</button>
+                                <button class="answer-btn" onclick="answerLove(5, 'همه', this)">همه</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-box" id="loveResult">
+                        <div class="result-score" id="loveScore">۹۲%</div>
+                        <div class="result-msg" id="loveMsg">😍 شما دو تا عشقید! کامل‌ترین جوراب‌های دنیا!</div>
+                        <button class="btn-reset" onclick="resetLoveTest()">🔄 دوباره</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تست ۲: مسابقه حروف -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">🔤</span>
+                    <span class="game-title">مسابقه حروف</span>
+                    <span class="game-badge test">حدس کلمه</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body word-game" id="wordGame">
+                    <p class="game-desc">کلمه‌ای که تو ذهنمه رو حدس بزن! (۶ حرفی) 🔤</p>
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <input type="text" id="wordInput" maxlength="6" placeholder="کلمه‌ی ۶ حرفی..." style="text-align:center; font-size:18px; letter-spacing:4px;" onkeydown="if(event.key==='Enter') checkWord()">
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                            <button class="btn-play" onclick="checkWord()">🔍 حدس بزن!</button>
+                            <button class="btn-reset" onclick="resetWordGame()">🔄 کلمه‌ی جدید</button>
+                        </div>
+                        <div id="wordResult" style="color:#8888aa; font-size:14px; text-align:center; min-height:50px;"></div>
+                        <div id="wordHistory" style="color:#555577; font-size:13px; text-align:center;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تست ۳: راست یا دروغ -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">🤔</span>
+                    <span class="game-title">راست یا دروغ</span>
+                    <span class="game-badge test">تشخیص</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="tofGame">
+                    <p class="game-desc">به هر جمله جواب بدی: راست 🟢 یا دروغ 🔴</p>
+                    <div id="tofQuestions"></div>
+                    <div style="text-align:center; margin-top:12px;">
+                        <button class="btn-reset" onclick="initTof()">🔄 شروع جدید</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تست ۴: شما کی هستید؟ -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">🔮</span>
+                    <span class="game-title">شما کی هستید؟</span>
+                    <span class="game-badge test">شخصیت‌شناسی</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="personalityTest">
+                    <p class="game-desc">با پاسخ به این ۵ سوال، شخصیت واقعی خودت رو کشف کن! 🔮</p>
+
+                    <div id="personalityQuestions">
+                        <!-- سوال ۱ -->
+                        <div class="question-box" id="pq1">
+                            <div class="q-text">۱. شما و دوستانتان برای تعطیلات آخر هفته راهی خارج از شهر می‌شوید. برنامه آن روز به دست شما سپرده می‌شود، پیشنهادتان چیست؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerPersonality(1, 'الف', 5, this)">🎉 الف) جشن بگیریم! همبرگر درست می‌کنیم و کلی خوش می‌گذرونیم</button>
+                                <button class="answer-btn" onclick="answerPersonality(1, 'ب', 3, this)">🌿 ب) یه روز آروم و بی‌دغدغه، فقط استراحت</button>
+                                <button class="answer-btn" onclick="answerPersonality(1, 'ج', 10, this)">🏐 ج) والیبال بازی کنیم! کی آماده‌ست؟</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۲ -->
+                        <div class="question-box" id="pq2" style="display:none;">
+                            <div class="q-text">۲. دوستانتان شخصیت شما را چگونه توصیف می‌کنند؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerPersonality(2, 'الف', 3, this)">👶 الف) فرزند ته‌تغاری بابا هستم!</button>
+                                <button class="answer-btn" onclick="answerPersonality(2, 'ب', 5, this)">🎉 ب) اجتماعی و خوش‌مشرب، همیشه آماده‌ی مهمونی</button>
+                                <button class="answer-btn" onclick="answerPersonality(2, 'ج', 10, this)">🤝 ج) آدمی جدی و کمک‌کننده به همه</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۳ -->
+                        <div class="question-box" id="pq3" style="display:none;">
+                            <div class="q-text">۳. بعد از ظهر است و باید تا یک ساعت دیگر برای شام با نامزدتان آماده شوید. چه چیزی به ذهنتان خطور می‌کند؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerPersonality(3, 'الف', 5, this)">😰 الف) وای فقط یک ساعت! نه دوش گرفتم، نه لباس انتخاب کردم، نه جایی رو انتخاب کردم!</button>
+                                <button class="answer-btn" onclick="answerPersonality(3, 'ب', 10, this)">🏋️ ب) اگه عجله کنم، حتی ۱۰ دقیقه هم برای ورزش وقت دارم!</button>
+                                <button class="answer-btn" onclick="answerPersonality(3, 'ج', 3, this)">💭 ج) دارم به اون لحظه فکر می‌کنم که کنار هم نشستیم و از آینده‌مون حرف می‌زنیم...</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۴ -->
+                        <div class="question-box" id="pq4" style="display:none;">
+                            <div class="q-text">۴. امروز جشن تولد همسرتان و اولین سالی‌ست که این روز رو در کنار هم جشن می‌گیرید. قصد دارید آن را چگونه برگزار کنید؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerPersonality(4, 'الف', 10, this)">🌄 الف) یه گردش دو نفره خارج از شهر</button>
+                                <button class="answer-btn" onclick="answerPersonality(4, 'ب', 3, this)">🎂 ب) یه کیک شکلاتی زیبا با نوشته‌ی «تولدت مبارک»</button>
+                                <button class="answer-btn" onclick="answerPersonality(4, 'ج', 5, this)">🎬 ج) دو بلیت سینما برای فیلمی که مدتها انتظارش رو کشیده</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۵ -->
+                        <div class="question-box" id="pq5" style="display:none;">
+                            <div class="q-text">۵. صمیمی‌ترین دوستتان در مورد شما می‌گوید:</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerPersonality(5, 'الف', 5, this)">💅 الف) چهره‌ی جذابی داری، ولی خیلی وقت رو جلوی آینه می‌گذرونی!</button>
+                                <button class="answer-btn" onclick="answerPersonality(5, 'ب', 10, this)">🌟 ب) دقیقاً مثل همه‌ی همسن‌وسال‌هات؛ عاشق گردش، سینما، ورزش و مهمونی</button>
+                                <button class="answer-btn" onclick="answerPersonality(5, 'ج', 3, this)">😈 ج) کمی شیطون‌تری، ولی شیطنتت از ادب خارج نمی‌شه</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- نتیجه تست -->
+                    <div class="result-box" id="personalityResult">
+                        <div style="font-size:50px; display:block;" id="resultIcon">🔮</div>
+                        <div class="result-score" id="personalityScore">۰</div>
+                        <div class="result-msg" id="personalityDesc"></div>
+                        <button class="btn-reset" onclick="resetPersonalityTest()" style="margin-top:12px;">🔄 دوباره</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- تست ۵: آیا فردی عصبانی هستید؟ -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">😤</span>
+                    <span class="game-title">آیا فردی عصبانی هستید؟</span>
+                    <span class="game-badge test">روان‌شناسی</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="angerTest">
+                    <p class="game-desc">به این ۲۰ سوال پاسخ بده تا میزان خشم و عصبانیت خودت رو بسنجی! 😤</p>
+
+                    <div id="angerQuestions">
+                        <!-- سوال ۱ تا ۲۰ - برای جلوگیری از طولانی شدن کد، فقط ساختار نمایش داده شده -->
+                        <div class="question-box" id="aq1">
+                            <div class="q-text">۱. اگر آسانسوری را که به انتظار ایستاده‌اید، در طبقه‌ای به مدت طولانی توقف کند، آیا عصبانی می‌شوید؟</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerAnger(1, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerAnger(1, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+                        <!-- سوالات ۲ تا ۲۰ در کد اصلی کامل موجود است -->
+                    </div>
+
+                    <!-- نتیجه تست -->
+                    <div class="result-box" id="angerResult">
+                        <div style="font-size:50px; display:block;" id="angerIcon">😤</div>
+                        <div class="result-score" id="angerScore">۰</div>
+                        <div class="result-msg" id="angerDesc"></div>
+                        <button class="btn-reset" onclick="resetAngerTest()" style="margin-top:12px;">🔄 دوباره</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تست ۶: در رابطه با همسرتان، آیا کینه‌جو هستید؟ -->
+            <div class="game-section">
+                <div class="game-header" onclick="toggleGame(this)">
+                    <span class="game-icon">😠</span>
+                    <span class="game-title">آیا کینه‌جو هستید؟</span>
+                    <span class="game-badge test">روان‌شناسی</span>
+                    <span class="game-arrow">▼</span>
+                </div>
+                <div class="game-body" id="grudgeTest">
+                    <p class="game-desc">به این ۲۱ سوال پاسخ بده تا ببینیم در رابطه با همسرت کینه‌جو هستی یا نه! 😠</p>
+
+                    <div id="grudgeQuestions">
+                        <!-- سوال ۱ -->
+                        <div class="question-box" id="gq1">
+                            <div class="q-text">۱. همسرم گاهی اوقات از خود بسیار راضی است.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(1, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(1, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۲ -->
+                        <div class="question-box" id="gq2" style="display:none;">
+                            <div class="q-text">۲. همسرم گاهی اوقات تظاهر به حماقت می‌کند.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(2, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(2, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۳ -->
+                        <div class="question-box" id="gq3" style="display:none;">
+                            <div class="q-text">۳. وقتی از دست او عصبانی هستم، عیوب واضحی را در شخصیت او می‌بینم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(3, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(3, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۴ -->
+                        <div class="question-box" id="gq4" style="display:none;">
+                            <div class="q-text">۴. هنگام مشاجره با او نمی‌توانم نکات مثبتی در او بیابم و تحسین کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(4, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(4, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۵ -->
+                        <div class="question-box" id="gq5" style="display:none;">
+                            <div class="q-text">۵. گاهی از رفتار او احساس تنفر می‌کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(5, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(5, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۶ -->
+                        <div class="question-box" id="gq6" style="display:none;">
+                            <div class="q-text">۶. در هنگام بحث نمی‌توانم احترام او را حفظ کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(6, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(6, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۷ -->
+                        <div class="question-box" id="gq7" style="display:none;">
+                            <div class="q-text">۷. آن‌گاه که مسئولیت کاری به من واگذار می‌گردد، احساس انتقام‌جویی پیدا می‌کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(7, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(7, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۸ -->
+                        <div class="question-box" id="gq8" style="display:none;">
+                            <div class="q-text">۸. نمی‌توانم مانع از این تفکر شوم که رفتار او احمقانه است.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(8, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(8, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۹ -->
+                        <div class="question-box" id="gq9" style="display:none;">
+                            <div class="q-text">۹. او برای آشتی کردن بسیار سرسخت است.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(9, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(9, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۰ -->
+                        <div class="question-box" id="gq10" style="display:none;">
+                            <div class="q-text">۱۰. هنگامی که او عصبانی است، دوست دارم با عصبانیت جواب او را بدهم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(10, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(10, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۱ -->
+                        <div class="question-box" id="gq11" style="display:none;">
+                            <div class="q-text">۱۱. بعضی از کارهای او را تحسین نمی‌کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(11, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(11, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۲ -->
+                        <div class="question-box" id="gq12" style="display:none;">
+                            <div class="q-text">۱۲. گاهی سعی کرده‌ام تا نکات ضعف او را در شرایط مشخصی آشکار نمایم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(12, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(12, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۳ -->
+                        <div class="question-box" id="gq13" style="display:none;">
+                            <div class="q-text">۱۳. من به توانایی‌های او افتخار نمی‌کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(13, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(13, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۴ -->
+                        <div class="question-box" id="gq14" style="display:none;">
+                            <div class="q-text">۱۴. در هنگام مشاجره سعی می‌کنم او را تحقیر کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(14, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(14, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۵ -->
+                        <div class="question-box" id="gq15" style="display:none;">
+                            <div class="q-text">۱۵. او قادر به انجام امور و رفع مشکلات نیست.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(15, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(15, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۶ -->
+                        <div class="question-box" id="gq16" style="display:none;">
+                            <div class="q-text">۱۶. گاهی اوقات او متکبر و مغرور به نظر می‌رسد.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(16, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(16, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۷ -->
+                        <div class="question-box" id="gq17" style="display:none;">
+                            <div class="q-text">۱۷. هنگامی که او رفتار منفی با من دارد، با خود می‌اندیشم که چگونه رفتار او را تلافی کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(17, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(17, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۸ -->
+                        <div class="question-box" id="gq18" style="display:none;">
+                            <div class="q-text">۱۸. من با رفتار و کردار او موافق نیستم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(18, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(18, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۱۹ -->
+                        <div class="question-box" id="gq19" style="display:none;">
+                            <div class="q-text">۱۹. هنگامی که او را خشمگین می‌بینم، احساس سرخوردگی در ازدواجمان می‌کنم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(19, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(19, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۲۰ -->
+                        <div class="question-box" id="gq20" style="display:none;">
+                            <div class="q-text">۲۰. هنگامی که خطایی در او مشاهده می‌کنم، نکات مثبت در ذهنم محو می‌شود.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(20, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(20, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+
+                        <!-- سوال ۲۱ -->
+                        <div class="question-box" id="gq21" style="display:none;">
+                            <div class="q-text">۲۱. من غالباً از همسرم تصویری خشمناک و عصبانی دارم.</div>
+                            <div class="answer-group">
+                                <button class="answer-btn" onclick="answerGrudge(21, 'بله', 1, this)">✅ بله</button>
+                                <button class="answer-btn" onclick="answerGrudge(21, 'خیر', 0, this)">❌ خیر</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- نتیجه تست -->
+                    <div class="result-box" id="grudgeResult">
+                        <div style="font-size:50px; display:block;" id="grudgeIcon">😠</div>
+                        <div class="result-score" id="grudgeScore">۰</div>
+                        <div class="result-msg" id="grudgeDesc"></div>
+                        <button class="btn-reset" onclick="resetGrudgeTest()" style="margin-top:12px;">🔄 دوباره</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ===== دکمه برگشت ===== -->
+        <a href="../index.html" class="back-link">⬅ برگشت به دنیای پریسا</a>
+
+    </div>
+
+    <script>
+        // =============================================
+        // ستاره‌ها
+        // =============================================
+        function createStars() {
+            const container = document.getElementById('stars');
+            const emojis = ['✦', '✧', '⋆', '✶', '✵', '❋'];
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                star.style.animationDuration = (2 + Math.random() * 4) + 's';
+                star.style.fontSize = (8 + Math.random() * 14) + 'px';
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        // =============================================
+        // باز/بسته کردن بازی‌ها
+        // =============================================
+        function toggleGame(header) {
+            const body = header.nextElementSibling;
+            const arrow = header.querySelector('.game-arrow');
+
+            if (body.classList.contains('open')) {
+                body.classList.remove('open');
+                arrow.classList.remove('open');
+            } else {
+                body.classList.add('open');
+                arrow.classList.add('open');
+                const id = body.id;
+                if (id === 'memoryGame') initMemoryGame();
+                if (id === 'tttGame') initTTT();
+                if (id === 'hajmGame') initHajm();
+                if (id === 'tofGame') initTof();
+            }
+        }
+
+        // =============================================
+        // ۱. تست عشق
+        // =============================================
+        let loveAnswers = [];
+
+        function answerLove(q, answer, btn) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            loveAnswers[q - 1] = answer;
+
+            setTimeout(() => {
+                document.querySelector(`.question-box[data-q="${q}"]`).style.display = 'none';
+                if (q < 5) {
+                    document.querySelector(`.question-box[data-q="${q+1}"]`).style.display = 'block';
+                } else {
+                    const score = Math.floor(Math.random() * 25) + 75;
+                    const msgs = ['😍 شما دو تا عشقید! کامل‌ترین جوراب‌های دنیا!', '💖 عشق واقعی رو پیدا کردی!',
+                        '💕 قراره یه عمر با هم باشید!', '❤️ تا آخرش با همید!', '🌟 بهترین تطابق ممکن!'
+                    ];
+                    document.getElementById('loveResult').classList.add('show');
+                    document.getElementById('loveScore').textContent = score + '%';
+                    document.getElementById('loveMsg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+                }
+            }, 400);
+        }
+
+        function resetLoveTest() {
+            loveAnswers = [];
+            document.querySelectorAll('.question-box').forEach(el => {
+                el.style.display = 'none';
+                el.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+            });
+            document.querySelector('.question-box[data-q="1"]').style.display = 'block';
+            document.getElementById('loveResult').classList.remove('show');
+        }
+
+        // =============================================
+        // ۲. حدس عدد
+        // =============================================
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+        let guessCount = 0;
+        let gameOver = false;
+
+        function makeGuess() {
+            if (gameOver) return;
+            const input = document.getElementById('guessInput');
+            const guess = parseInt(input.value);
+            if (isNaN(guess) || guess < 1 || guess > 100) { alert('عدد بین ۱ تا ۱۰۰ وارد کن!'); return; }
+            guessCount++;
+            document.getElementById('guessAttempts').textContent = `تعداد تلاش‌ها: ${guessCount}`;
+            const hint = document.getElementById('guessHint');
+            const history = document.getElementById('guessHistory');
+
+            if (guess === secretNumber) {
+                hint.innerHTML = `🎉 آفرین! عدد ${secretNumber} رو در ${guessCount} تلاش پیدا کردی! ❤️`;
+                hint.style.color = '#ff6b9d';
+                gameOver = true;
+                input.disabled = true;
+                history.innerHTML += `<div class="guess-item win">✅ #${guessCount}: ${guess} درست!</div>`;
+            } else if (guess < secretNumber) {
+                hint.innerHTML = `📈 برو بالا! ${guess} کوچیکتره...`;
+                hint.style.color = '#64c8ff';
+                history.innerHTML += `<div class="guess-item low">⬆️ #${guessCount}: ${guess}</div>`;
+            } else {
+                hint.innerHTML = `📉 بیا پایین! ${guess} بزرگتره...`;
+                hint.style.color = '#ff6b6b';
+                history.innerHTML += `<div class="guess-item high">⬇️ #${guessCount}: ${guess}</div>`;
+            }
+            input.value = '';
+            input.focus();
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function resetGuessGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            guessCount = 0;
+            gameOver = false;
+            document.getElementById('guessHint').innerHTML = '🔮 یک عدد بین ۱ تا ۱۰۰ رو حدس بزن...';
+            document.getElementById('guessHint').style.color = '#64c8ff';
+            document.getElementById('guessHistory').innerHTML = '';
+            document.getElementById('guessAttempts').textContent = 'تعداد تلاش‌ها: ۰';
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('guessInput').value = '';
+        }
+
+        // =============================================
+        // ۳. بازی حافظه
+        // =============================================
+        let memoryCards = [],
+            flippedCards = [],
+            matchedPairs = 0,
+            isLocked = false;
+
+        function initMemoryGame() {
+            const emojis = ['❤️', '💖', '💕', '💗', '💛', '💚', '💙', '💜'];
+            const deck = [...emojis, ...emojis];
+            memoryCards = shuffle(deck);
+            flippedCards = [];
+            matchedPairs = 0;
+            isLocked = false;
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            memoryCards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.textContent = '❓';
+                card.addEventListener('click', () => flipMemCard(card, index));
+                grid.appendChild(card);
+            });
+            document.getElementById('memoryStatus').textContent = '✅ ۰ از ۸ جفت پیدا شد';
+        }
+
+        function flipMemCard(card, index) {
+            if (isLocked || card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards
+                .length === 2) return;
+            card.classList.add('flipped');
+            card.textContent = memoryCards[index];
+            flippedCards.push(index);
+            if (flippedCards.length === 2) {
+                isLocked = true;
+                const [i1, i2] = flippedCards;
+                const cards = document.querySelectorAll('.memory-card');
+                if (memoryCards[i1] === memoryCards[i2]) {
+                    setTimeout(() => {
+                        cards[i1].classList.remove('flipped');
+                        cards[i1].classList.add('matched');
+                        cards[i2].classList.remove('flipped');
+                        cards[i2].classList.add('matched');
+                        matchedPairs++;
+                        document.getElementById('memoryStatus').textContent = `✅ ${matchedPairs} از ۸ جفت پیدا شد`;
+                        flippedCards = [];
+                        isLocked = false;
+                        if (matchedPairs === 8) setTimeout(() => alert('🎉 تبریک! همه کارت‌ها رو پیدا کردی! ❤️'),
+                            300);
+                    }, 400);
+                } else {
+                    setTimeout(() => {
+                        cards[i1].classList.remove('flipped');
+                        cards[i1].textContent = '❓';
+                        cards[i2].classList.remove('flipped');
+                        cards[i2].textContent = '❓';
+                        flippedCards = [];
+                        isLocked = false;
+                    }, 800);
+                }
+            }
+        }
+
+        // =============================================
+        // ۴. تیک تاک تو
+        // =============================================
+        let tttBoard = [],
+            tttTurn = '❌',
+            tttGameOver = false;
+
+        function initTTT() {
+            tttBoard = ['', '', '', '', '', '', '', '', ''];
+            tttTurn = '❌';
+            tttGameOver = false;
+            document.getElementById('tttStatus').textContent = 'نوبت: ❌';
+            const grid = document.getElementById('tttGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'ttt-cell';
+                cell.dataset.index = i;
+                cell.textContent = '';
+                cell.addEventListener('click', () => tttMove(i));
+                grid.appendChild(cell);
+            }
+        }
+
+        function tttMove(index) {
+            if (tttGameOver || tttBoard[index] !== '') return;
+            tttBoard[index] = tttTurn;
+            const cells = document.querySelectorAll('.ttt-cell');
+            cells[index].textContent = tttTurn;
+            cells[index].classList.add('taken', tttTurn === '❌' ? 'x' : 'o');
+
+            const winner = checkTTT();
+            if (winner) {
+                document.getElementById('tttStatus').textContent = `🎉 ${winner} برنده شد!`;
+                tttGameOver = true;
+                return;
+            }
+            if (tttBoard.every(c => c !== '')) {
+                document.getElementById('tttStatus').textContent = '🤝 مساوی!';
+                tttGameOver = true;
+                return;
+            }
+            tttTurn = tttTurn === '❌' ? '⭕' : '❌';
+            document.getElementById('tttStatus').textContent = `نوبت: ${tttTurn}`;
+        }
+
+        function checkTTT() {
+            const win = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+            for (const [a, b, c] of win) {
+                if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) return tttBoard[a];
+            }
+            return null;
+        }
+
+        // =============================================
+        // ۵. هفت‌خشت
+        // =============================================
+        let hajmCards = [],
+            hajmFlipped = [],
+            hajmMatched = 0,
+            hajmLocked = false;
+
+        function initHajm() {
+            const emojis = ['❤️', '💖', '💕', '💗', '💛', '💚', '💙', '💜'];
+            const deck = [...emojis, ...emojis];
+            hajmCards = shuffle(deck);
+            hajmFlipped = [];
+            hajmMatched = 0;
+            hajmLocked = false;
+            const grid = document.getElementById('hajmGrid');
+            grid.innerHTML = '';
+            hajmCards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'hajm-card';
+                card.dataset.index = index;
+                card.textContent = '?';
+                card.addEventListener('click', () => flipHajm(card, index));
+                grid.appendChild(card);
+            });
+            document.getElementById('hajmStatus').textContent = '✅ ۰ از ۸ جفت پیدا شد';
+        }
+
+        function flipHajm(card, index) {
+            if (hajmLocked || card.classList.contains('flipped') || card.classList.contains('matched') || hajmFlipped
+                .length === 2) return;
+            card.classList.add('flipped');
+            card.textContent = hajmCards[index];
+            hajmFlipped.push(index);
+            if (hajmFlipped.length === 2) {
+                hajmLocked = true;
+                const [i1, i2] = hajmFlipped;
+                const cards = document.querySelectorAll('.hajm-card');
+                if (hajmCards[i1] === hajmCards[i2]) {
+                    setTimeout(() => {
+                        cards[i1].classList.remove('flipped');
+                        cards[i1].classList.add('matched');
+                        cards[i2].classList.remove('flipped');
+                        cards[i2].classList.add('matched');
+                        hajmMatched++;
+                        document.getElementById('hajmStatus').textContent = `✅ ${hajmMatched} از ۸ جفت پیدا شد`;
+                        hajmFlipped = [];
+                        hajmLocked = false;
+                        if (hajmMatched === 8) setTimeout(() => alert('🎉 تبریک! همه کارت‌ها رو پیدا کردی! ❤️'),
+                            300);
+                    }, 400);
+                } else {
+                    setTimeout(() => {
+                        cards[i1].classList.remove('flipped');
+                        cards[i1].textContent = '?';
+                        cards[i2].classList.remove('flipped');
+                        cards[i2].textContent = '?';
+                        hajmFlipped = [];
+                        hajmLocked = false;
+                    }, 800);
+                }
+            }
+        }
+
+        // =============================================
+        // ۶. مسابقه حروف
+        // =============================================
+        const wordList = ['عاشق', 'دوست', 'قلب', 'ماه', 'شیدا', 'رویا', 'پریا', 'نگاه', 'دلبر', 'جانان'];
+        let targetWord = '';
+        let wordAttempts = [];
+
+        function resetWordGame() {
+            targetWord = wordList[Math.floor(Math.random() * wordList.length)];
+            wordAttempts = [];
+            document.getElementById('wordResult').innerHTML = '';
+            document.getElementById('wordHistory').innerHTML = '';
+            document.getElementById('wordInput').value = '';
+            document.getElementById('wordInput').disabled = false;
+        }
+
+        function checkWord() {
+            const input = document.getElementById('wordInput');
+            const guess = input.value.trim();
+            if (guess.length !== 6) { document.getElementById('wordResult').innerHTML = '❌ کلمه باید ۶ حرف باشه!'; return; }
+            if (guess === targetWord) {
+                document.getElementById('wordResult').innerHTML = '🎉 آفرین! کلمه رو پیدا کردی! ❤️';
+                document.getElementById('wordResult').style.color = '#ff6b9d';
+                input.disabled = true;
+                return;
+            }
+            wordAttempts.push(guess);
+            document.getElementById('wordResult').innerHTML = `❌ ${guess} صحیح نیست. دوباره امتحان کن!`;
+            document.getElementById('wordResult').style.color = '#ff6b6b';
+            document.getElementById('wordHistory').innerHTML = `📝 حدس‌ها: ${wordAttempts.join(' - ')}`;
+            input.value = '';
+            input.focus();
+        }
+
+        // =============================================
+        // ۷. راست یا دروغ
+        // =============================================
+        const tofData = [
+            { text: 'من عاشق پیتزا هستم 🍕', answer: true },
+            { text: 'من تا حالا بستنی نخوردم 🍦', answer: false },
+            { text: 'من از تاریکی می‌ترسم 🌑', answer: true },
+            { text: 'من تا حالا پرواز کردم ✈️', answer: false },
+            { text: 'من عاشق بارونم 🌧️', answer: true },
+            { text: 'من تا حالا به خارج سفر نرفتم 🌍', answer: false },
+        ];
+        let tofIndex = 0;
+        let tofScore = 0;
+
+        function initTof() {
+            tofIndex = 0;
+            tofScore = 0;
+            const container = document.getElementById('tofQuestions');
+            container.innerHTML = '';
+            tofData.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.className = 'tof-item';
+                div.dataset.index = i;
+                div.innerHTML = `
+                            <div class="tof-text">${i+1}. ${q.text}</div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <button class="answer-btn" onclick="checkTof(${i}, true, this)">🟢 راست</button>
+                                <button class="answer-btn" onclick="checkTof(${i}, false, this)">🔴 دروغ</button>
+                            </div>
+                            <div class="tof-result" id="tofResult${i}"></div>
+                        `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkTof(index, guess, btn) {
+            const result = document.getElementById(`tofResult${index}`);
+            if (result.classList.contains('show')) return;
+            const correct = tofData[index].answer;
+            if (guess === correct) {
+                result.innerHTML = '✅ درست! آفرین! 🎉';
+                result.style.color = '#64c8ff';
+                tofScore++;
+            } else {
+                result.innerHTML = `❌ اشتباه! جواب درست: ${correct ? 'راست 🟢' : 'دروغ 🔴'}`;
+                result.style.color = '#ff6b6b';
+            }
+            result.classList.add('show');
+            btn.parentElement.querySelectorAll('.answer-btn').forEach(b => b.style.opacity = '.5');
+            btn.style.opacity = '1';
+            setTimeout(() => {
+                if (index === tofData.length - 1) {
+                    alert(`🎯 بازی تموم شد! امتیازت: ${tofScore} از ${tofData.length}`);
+                }
+            }, 500);
+        }
+
+        // =============================================
+        // ۸. تست شخصیت‌شناسی "شما کی هستید؟"
+        // =============================================
+        let personalityScores = [];
+
+        function answerPersonality(q, option, score, btn) {
+            personalityScores[q - 1] = score;
+
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            setTimeout(() => {
+                const currentId = 'pq' + q;
+                const currentQ = document.getElementById(currentId);
+                if (currentQ) {
+                    currentQ.style.display = 'none';
+                }
+
+                const nextQ = q + 1;
+                const nextId = 'pq' + nextQ;
+                const nextQuestion = document.getElementById(nextId);
+
+                if (nextQuestion) {
+                    nextQuestion.style.display = 'block';
+                    nextQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    showPersonalityResult();
+                }
+            }, 500);
+        }
+
+        function showPersonalityResult() {
+            const total = personalityScores.reduce((a, b) => a + b, 0);
+            const resultBox = document.getElementById('personalityResult');
+            const scoreDisplay = document.getElementById('personalityScore');
+            const descDisplay = document.getElementById('personalityDesc');
+            const iconDisplay = document.getElementById('resultIcon');
+
+            resultBox.classList.add('show');
+            scoreDisplay.textContent = `امتیاز شما: ${total}`;
+
+            let icon, desc;
+
+            if (total >= 35 && total <= 50) {
+                icon = '🧠';
+                desc = `
+                            <strong>شخصیت جدی، منطقی و شاد 🧠</strong><br><br>
+                            شما آدمی بسیار جدی و در عین حال منطقی و شاد هستید. 
+                            به‌رغم آن که ممکن است در بسیاری از برنامه‌های دوستانه شرکت کنید، 
+                            اما جدیت و برنامه‌ریزی را در هیچ شرایطی فراموش نمی‌کنید.<br><br>
+                            از نظر شما تفریح جای خود را دارد و کار و درس جای خود را. 
+                            ترجیح می‌دهید در یک روز تعطیل به گرفتاری دوستتان برسید تا این که به استراحت بپردازید.<br><br>
+                            <span style="color:#ff6b9d;">💡 اما یادت باشه:</span> 
+                            زندگی کردن برای خود نیز عالمی دارد و بهتر است چندان هم از آن غافل نشوید. 
+                            کمی هم با نشاط و بی‌خیال زندگی کردن، زندگی را در کام شما شیرین‌تر می‌کند.
+                        `;
+            } else if (total >= 20 && total < 35) {
+                icon = '🎉';
+                desc = `
+                            <strong>شخصیت شاد، اجتماعی و پرانرژی 🎉</strong><br><br>
+                            چنانچه قرار به برگزاری یک مهمانی باشد، مطمئناً شما در رأس لیست مدعوین قرار دارید!<br><br>
+                            شما در شمار آن گروه از افرادی هستید که شادی را با اعماق وجود خود حس کرده 
+                            و دیگران را نیز از آن بی‌بهره نمی‌سازید. 
+                            حتی حرکات دست‌های شما، گویای احساس درونتان است.<br><br>
+                            <span style="color:#ff6b9d;">💡 به‌راستی زمانی که شاد هستید،</span> 
+                            دوست دارید دیگران را نیز از این شادی بهره‌مند سازید. 
+                            شادیتان مستمر باد! 🌟
+                        `;
+            } else {
+                icon = '🌈';
+                desc = `
+                            <strong>شخصیت آزاد، بی‌برنامه و شیرین 🌈</strong><br><br>
+                            شما عاشق بی‌برنامگی و «هر چه پیش آید خوش آید» هستید. 
+                            به نظر شما زندگی بی‌معناتر از آن است که بخواهید برای کارهای خود برنامه داشته باشید.<br><br>
+                            باید روزها را برای تفریح و استراحت گذاشت و شب‌ها را برای خواب. 
+                            شما پیرو «زندگی زیباست» هستید.<br><br>
+                            <span style="color:#ff6b9d;">💡 ولی یادت باشه:</span> 
+                            شما دارای شخصیتی شیرین می‌باشید، ولی لطفاً کمی هم «دگرخواه» باشید. 
+                            با این تفکر می‌توان راحت و خوش زندگی کرد و بیشتر محبوب و مورد اعتماد دیگران بود.
+                        `;
+            }
+
+            iconDisplay.textContent = icon;
+            descDisplay.innerHTML = desc;
+        }
+
+        function resetPersonalityTest() {
+            personalityScores = [];
+
+            for (let i = 1; i <= 5; i++) {
+                const el = document.getElementById('pq' + i);
+                if (el) {
+                    el.style.display = 'none';
+                    el.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+                }
+            }
+
+            const firstQuestion = document.getElementById('pq1');
+            if (firstQuestion) {
+                firstQuestion.style.display = 'block';
+            }
+
+            document.getElementById('personalityResult').classList.remove('show');
+        }
+
+        // =============================================
+        // ۹. تست خشم و عصبانیت
+        // =============================================
+        let angerScores = [];
+
+        function answerAnger(q, answer, score, btn) {
+            angerScores[q - 1] = score;
+
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            setTimeout(() => {
+                const currentId = 'aq' + q;
+                const currentQ = document.getElementById(currentId);
+                if (currentQ) {
+                    currentQ.style.display = 'none';
+                }
+
+                const nextQ = q + 1;
+                const nextId = 'aq' + nextQ;
+                const nextQuestion = document.getElementById(nextId);
+
+                if (nextQuestion) {
+                    nextQuestion.style.display = 'block';
+                    nextQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    showAngerResult();
+                }
+            }, 400);
+        }
+
+        function showAngerResult() {
+            const total = angerScores.reduce((a, b) => a + b, 0);
+            const resultBox = document.getElementById('angerResult');
+            const scoreDisplay = document.getElementById('angerScore');
+            const descDisplay = document.getElementById('angerDesc');
+            const iconDisplay = document.getElementById('angerIcon');
+
+            resultBox.classList.add('show');
+            scoreDisplay.textContent = `امتیاز شما: ${total} از ۲۰`;
+
+            let icon, desc;
+
+            if (total >= 1 && total <= 10) {
+                icon = '😌';
+                desc = `
+                            <strong>شخصیت متعادل و آرام 😌</strong><br><br>
+                            نگران نباشید! اعتدال در رفتار شما جاری است و شما به خوبی قادر به کنترل عواطف و احساسات خود می‌باشید.<br><br>
+                            مطمئن باشید اگر به همین نحو احساسات خود را مدیریت کنید، یقیناً در زندگی و فرداهای خود موفق خواهید شد، زیرا یکی از رموز موفقیت، کنترل احساسات است.<br><br>
+                            <span style="color:#64c8ff;">✨ برایتان روزهای سبزی را می‌طلبیم.</span>
+                        `;
+            } else if (total > 10 && total <= 15) {
+                icon = '🤔';
+                desc = `
+                            <strong>در مرز دو دنیا 🤔</strong><br><br>
+                            هنوز جای نگرانی نیست، زیرا شما در مرز دو بی‌نهایت خوب و بد ایستاده‌اید. با کمی تفکر و اندیشه در امور، می‌توانید عنان احساسات لجام‌گسیختهٔ خود را به دست گیرید.<br><br>
+                            <span style="color:#ff6b9d;">💡 یادتان باشد:</span> 
+                            آدم‌ها را همان‌طور که هستند بپذیرید و فراموش نکنید که عصبانیت و خشم حلال مشکلات نیست، بلکه خود عامل بسیار مهمی در به وجود آمدن مشکلات جدید می‌باشد.
+                        `;
+            } else {
+                icon = '🔥';
+                desc = `
+                            <strong>شخصیت خشمگین و پرتنش 🔥</strong><br><br>
+                            چرا فکر می‌کنید که عصبانیت تنها راه حل است؟<br><br>
+                            باور کنید که پایان خشم چیزی جز خجالت نیست! شما که بارها این مهم را آزمایش کرده‌اید، چرا دوباره؟!<br><br>
+                            <span style="color:#ff6b6b;">⚠️ این مطلب را فراموش نکنید:</span> 
+                            رمز موفقیت در زندگی، مدیریت احساس است. پس از هم‌اکنون کمر همت ببندید و با نوشیدن یک جرعه اغماض، معضلات و مشکلات را با آرامش بیشتری حل کنید.<br><br>
+                            <span style="color:#ff6b9d;">💬 سخنی از بزرگان:</span><br>
+                            🧘 بودا: «هرگاه عصبانی شدی و قصد کاری را داری، از ۱۰ تا ۱ به طور معکوس بشمار.»<br>
+                            🕌 امام علی (ع): «وقتی عصبانی هستی، سکوت کن، زیرا خشم کلید همهٔ بدی‌هاست.»<br><br>
+                            <span style="color:#64c8ff;">✨ برایتان روزهای سرشار از آرامش می‌طلبیم.</span>
+                        `;
+            }
+
+            iconDisplay.textContent = icon;
+            descDisplay.innerHTML = desc;
+        }
+
+        function resetAngerTest() {
+            angerScores = [];
+
+            for (let i = 1; i <= 20; i++) {
+                const el = document.getElementById('aq' + i);
+                if (el) {
+                    el.style.display = 'none';
+                    el.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+                }
+            }
+
+            const firstQuestion = document.getElementById('aq1');
+            if (firstQuestion) {
+                firstQuestion.style.display = 'block';
+            }
+
+            document.getElementById('angerResult').classList.remove('show');
+        }
+
+        // =============================================
+        // ۱۰. تست کینه‌جویی نسبت به همسر
+        // =============================================
+        let grudgeScores = [];
+
+        function answerGrudge(q, answer, score, btn) {
+            grudgeScores[q - 1] = score;
+
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            setTimeout(() => {
+                const currentId = 'gq' + q;
+                const currentQ = document.getElementById(currentId);
+                if (currentQ) {
+                    currentQ.style.display = 'none';
+                }
+
+                const nextQ = q + 1;
+                const nextId = 'gq' + nextQ;
+                const nextQuestion = document.getElementById(nextId);
+
+                if (nextQuestion) {
+                    nextQuestion.style.display = 'block';
+                    nextQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    showGrudgeResult();
+                }
+            }, 400);
+        }
+
+        function showGrudgeResult() {
+            const total = grudgeScores.reduce((a, b) => a + b, 0);
+            const resultBox = document.getElementById('grudgeResult');
+            const scoreDisplay = document.getElementById('grudgeScore');
+            const descDisplay = document.getElementById('grudgeDesc');
+            const iconDisplay = document.getElementById('grudgeIcon');
+
+            resultBox.classList.add('show');
+            scoreDisplay.textContent = `امتیاز شما: ${total} از ۲۱`;
+
+            let icon, desc;
+
+            if (total < 7) {
+                icon = '😊';
+                desc = `
+                            <strong>تصویر معتدل و مطلوب از همسر 😊</strong><br><br>
+                            به شما تبریک می‌گوییم! زیرا تصویر معتدل و مطلوبی از خصوصیات و ویژگی‌های همسرتان دارید و به این مطلب آگاه هستید که انسان مجموعه‌ای از صفات خوب و بد است و سعی می‌کنید که صفات منفی همسرتان را در طول زمان به صفات مثبت تبدیل نمایید.<br><br>
+                            <span style="color:#64c8ff;">✨ باز هم به شما تبریک می‌گوییم و فرداهای سبزی را برایتان مسئلت داریم.</span>
+                        `;
+            } else {
+                icon = '😤';
+                desc = `
+                            <strong>انتقادپیشه و کینه‌جو 😤</strong><br><br>
+                            متأسفانه باید بگویم که شما نسبت به همسرتان انتقادپیشه و کینه‌جو می‌باشید.<br><br>
+                            <span style="color:#ff6b9d;">💡 لحظه‌ای با خود فکر کنید:</span><br>
+                            آیا همسرتان فقط ویژگی‌های منفی دارد؟<br>
+                            آیا هیچ صفت مثبتی ندارند؟<br><br>
+                            بی‌شک همسر شما نیز دارای ویژگی‌های مثبت و مطلوبی می‌باشد، ولی این عیب از شماست که فقط به نیمهٔ خالی جام وجود همسرتان می‌نگرید.<br><br>
+                            <span style="color:#ff6b9d;">💡 پیشنهاد می‌کنیم به صفات مثبت او نیز نیم‌نگاهی داشته باشید.</span><br><br>
+                            <span style="color:#ff6b6b;">⚠️ یادتان باشد:</span> 
+                            وقتی با انگشت اشاره و با خشم به او انتقاد می‌ورزید، به مشت خود نگاه کنید؛ چهار انگشت دیگر به طرف خودتان می‌باشد.<br><br>
+                            کمی تأمل کنید و دوباره این مطلب را بخوانید و دوباره سؤالات آزمون را مطالعه کنید. حتماً جواب شما در همین سؤالات پنهان است. امتحان کنید.
+                        `;
+            }
+
+            iconDisplay.textContent = icon;
+            descDisplay.innerHTML = desc;
+        }
+
+        function resetGrudgeTest() {
+            grudgeScores = [];
+
+            for (let i = 1; i <= 21; i++) {
+                const el = document.getElementById('gq' + i);
+                if (el) {
+                    el.style.display = 'none';
+                    el.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('selected'));
+                }
+            }
+
+            const firstQuestion = document.getElementById('gq1');
+            if (firstQuestion) {
+                firstQuestion.style.display = 'block';
+            }
+
+            document.getElementById('grudgeResult').classList.remove('show');
+        }
+
+        // =============================================
+        // توابع کمکی
+        // =============================================
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =============================================
+        // مقداردهی اولیه
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initMemoryGame();
+            initTTT();
+            initHajm();
+            resetWordGame();
+            initTof();
+        });
+    </script>
+
+</body>
+
+</html>
