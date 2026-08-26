@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💌 نامه‌ها</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* استایل‌های مشابه صفحه اصلی */
+        * { box-sizing: border-box; font-family: Vazirmatn, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #ffd6e7, #fff7fb);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 8px 25px rgba(176,48,96,0.08);
+        }
+        .letter-item {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .letter-item:hover { background: rgba(176,48,96,0.03); padding-right: 10px; }
+        .letter-title { font-weight: 700; color: #b03060; font-size: 18px; }
+        .letter-meta { color: #888; font-size: 13px; }
+        .letter-content { display: none; margin-top: 10px; color: #555; line-height: 2; }
+        .letter-content.show { display: block; }
+        .btn-new {
+            background: #b03060;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-new:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(176,48,96,0.3); }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content input, .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f0c4ce;
+            border-radius: 14px;
+            margin: 8px 0;
+            font-family: Vazirmatn, sans-serif;
+        }
+        .modal-content textarea { min-height: 120px; resize: vertical; }
+        .modal-content input:focus, .modal-content textarea:focus {
+            border-color: #b03060;
+            outline: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #b03060;
+            text-decoration: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="color:#b03060; text-align:center;">💌 نامه‌ها</h1>
+    <p style="text-align:center; color:#888;">نامه‌هایی که برای هم نوشتیم...</p>
+
+    <button class="btn-new" onclick="openNewLetter()">✍️ نامه جدید</button>
+
+    <div id="lettersList">
+        <!-- نامه‌ها اینجا قرار می‌گیرند -->
+        <div class="card" style="text-align:center; color:#999;">
+            ⏳ در حال بارگذاری...
+        </div>
+    </div>
+
+    <a href="../index.html" class="back-link">⬅ برگشت به خانه</a>
+</div>
+
+<!-- مودال نامه جدید -->
+<div class="modal" id="newLetterModal">
+    <div class="modal-content">
+        <h3 style="color:#b03060;">✍️ نامه جدید</h3>
+        <input type="text" id="letterTitle" placeholder="عنوان نامه..." />
+        <input type="text" id="letterSender" placeholder="فرستنده..." />
+        <input type="text" id="letterReceiver" placeholder="گیرنده..." />
+        <input type="date" id="letterDate" />
+        <textarea id="letterBody" placeholder="متن نامه..."></textarea>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn-new" style="flex:1;" onclick="saveLetter()">💾 ذخیره</button>
+            <button class="btn-new" style="background:#ccc; flex:1;" onclick="closeNewLetter()">بی‌خیال</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://zcossaztlqzznmhxuphx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjb3NzYXp0bHF6em5taHh1cGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMDI4MDMsImV4cCI6MjEwMTY3ODgwM30.ahdN6aNQyyn2_5Q7PtUZD3yYl_xcncJ0GUSr0UetUJQ';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadLetters() {
+        const { data, error } = await supabase
+            .from('messages')
+            .select('*')
+            .eq('type', 'message')
+            .eq('is_deleted', false)
+            .order('date', { ascending: false });
+
+        if (error) {
+            document.getElementById('lettersList').innerHTML = '❌ خطا در بارگذاری';
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            document.getElementById('lettersList').innerHTML = `
+                <div class="card" style="text-align:center; color:#999;">
+                    📭 هنوز نامه‌ای نوشته نشده...
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        data.forEach(letter => {
+            const date = new Date(letter.date);
+            const persianDate = date.toLocaleDateString('fa-IR');
+            html += `
+                <div class="card letter-item" onclick="toggleLetter('${letter.id}')">
+                    <div class="letter-title">${letter.title || 'بدون عنوان'}</div>
+                    <div class="letter-meta">
+                        ✉️ از: ${letter.sender || 'ناشناس'} | به: ${letter.receiver || 'ناشناس'} | 📅 ${persianDate}
+                    </div>
+                    <div class="letter-content" id="letter-${letter.id}">
+                        ${letter.content || 'متن نامه...'}
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('lettersList').innerHTML = html;
+    }
+
+    function toggleLetter(id) {
+        const el = document.getElementById(`letter-${id}`);
+        if (el) el.classList.toggle('show');
+    }
+
+    function openNewLetter() {
+        document.getElementById('newLetterModal').classList.add('active');
+        document.getElementById('letterDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    function closeNewLetter() {
+        document.getElementById('newLetterModal').classList.remove('active');
+    }
+
+    async function saveLetter() {
+        const title = document.getElementById('letterTitle').value.trim();
+        const sender = document.getElementById('letterSender').value.trim();
+        const receiver = document.getElementById('letterReceiver').value.trim();
+        const date = document.getElementById('letterDate').value;
+        const content = document.getElementById('letterBody').value.trim();
+
+        if (!content) { alert('⚠️ لطفاً متن نامه رو بنویس!'); return; }
+
+        const { error } = await supabase
+            .from('messages')
+            .insert([{
+                type: 'message',
+                title: title || 'بدون عنوان',
+                sender: sender || 'پریسا',
+                receiver: receiver || 'علی',
+                date: date || new Date().toISOString(),
+                content: content,
+                is_deleted: false
+            }]);
+
+        if (error) {
+            alert('❌ خطا در ذخیره: ' + error.message);
+            return;
+        }
+
+        alert('✅ نامه با موفقیت ذخیره شد!');
+        closeNewLetter();
+        loadLetters();
+    }
+
+    loadLetters();
+</script>
+
+</body>
+</html>
