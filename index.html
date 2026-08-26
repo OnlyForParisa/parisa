@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📸 خاطرات</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; font-family: Vazirmatn, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #ffd6e7, #fff7fb);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 8px 25px rgba(176,48,96,0.08);
+        }
+        .memory-item {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .memory-item:hover { background: rgba(176,48,96,0.03); padding-right: 10px; }
+        .memory-title { font-weight: 700; color: #b03060; font-size: 18px; }
+        .memory-chapter {
+            display: inline-block;
+            background: #b03060;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        .memory-meta { color: #888; font-size: 13px; }
+        .memory-content { display: none; margin-top: 10px; color: #555; line-height: 2; }
+        .memory-content.show { display: block; }
+        .memory-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .memory-images img { max-width: 100px; border-radius: 12px; }
+        .btn-new {
+            background: #b03060;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-new:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(176,48,96,0.3); }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content input, .modal-content textarea, .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f0c4ce;
+            border-radius: 14px;
+            margin: 8px 0;
+            font-family: Vazirmatn, sans-serif;
+        }
+        .modal-content textarea { min-height: 120px; resize: vertical; }
+        .modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus {
+            border-color: #b03060;
+            outline: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #b03060;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .chapter-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        .chapter-filter button {
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 2px solid #f0c4ce;
+            background: transparent;
+            color: #888;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .chapter-filter button.active {
+            background: #b03060;
+            color: white;
+            border-color: #b03060;
+        }
+        .chapter-filter button:hover { border-color: #b03060; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="color:#b03060; text-align:center;">📸 خاطرات</h1>
+    <p style="text-align:center; color:#888;">هر خاطره یه فصل از زندگی ماست...</p>
+
+    <button class="btn-new" onclick="openNewMemory()">✍️ خاطره جدید</button>
+
+    <div class="chapter-filter" id="chapterFilter">
+        <button class="active" data-chapter="all" onclick="filterChapter('all')">همه</button>
+        <!-- فصل‌ها از دیتابیس لود میشن -->
+    </div>
+
+    <div id="memoriesList">
+        <div class="card" style="text-align:center; color:#999;">
+            ⏳ در حال بارگذاری...
+        </div>
+    </div>
+
+    <a href="../index.html" class="back-link">⬅ برگشت به خانه</a>
+</div>
+
+<!-- مودال خاطره جدید -->
+<div class="modal" id="newMemoryModal">
+    <div class="modal-content">
+        <h3 style="color:#b03060;">📸 خاطره جدید</h3>
+        <input type="text" id="memoryTitle" placeholder="عنوان خاطره..." />
+        <select id="memoryChapter">
+            <option value="فصل ۱">فصل ۱</option>
+            <option value="فصل ۲">فصل ۲</option>
+            <option value="فصل ۳">فصل ۳</option>
+            <option value="فصل ۴">فصل ۴</option>
+            <option value="فصل ۵">فصل ۵</option>
+        </select>
+        <div style="display:flex; gap:10px;">
+            <input type="date" id="memoryStartDate" style="flex:1;" />
+            <span style="color:#888; display:flex; align-items:center;">تا</span>
+            <input type="date" id="memoryEndDate" style="flex:1;" />
+        </div>
+        <textarea id="memoryContent" placeholder="متن خاطره..."></textarea>
+        <input type="text" id="memoryImages" placeholder="لینک عکس‌ها (با کاما جدا کن)" />
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn-new" style="flex:1;" onclick="saveMemory()">💾 ذخیره</button>
+            <button class="btn-new" style="background:#ccc; flex:1;" onclick="closeNewMemory()">بی‌خیال</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://zcossaztlqzznmhxuphx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjb3NzYXp0bHF6em5taHh1cGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMDI4MDMsImV4cCI6MjEwMTY3ODgwM30.ahdN6aNQyyn2_5Q7PtUZD3yYl_xcncJ0GUSr0UetUJQ';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentChapter = 'all';
+    let allMemories = [];
+
+    async function loadMemories() {
+        const { data, error } = await supabase
+            .from('messages')
+            .select('*')
+            .eq('type', 'memory')
+            .eq('is_deleted', false)
+            .order('date', { ascending: false });
+
+        if (error) {
+            document.getElementById('memoriesList').innerHTML = '❌ خطا در بارگذاری';
+            return;
+        }
+
+        allMemories = data || [];
+        renderMemories();
+        updateChapters();
+    }
+
+    function renderMemories() {
+        const filtered = currentChapter === 'all' 
+            ? allMemories 
+            : allMemories.filter(m => m.chapter === currentChapter);
+
+        if (filtered.length === 0) {
+            document.getElementById('memoriesList').innerHTML = `
+                <div class="card" style="text-align:center; color:#999;">
+                    📭 هیچ خاطره‌ای در این فصل نیست...
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        filtered.forEach(memory => {
+            const start = memory.start_date ? new Date(memory.start_date).toLocaleDateString('fa-IR') : 'نامشخص';
+            const end = memory.end_date ? new Date(memory.end_date).toLocaleDateString('fa-IR') : 'نامشخص';
+            const images = memory.images ? memory.images.split(',').map(i => i.trim()).filter(i => i) : [];
+            
+            html += `
+                <div class="card memory-item" onclick="toggleMemory('${memory.id}')">
+                    <div class="memory-title">
+                        ${memory.title || 'بدون عنوان'}
+                        <span class="memory-chapter">${memory.chapter || 'بدون فصل'}</span>
+                    </div>
+                    <div class="memory-meta">
+                        📅 ${start} تا ${end}
+                    </div>
+                    <div class="memory-content" id="memory-${memory.id}">
+                        ${memory.content || 'متن خاطره...'}
+                        ${images.length ? `<div class="memory-images">${images.map(img => `<img src="${img}" alt="عکس خاطره" />`).join('')}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('memoriesList').innerHTML = html;
+    }
+
+    function updateChapters() {
+        const chapters = [...new Set(allMemories.map(m => m.chapter).filter(Boolean))];
+        const container = document.getElementById('chapterFilter');
+        let html = `<button class="${currentChapter === 'all' ? 'active' : ''}" data-chapter="all" onclick="filterChapter('all')">همه</button>`;
+        chapters.forEach(ch => {
+            html += `<button class="${currentChapter === ch ? 'active' : ''}" data-chapter="${ch}" onclick="filterChapter('${ch}')">${ch}</button>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function filterChapter(chapter) {
+        currentChapter = chapter;
+        renderMemories();
+        document.querySelectorAll('.chapter-filter button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.chapter === chapter);
+        });
+    }
+
+    function toggleMemory(id) {
+        const el = document.getElementById(`memory-${id}`);
+        if (el) el.classList.toggle('show');
+    }
+
+    function openNewMemory() {
+        document.getElementById('newMemoryModal').classList.add('active');
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('memoryStartDate').value = today;
+        document.getElementById('memoryEndDate').value = today;
+    }
+
+    function closeNewMemory() {
+        document.getElementById('newMemoryModal').classList.remove('active');
+    }
+
+    async function saveMemory() {
+        const title = document.getElementById('memoryTitle').value.trim();
+        const chapter = document.getElementById('memoryChapter').value;
+        const start_date = document.getElementById('memoryStartDate').value;
+        const end_date = document.getElementById('memoryEndDate').value;
+        const content = document.getElementById('memoryContent').value.trim();
+        const images = document.getElementById('memoryImages').value.trim();
+
+        if (!content) { alert('⚠️ لطفاً متن خاطره رو بنویس!'); return; }
+
+        const { error } = await supabase
+            .from('messages')
+            .insert([{
+                type: 'memory',
+                title: title || 'خاطره بدون عنوان',
+                chapter: chapter,
+                start_date: start_date || null,
+                end_date: end_date || null,
+                content: content,
+                images: images || null,
+                date: new Date().toISOString(),
+                is_deleted: false
+            }]);
+
+        if (error) {
+            alert('❌ خطا در ذخیره: ' + error.message);
+            return;
+        }
+
+        alert('✅ خاطره با موفقیت ذخیره شد!');
+        closeNewMemory();
+        loadMemories();
+    }
+
+    loadMemories();
+</script>
+
+</body>
+</html>
